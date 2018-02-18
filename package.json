@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon app.js",
-    "test": "standard"
+    "test": "xo"
   },
   "author": "tmilar",
   "license": "ISC",
@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "nodemon": "^1.15.1",
-    "standard": "^11.0.0"
+    "xo": "^0.20.3"
   }
 }
