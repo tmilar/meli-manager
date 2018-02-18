@@ -10,6 +10,13 @@
   },
   "author": "tmilar",
   "license": "ISC",
+  "xo": {
+    "rules":{
+      "camelcase": "warn",
+      "no-use-extend-native/no-use-extend-native": "warn",
+      "import/no-unassigned-import": "off"
+    }
+  },
   "dependencies": {
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
