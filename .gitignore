@@ -124,4 +124,4 @@ fabric.properties
 
 
 # End of https://www.gitignore.io/api/node,webstorm+all
-/client_secret.json
+/*secret*.json
