@@ -1,0 +1,21 @@
+{
+  "name": "meli-manager",
+  "version": "0.0.1",
+  "description": "Handle Mercadolibre data and events, synchronize to Google Sheets.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tmilar",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "google-spreadsheet": "^2.0.4",
+    "moment": "^2.20.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.15.1"
+  }
+}
