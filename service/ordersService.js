@@ -3,12 +3,16 @@ const Order = require("../model/order.js");
 
 class OrdersService {
 
-    static async saveNewOrder(sheet, newOrderBody) {
+    constructor({sheet}) {
+        this.ordersSheet = sheet;
+    }
+
+    async saveNewOrder(newOrderBody) {
         let newOrder = Order.buildFromMeliOrder(newOrderBody);
         let orderRow = newOrder.toRowArray();
-        let newRowPosition = await SheetsHelper.getNextEmptyRowPosition(sheet);
-        await SheetsHelper.ensureSheetSpace(sheet, newRowPosition);
-        await SheetsHelper.setRowValuesInRowCells(sheet, orderRow, newRowPosition);
+        let newRowPosition = await SheetsHelper.getNextEmptyRowPosition(this.ordersSheet);
+        await SheetsHelper.ensureSheetSpace(this.ordersSheet, newRowPosition);
+        await SheetsHelper.setRowValuesInRowCells(this.ordersSheet, orderRow, newRowPosition);
     }
 }
 

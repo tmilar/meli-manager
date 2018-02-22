@@ -4,11 +4,12 @@ const SheetsHelper = require('./lib/sheetsHelper');
 // config setup
 const credentials = require('./client_secret.json');
 const config = require("./config.json");
-const ordersSpreadsheet = config.spreadsheet.orders;
 
 main();
 
 async function main() {
+    const ordersSpreadsheet = config.spreadsheet.orders;
+
     const ordersSheet = await SheetsHelper.setupSheet({
         credentials,
         spreadsheetsKey: ordersSpreadsheet.id,
@@ -18,9 +19,11 @@ async function main() {
     await updateSomeOrders(ordersSheet);
 }
 
-async function updateSomeOrders(sheet) {
+async function updateSomeOrders(ordersSheet) {
+    const ordersService = new OrdersService({sheet: ordersSheet});
+
     const newOrderSampleJSON = require("./data/order_sample.json");
-    await OrdersService.saveNewOrder(sheet, newOrderSampleJSON);
+    await ordersService.saveNewOrder(newOrderSampleJSON);
 
     // TODO implement updateOrder
     // await updateOrder({sheet, row: 5}, {estadodeventa: 'Cancelada'});
