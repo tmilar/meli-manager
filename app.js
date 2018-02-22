@@ -2,7 +2,7 @@ const OrdersService = require('./service/ordersService');
 const SheetsHelper = require('./lib/sheetsHelper');
 
 // config setup
-const credentials = require('./client_secret.json');
+const credentials = require('./secrets.json').spreadsheet;
 const config = require("./config.json");
 
 main();
