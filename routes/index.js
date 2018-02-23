@@ -12,18 +12,16 @@ router.get('/error', (req, res) => res.send("error logging in"));
 
 router.get('/welcome', ensureAuthenticated,
     function (req, res) {
-        debugger;
         res.send("Logged in user: " + req.user.nickname);
     }
 );
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        debugger;
         return next();
-    };
+    }
 
     res.redirect('/auth/mercadolibre');
-};
+}
 
 module.exports = router;

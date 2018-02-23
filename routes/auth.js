@@ -6,13 +6,11 @@ var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
 
 const Account = require('../model/account');
 
-
-var CLIENT_ID = process.env.MELI_CLIENT_ID;
-var SECRET_KEY = process.env.MELI_CLIENT_SECRET;
+const {clientId, clientSecret} = require('../config').secrets.mercadolibre;
 
 passport.use(new MercadoLibreStrategy({
-        clientID: CLIENT_ID,
-        clientSecret: SECRET_KEY,
+        clientID: clientId,
+        clientSecret: clientSecret,
         callbackURL: '/auth/mercadolibre/callback',
     },
     async function (accessToken, refreshToken, profile, cb) {
