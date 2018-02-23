@@ -14,6 +14,18 @@ class OrdersService {
         await SheetsHelper.ensureSheetSpace(this.ordersSheet, newRowPosition);
         await SheetsHelper.setRowValuesInRowCells(this.ordersSheet, orderRow, newRowPosition);
     }
+
+    /**
+     * For all accounts, fetch all Meli orders between desired dates.
+     *
+     * @param startDate
+     * @param endDate
+     * @returns {Promise.<void>}
+     */
+    async fetchOrdersBetweenDates(startDate, endDate=new Date()) {
+        let url = "";
+
+    }
 }
 
 

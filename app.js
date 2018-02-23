@@ -1,30 +1,51 @@
-const OrdersService = require('./service/ordersService');
-const SheetsHelper = require('./lib/sheetsHelper');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-// config setup
-const credentials = require('./secrets.json').spreadsheet;
-const config = require("./config.json");
+// mount db connection
+require("./config/db");
 
-main();
+const index = require('./routes/index');
+const auth = require('./routes/auth');
 
-async function main() {
-    const ordersSpreadsheet = config.spreadsheet.orders;
+const app = express();
 
-    const ordersSheet = await SheetsHelper.setupSheet({
-        credentials,
-        spreadsheetsKey: ordersSpreadsheet.id,
-        sheetName: ordersSpreadsheet.sheet
-    });
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
 
-    await updateSomeOrders(ordersSheet);
-}
+// uncomment after placing your favicon in /public
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-async function updateSomeOrders(ordersSheet) {
-    const ordersService = new OrdersService({sheet: ordersSheet});
+//setup routes
+app.use('/', index);
+app.use('/auth', auth);
 
-    const newOrderSampleJSON = require("./data/order_sample.json");
-    await ordersService.saveNewOrder(newOrderSampleJSON);
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
-    // TODO implement updateOrder
-    // await updateOrder({sheet, row: 5}, {estadodeventa: 'Cancelada'});
-}
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+module.exports = app;
