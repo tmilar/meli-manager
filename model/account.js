@@ -22,6 +22,32 @@ accountSchema.statics.refreshToken = async function () {
     /// complete this.. move elsewhere..
 };
 
+accountSchema.statics.register = async function (profile, auth) {
+    let {id, nickname, first_name, last_name, email} = profile;
+    let {accessToken, refreshToken} = auth;
+
+    let expires = new Date();
+    expires.setSeconds(expires.getSeconds() + 21000);
+
+    let account = {
+        id,
+        nickname,
+        firstName: first_name,
+        lastName: last_name,
+        email,
+        auth: {
+            accessToken,
+            refreshToken,
+            expires
+        }
+    };
+
+    await this.findOneAndUpdate({id}, account, {upsert: true}).exec();
+
+    console.log(`Login & save ${nickname} account auth successful!`);
+};
+
+
 const Account = mongoose.model('Account', accountSchema);
 
 module.exports = Account;
