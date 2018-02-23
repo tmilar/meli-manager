@@ -4,7 +4,7 @@
   "description": "Handle Mercadolibre data and events, synchronize to Google Sheets.",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node ./bin/www",
     "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,8 +12,19 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "debug": "^3.1.0",
+    "express": "^4.16.2",
     "google-spreadsheet": "^2.0.4",
-    "moment": "^2.20.1"
+    "hbs": "^4.0.1",
+    "moment": "^2.20.1",
+    "mongoose": "^5.0.6",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-mercadolibre": "0.0.2",
+    "request-promise": "^4.2.2",
+    "serve-favicon": "^2.4.5"
   },
   "devDependencies": {
     "nodemon": "^1.15.1"

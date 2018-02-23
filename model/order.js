@@ -24,6 +24,7 @@ class Order {
         order.itemTitle = meliOrderJson.order_items[0].item.title;
         order.itemId = meliOrderJson.order_items[0].item.id;
         order.buyer = meliOrderJson.buyer;
+        order.id = meliOrderJson.id;
 
         return order;
     }
@@ -78,6 +79,7 @@ class Order {
             ['shipmentType',            {header: 'FormaEntrega'                       ,column: "formaentrega",    meliPath: 'shipping.shipment_type'                               }],
             ['status',                  {header: 'Estado de venta', default: 'Nueva'  ,column: "estadodeventa",   meliPath: ''                                }],
             ['comments',                {header: 'Comentarios',     default: ''       ,column: "comentarios",     meliPath: ''                              }],
+            ['id',                      {} ],
         ]);
 
         // map Order properties to array values, in columns order.
