@@ -10,6 +10,7 @@ require("./config/db");
 
 const index = require('./routes/index');
 const auth = require('./routes/auth');
+const order = require('./routes/order');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //setup routes
 app.use('/', index);
 app.use('/auth', auth);
+app.use('/order', order);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
