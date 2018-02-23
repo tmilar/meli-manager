@@ -16,25 +16,25 @@ router.get('/', async (req, res, next) => {
     // parse params
     let dateStart = start && moment(start, 'DD-MM-YY').toDate();
     let dateEnd = end && moment(end, 'DD-MM-YY').endOf('day').toDate();
-    let nicknamesFilter = accounts ? {nickname: {$in: JSON.parse(accounts)}}: {};
+    let nicknamesFilter = accounts ? {nickname: {$in: JSON.parse(accounts)}} : {};
     let shouldStore = store === "true" || store === "1";
 
+    let orders = [];
+
     //// *** orders service ***
-    // 1. get accounts from DB
-    let selectedAccounts = await Account.find(nicknamesFilter).lean().exec();
+    try {
+        // 1. get accounts from DB
+        let selectedAccounts = await Account.find(nicknamesFilter).exec();
 
-    // 2. fetch remote orders for accounts
-    let orders = await OrderService.fetchMeliOrders(dateStart, dateEnd, selectedAccounts);
+        // 2. fetch remote orders for accounts
+        orders = await OrderService.fetchMeliOrders(dateStart, dateEnd, selectedAccounts);
 
-    // 3. store selected orders
-    if(shouldStore) {
-        try {
+        // 3. store selected orders
+        if (shouldStore) {
             await Promise.mapSeries(orders, o => OrderService.saveNewOrder(o));
-        } catch(e) {
-            debugger;
-            throw new Error(e);
-            // next(e);
         }
+    } catch (e) {
+        return next(e);
     }
 
     res.json(orders);
