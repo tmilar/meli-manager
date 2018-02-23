@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const request = require("request-promise");
+const refresh = require('passport-oauth2-refresh');
+const Promise = require('bluebird');
 
 const accountSchema = new Schema({
     id: Number,
@@ -15,11 +17,25 @@ const accountSchema = new Schema({
     }
 });
 
-accountSchema.statics.refreshToken = async function () {
-    let refreshUrl = `https://api.mercadolibre.com/oauth/token?grant_type=refresh_token&client_id=${clientId}&client_secret=${clientSecret}&refresh_token=${refreshToken}`;
-    let auth = await request.post(refreshUrl);
-    ///  todo update expires to a date...
-    /// complete this.. move elsewhere..
+accountSchema.methods.refreshToken = async function () {
+
+    const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken);
+    let accessToken;
+    try {
+        accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken);
+    } catch(e) {
+        console.log(`Could not refresh token for ${this.nickname}. `, e);
+        throw new Error(e);
+    }
+
+    let expires = new Date();
+    expires.setSeconds(expires.getSeconds() + 21000);
+
+    this.auth.accessToken = accessToken;
+    this.auth.expires = expires;
+    await this.save();
+
+    console.log(`Refresh token success for ${this.nickname}`);
 };
 
 accountSchema.statics.register = async function (profile, auth) {

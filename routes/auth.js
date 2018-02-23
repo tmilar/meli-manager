@@ -2,6 +2,7 @@ var router = require('express').Router();
 
 var passport = require('passport');
 var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
+var refresh = require("passport-oauth2-refresh");
 
 const Account = require('../model/account');
 
@@ -21,6 +22,7 @@ let mercadoLibreStrategy = new MercadoLibreStrategy({
     }
 );
 passport.use(mercadoLibreStrategy);
+refresh.use(mercadoLibreStrategy);
 
 passport.serializeUser((user, cb) => {
     cb(null, user);
