@@ -1,3 +1,5 @@
+const {spreadsheet, mercadolibre} = require('../secrets.json');
+
 const config = {
     db: process.env.NODE_ENV === 'production' ?
         process.env.MONGODB_URL :
@@ -12,6 +14,13 @@ const config = {
             id: "1CPwBbJaDwLbv80S5__LK8_5LZOQ5NE5_zXo45um1LNQ",
             sheet: "Clientes"
         }
+    },
+    secrets: {
+        mercadolibre: {
+            clientId: process.env.MELI_CLIENT_ID || mercadolibre.id,
+            clientSecret: process.env.MELI_CLIENT_SECRET || mercadolibre.secret_key
+        },
+        spreadsheet
     }
 };
 
