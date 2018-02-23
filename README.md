@@ -6,6 +6,7 @@ Handle Mercadolibre events, synchronize data with Google Spredsheets.
 
 Features:
 1. Store new Order in Google Spreadsheet.
+2.1 exclude self-account purchases
 
 Coming Next:
 2. Bulk-store historical data.
