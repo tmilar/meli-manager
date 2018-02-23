@@ -84,14 +84,17 @@ class OrdersService {
             .map(ordersResponse => ordersResponse.results)
             .reduce((arr = [], order) => arr.concat(order));
 
-        // Filter orders between startDate & endDate
-        let filteredOrders = orders.filter(order =>
-            (!startDate || (new Date(order["date_closed"]) >= startDate)) &&
-            (!endDate || (new Date(order["date_closed"]) <= endDate))
-        );
+        // Filter orders between startDate & endDate. Also exclude orders from own accounts.
+        let filteredOrders = orders
+            .filter(order =>
+                (!startDate || (new Date(order["date_closed"]) >= startDate)) &&
+                (!endDate || (new Date(order["date_closed"]) <= endDate))
+            ).filter(order => // not from one of our accounts
+                !accounts.map(a => a.nickname).includes(order["buyer"]["nickname"])
+            );
 
-        // sort orders by "date_closed"
-        let filteredOrdersSorted = filteredOrders.sort((a,b) => new Date(a["date_closed"]) - new Date(b["date_closed"]));
+        // sort orders by "date_closed" asc.
+        let filteredOrdersSorted = filteredOrders.sort((a, b) => new Date(a["date_closed"]) - new Date(b["date_closed"]));
 
         return filteredOrdersSorted;
     }
