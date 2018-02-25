@@ -4,13 +4,38 @@ const Account = require('../model/account');
 const OrderService = require("../service/orders.service.js");
 const Promise = require("bluebird");
 
+
+/**
+ * Check that the Mercadolibre accounts tokens are not expired, otherwise refresh them.
+ * TODO move this middleware function to a better place?
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise.<void>}
+ */
+let accountsAuthorized = async (req, res, next) => {
+    let accountsFilter = req.query.accounts ? {nickname: {$in: JSON.parse(req.query.accounts)}} : {};
+    let accounts = await Account.find(accountsFilter);
+
+    await Promise.mapSeries(accounts, acc => {
+        if (!acc.isAuthorized()) {
+            console.log(`Token for ${acc.nickname} expired. Refreshing...`);
+            return acc.refreshToken()
+                .catch(() => console.log(`Could not refresh token for ${acc.nickname}.`, e));
+        }
+    });
+
+    next();
+};
+
 /**
  * @param start - start date range, format 'MM-DD-YY'
  * @param end - end date range, format 'MM-DD-YY', default today.
  * @param accounts - pick specific account usernames instead of all.
  *
  */
-router.get('/', async (req, res, next) => {
+router.get('/', accountsAuthorized, async (req, res, next) => {
     let {start, end, accounts, store} = req.query;
 
     // parse params
