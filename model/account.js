@@ -23,7 +23,7 @@ accountSchema.methods.refreshToken = async function () {
     let accessToken;
     try {
         accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken);
-    } catch(e) {
+    } catch (e) {
         console.log(`Could not refresh token for ${this.nickname}. `, e);
         throw new Error(e);
     }
@@ -36,6 +36,11 @@ accountSchema.methods.refreshToken = async function () {
     await this.save();
 
     console.log(`Refresh token success for ${this.nickname}`);
+};
+
+accountSchema.methods.isAuthorized = function () {
+    // if we are earlier than expiration date, then it's authorized.
+    return new Date() < this.auth.expires;
 };
 
 accountSchema.statics.register = async function (profile, auth) {
