@@ -13,36 +13,25 @@ class OrdersService {
      * @returns {Promise.<void>}
      */
     static async setup() {
-        if (this.ready) return;
+        if (this.ordersSheet) return;
 
         const ordersSpreadsheet = config.spreadsheet.orders;
 
-        this.ordersSheet = await SheetsHelper.setupSheet({
+        this.ordersSheet = new SheetsHelper();
+
+        await this.ordersSheet.setupSheet({
             credentials: config.secrets.spreadsheet,
             spreadsheetsKey: ordersSpreadsheet.id,
             sheetName: ordersSpreadsheet.sheet
         });
-
-        this.ready = true;
     }
 
-    static async saveNewOrder(newOrderBody) {
-        /* // TODO make the sheets helper *be* the actual empowered sheet...
-         const ordersSheet = await SheetsHelper.setupSheet({
-         credentials: config.secrets.spreadsheet,
-         spreadsheetsKey: ordersSpreadsheet.id,
-         sheetName: ordersSpreadsheet.sheet
-         });
-         */
-
-        // TODO don't do the setup here... move elsewhere...
-        await this.setup();
-
-        let newOrder = Order.buildFromMeliOrder(newOrderBody);
+    static async saveNewOrder(newOrderJson) {
+        let newOrder = Order.buildFromMeliOrder(newOrderJson);
         let orderRow = newOrder.toRowArray();
-        let newRowPosition = await SheetsHelper.getNextEmptyRowPosition(this.ordersSheet);
-        await SheetsHelper.ensureSheetSpace(this.ordersSheet, newRowPosition);
-        await SheetsHelper.setRowValuesInRowCells(this.ordersSheet, orderRow, newRowPosition);
+        let newRowPosition = await this.ordersSheet.getNextEmptyRowPosition();
+        await this.ordersSheet.ensureSheetSpace(newRowPosition);
+        await this.ordersSheet.setRowValuesInRowCells(orderRow, newRowPosition);
     }
 
     /**
@@ -100,5 +89,8 @@ class OrdersService {
     }
 }
 
+OrdersService
+    .setup()
+    .then(() => console.log("Orders Service ready."));
 
 module.exports = OrdersService;
