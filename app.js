@@ -27,11 +27,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const authorizeAccounts = require('./lib/authorizeAccounts');
+
 //setup routes
 app.use('/', index);
 app.use('/auth', auth);
-app.use('/order', order);
-app.use('/notification', notification);
+app.use('/order', authorizeAccounts, order);
+app.use('/notification', authorizeAccounts, notification);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

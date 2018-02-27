@@ -1,8 +1,8 @@
-var router = require('express').Router();
+const router = require('express').Router();
 
-var passport = require('passport');
-var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
-var refresh = require("passport-oauth2-refresh");
+const passport = require('passport');
+const MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
+const refresh = require("passport-oauth2-refresh");
 
 const Account = require('../model/account');
 
@@ -40,6 +40,10 @@ router.get('/mercadolibre/callback', passport.authorize('mercadolibre', {failure
         console.log("Successful login!");
         res.redirect('/success');
     });
+
+router.get('/success', (req, res) => res.send("You have successfully logged in"));
+
+router.get('/error', (req, res) => res.send("error logging in"));
 
 
 module.exports = router;
