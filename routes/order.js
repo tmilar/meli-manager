@@ -27,7 +27,8 @@ router.get('/', async (req, res, next) => {
         let selectedAccounts = await Account.find(nicknamesFilter).exec();
 
         // 2. fetch remote orders for accounts
-        orders = await OrderService.fetchMeliOrders(dateStart, dateEnd, selectedAccounts);
+        let meliOrderFilters = {startDate: dateStart, endDate: dateEnd, accounts: selectedAccounts};
+        orders = await OrderService.fetchMeliOrders(meliOrderFilters);
 
         // 3. store selected orders
         if (shouldStore) {
