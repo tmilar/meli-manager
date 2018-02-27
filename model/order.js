@@ -258,7 +258,7 @@ class Order {
         if (accreditedPayments.length === 0) {
             return null;
         }
-        return accreditedPayments[0].payment_method_id;
+        return accreditedPayments[0].payment_type;
     }
     
     static extractIdFromCellValue(orderDetailURL) {
