@@ -34,11 +34,11 @@ passport.deserializeUser((obj, cb) => {
 
 router.get('/mercadolibre', passport.authorize('mercadolibre'));
 
-router.get('/mercadolibre/callback', passport.authorize('mercadolibre', {failureRedirect: '/error'}),
+router.get('/mercadolibre/callback', passport.authorize('mercadolibre', {failureRedirect: '/auth/error'}),
     function (req, res) {
         // Successful authentication, redirect home.
         console.log("Successful login!");
-        res.redirect('/success');
+        res.redirect('/auth/success');
     });
 
 router.get('/success', (req, res) => res.send("You have successfully logged in"));
