@@ -6,7 +6,7 @@ const refresh = require("passport-oauth2-refresh");
 
 const Account = require('../model/account');
 
-const {clientId, clientSecret} = require('../config').secrets.mercadolibre;
+const {clientId, clientSecret} = require('../config').auth.mercadolibre;
 
 let mercadoLibreStrategy = new MercadoLibreStrategy({
         clientID: clientId,

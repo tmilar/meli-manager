@@ -22,7 +22,7 @@ class OrdersService {
         this.headerRowWidth = Order.getColumns().keys().length;
 
         await this.ordersSheet.setupSheet({
-            credentials: config.secrets.spreadsheet,
+            credentials: config.auth.spreadsheet,
             spreadsheetsKey: ordersSpreadsheet.id,
             sheetName: ordersSpreadsheet.sheet,
             headerRowHeight: this.headerRowHeight,
