@@ -29,7 +29,7 @@ const notificationHandler = {
 
 router.post('/', async (req, res, next) => {
     let {resource, user_id, topic} = req.body;
-    let resourceId = resource.match(/\d+/)[0];
+    let resourceId = resource.match(/(MLA)?\d+/)[0];
 
     console.log(`Received '${topic}' notification: `, req.body);
 
