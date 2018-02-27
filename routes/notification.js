@@ -10,6 +10,12 @@ const notificationHandler = {
 
         await OrderService.saveOrUpdateOrder(order);
     },
+    orders_v2:  async (account, orderId) => {
+        console.log(`Order 'v2' notification for ${account.nickname}.`, );
+        let order = await OrderService.fetchOneMeliOrder(account, orderId);
+
+        await OrderService.saveOrUpdateOrder(order);
+    },
     questions: (account, questionId) => {
         console.log(`New question for ${account.nickname}! Not yet handled. `, questionId);
     },
