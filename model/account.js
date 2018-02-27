@@ -20,13 +20,7 @@ const accountSchema = new Schema({
 accountSchema.methods.refreshToken = async function () {
 
     const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken);
-    let accessToken;
-    try {
-        accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken);
-    } catch (e) {
-        console.log(`Could not refresh token for ${this.nickname}. `, e);
-        throw new Error(e);
-    }
+    let accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken);
 
     let expires = new Date();
     expires.setSeconds(expires.getSeconds() + 21000);
@@ -34,8 +28,6 @@ accountSchema.methods.refreshToken = async function () {
     this.auth.accessToken = accessToken;
     this.auth.expires = expires;
     await this.save();
-
-    console.log(`Refresh token success for ${this.nickname}`);
 };
 
 accountSchema.methods.isAuthorized = function () {
