@@ -9,9 +9,13 @@ Features:
 2. Bulk-store historical data.
 2.1 exclude self-account purchases
 2.2 calculate  proper 'FormaEntrega' + 'Estado de venta' + 'FormaPago' state values.
+4. Handle new Orders notifications, save data in realtime.
+4. Multi-account support.
 
 Coming Next:
 3. Store Customers data in Google Spreadsheet.
-4. Handle new Orders notifications, save data in realtime.
 4. Manage Questions and Messages.
-4. Multi-account support.
+
+Maybe:
+* Discount Mercadolibre charges from item price? Distinguish sale price
+ from leftover price?
