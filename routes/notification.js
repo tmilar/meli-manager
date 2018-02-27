@@ -16,11 +16,14 @@ const notificationHandler = {
 
         await OrderService.saveOrUpdateOrder(order);
     },
-    questions: (account, questionId) => {
+    questions: async (account, questionId) => {
         console.log(`New question for ${account.nickname}! Not yet handled. `, questionId);
     },
-    messages: (account, messageId) => {
+    messages: async (account, messageId) => {
         console.log(`New message for ${account.nickname}! Not yet handled.`, messageId);
+    },
+    items: async (account, itemId) => {
+        console.log(`'Items' notification for ${account.nickname}! Not yet handled.`, itemId);
     }
 };
 
@@ -32,7 +35,12 @@ router.post('/', async (req, res, next) => {
 
     try {
         const account = await Account.findOne({id: user_id});
-        await notificationHandler[topic](account, resourceId);
+        const handler = notificationHandler[topic];
+        if(typeof handler === "function") {
+            await handler(account, resourceId);
+        } else {
+            console.log(`Notiifcation topic '${topic}' not yet handled.`);
+        }
     } catch(e) {
         console.log(e.message, e.stack);
         return next(e);
