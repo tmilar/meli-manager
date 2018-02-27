@@ -107,7 +107,7 @@ class Order {
         const pendingDeliveryStatuses = ["to_be_agreed", "ready_to_ship", "pending"];
 
         // Se pago y se acuerda entrega ==> "reservado"
-        if (status === "paid" && pendingDeliveryStatuses.contains(shipping.status) && (feedback.purchase === null && feedback.sale === null)) {
+        if (status === "paid" && pendingDeliveryStatuses.includes(shipping.status) && (feedback.purchase === null && feedback.sale === null)) {
             return orderStatus.RESERVED;
         }
 
