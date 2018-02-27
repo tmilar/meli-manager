@@ -5,6 +5,9 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+// get env variables
+require('dotenv').config({path: path.resolve(__dirname, ".env")});
+
 // mount db connection
 require("./config/db");
 
