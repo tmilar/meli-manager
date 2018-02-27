@@ -104,10 +104,10 @@ class Order {
             DELIVERED_EXPIRED: "Entregada Vencida",
             UNKNOWN: "DESCONOCIDO"
         };
-        // const shippingStatuses = ["to_be_agreed", "delivered", "pending", "shipped"];
+        const pendingDeliveryStatuses = ["to_be_agreed", "ready_to_ship", "pending"];
 
         // Se pago y se acuerda entrega ==> "reservado"
-        if (status === "paid" && shipping.status === "to_be_agreed" && !(feedback.purchase !== null && feedback.sale !== null)) {
+        if (status === "paid" && pendingDeliveryStatuses.contains(shipping.status) && (feedback.purchase === null && feedback.sale === null)) {
             return orderStatus.RESERVED;
         }
 
