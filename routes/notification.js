@@ -4,8 +4,11 @@ const Account = require('../model/account');
 const OrderService = require("../service/orders.service.js");
 
 const notificationHandler = {
-    orders: (account, orderId) => {
-        console.log(`New order for ${account.nickname}! Not yet handled.`, orderId);
+    orders: async (account, orderId) => {
+        console.log(`Order notification for ${account.nickname}.`, );
+        let order = await OrderService.fetchOneMeliOrder(account, orderId);
+
+        await OrderService.saveOrUpdateOrder(order);
     },
     questions: (account, questionId) => {
         console.log(`New question for ${account.nickname}! Not yet handled. `, questionId);
@@ -17,12 +20,18 @@ const notificationHandler = {
 
 router.post('/', async (req, res, next) => {
     let {resource, user_id, topic} = req.body;
+    let resourceId = resource.match(/\d+/)[0];
+
     console.log(`Received '${topic}' notification: `, req.body);
+
+    try {
+        const account = await Account.findOne({id: user_id});
+        await notificationHandler[topic](account, resourceId);
+    } catch(e) {
+        console.log(e.message, e.stack);
+        return next(e);
+    }
     res.sendStatus(200);
-
-    const account = await Account.findOne({id: user_id});
-
-    notificationHandler[topic](account, resource);
 });
 
 module.exports = router;

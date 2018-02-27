@@ -1,5 +1,22 @@
 const moment = require("moment");
 
+const columns = new Map([
+    ['dateCreated',             {header: 'FechaVenta',                        column: "fechaventa",         colPos: 1   }],
+    ['timeCreated',             {header: 'Hora',                              column: "hora",               colPos: 2   }],
+    ['buyerNicknameHyperlink',  {header: 'Cliente',                           column: "cliente",            colPos: 3   }],
+    ['itemHyperlink',           {header: 'Item / Descripcion',                column: "itemdescripcion",    colPos: 4   }],
+    ['itemQuantity',            {header: 'Cantidad',                          column: "cantidad",           colPos: 5   }],
+    ['itemUnitPrice',           {header: 'Precio',                            column: "precio",             colPos: 6   }],
+    ['orderDetailURL',          {header: 'Link',                              column: "link",               colPos: 7   }],
+    ['sellerNickname',          {header: 'Vendedor',                          column: "vendedor",           colPos: 8   }],
+    ['paymentType',             {header: 'FormaPago', default: 'MP',          column: "formapago",          colPos: 9   }],
+    ['shipmentType',            {header: 'FormaEntrega',                      column: "formaentrega",       colPos: 10  }],
+    ['status',                  {header: 'Estado de venta', default: 'Nueva', column: "estadodeventa",      colPos: 11  }],
+    ['comments',                {header: 'Comentarios', default: '',          column: "comentarios",        colPos: 12  }],
+]);
+
+const updatableColumns = ['paymentType', 'shipmentType', 'status'];
+
 class Order {
 
     /**
@@ -66,25 +83,12 @@ class Order {
      *
      * @returns {Array}
      */
-    toRowArray() {
-        const columns = new Map([
-            ['dateCreated',             {header: 'FechaVenta'                         ,column: "fechaventa",      meliPath: ''                             }],
-            ['timeCreated',             {header: 'Hora'                               ,column: "hora",            meliPath: ''                       }],
-            ['buyerNicknameHyperlink',  {header: 'Cliente'                            ,column: "cliente",         meliPath: 'buyer.nickname'                          }],
-            ['itemHyperlink',           {header: 'Item / Descripcion'                 ,column: "itemdescripcion", meliPath: 'order_items[0].item.title'                                  }],
-            ['itemQuantity',            {header: 'Cantidad'                           ,column: "cantidad",        meliPath: 'order_items[0].quantity'                           }],
-            ['itemUnitPrice',           {header: 'Precio'                             ,column: "precio",          meliPath: 'order_items[0].unit_price'                         }],
-            ['orderDetailURL',          {header: 'Link'                               ,column: "link",            meliPath: ''                       }],
-            ['sellerNickname',          {header: 'Vendedor'                           ,column: "vendedor",        meliPath: 'seller.nickname'                           }],
-            ['paymentType',             {header: 'FormaPago', default: 'MP'           ,column: "formapago",       meliPath: ''                            }],
-            ['shipmentType',            {header: 'FormaEntrega'                       ,column: "formaentrega",    meliPath: 'shipping.shipment_type'                               }],
-            ['status',                  {header: 'Estado de venta', default: 'Nueva'  ,column: "estadodeventa",   meliPath: ''                                }],
-            ['comments',                {header: 'Comentarios',     default: ''       ,column: "comentarios",     meliPath: ''                              }],
-        ]);
-
+    toRowArray({update}={}) {
         // map Order properties to array values, in columns order.
         let orderRow = Array.from(columns.keys())
-            .map((key) => this.hasOwnProperty(key) ? this[key] : '');
+            .map((key) => {
+                return (this.hasOwnProperty(key) && (!update || updatableColumns.includes(key))) ? this[key] : null
+            });
 
         return orderRow;
     }
@@ -144,8 +148,6 @@ class Order {
             return orderStatus.CANCELLED;
         }
 
-
-
         if (status === "paid" && shipping.status === "to_be_agreed" && (Math.abs(moment(date_closed).diff(new Date(), 'days')) > 21)) {
             // Pago: "MP"
             return orderStatus.DELIVERED_EXPIRED;
@@ -156,7 +158,7 @@ class Order {
             return orderStatus.DELIVERED_EXPIRED;
         }
 
-        if(shipping.shipment_type === "shipping" && shipping.status === "shipped") {
+        if (shipping.shipment_type === "shipping" && shipping.status === "shipped") {
             return orderStatus.SHIPPED;
         }
 
@@ -200,7 +202,7 @@ class Order {
             MP: "MP",
             MP_PENDING: "MP Pendiente",
             CASH: "Efectivo",
-            UNKNOWN: "?"
+            UNKNOWN: null
         };
 
         // se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
@@ -248,15 +250,32 @@ class Order {
 
     static _getPaymentMethod(meliOrderJson) {
         let {payments} = meliOrderJson;
-        if(!payments || !payments.length) {
+        if (!payments || !payments.length) {
             return null;
         }
         let accreditedPayments = payments.filter(p => p.status_detail === "accredited");
 
-        if(accreditedPayments.length === 0) {
+        if (accreditedPayments.length === 0) {
             return null;
         }
         return accreditedPayments[0].payment_method_id;
+    }
+    
+    static extractIdFromCellValue(orderDetailURL) {
+        let orderIdMatches = orderDetailURL.match(/\d+/);
+        if (!(orderIdMatches && orderIdMatches.length)) {
+            // not a mercadolibre order!
+            return null;
+        }
+        return Number(orderIdMatches[0]);
+    }
+
+    static getColumns() {
+        return columns;
+    }
+
+    static getIdColumn() {
+        return columns.get('orderDetailURL');
     }
 }
 

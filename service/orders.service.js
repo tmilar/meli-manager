@@ -18,11 +18,15 @@ class OrdersService {
         const ordersSpreadsheet = config.spreadsheet.orders;
 
         this.ordersSheet = new SheetsHelper();
+        this.headerRowHeight = 1;
+        this.headerRowWidth = Order.getColumns().keys().length;
 
         await this.ordersSheet.setupSheet({
             credentials: config.secrets.spreadsheet,
             spreadsheetsKey: ordersSpreadsheet.id,
-            sheetName: ordersSpreadsheet.sheet
+            sheetName: ordersSpreadsheet.sheet,
+            headerRowHeight: this.headerRowHeight,
+            headerRowWidth: this.headerRowWidth
         });
     }
 
@@ -34,34 +38,36 @@ class OrdersService {
         await this.ordersSheet.setRowValuesInRowCells(orderRow, newRowPosition);
     }
 
+    static async updateOrder(updatedOrderJson, rowPosition) {
+        let order = Order.buildFromMeliOrder(updatedOrderJson);
+
+        let orderRow = order.toRowArray({update: true});
+
+        await this.ordersSheet.setRowValuesInRowCells(orderRow, rowPosition);
+    }
+
     /**
      * For all accounts, fetch all Meli orders between desired dates.
      *
      * @param startDate
      * @param endDate
      * @param accounts - {mongoose model}
+     * @param id - fetch by order id
      * @returns {Promise.<void>}
      */
-    static async fetchMeliOrders(startDate, endDate, accounts) {
+    static async fetchMeliOrders({startDate, endDate, accounts, id}) {
         let apiUrl = "https://api.mercadolibre.com/orders/search";
 
         // Build the request URLs for selected accounts.
-        // If 401 unauthorized, refresh and retry.
         let orderRequests = Promise.mapSeries(accounts, acc => ({
-            acc, orderRequest: apiUrl + `?seller=${acc.id}&access_token=${acc.auth.accessToken}&sort=date_desc`
+            acc,
+            orderRequest: apiUrl + `?seller=${acc.id}&access_token=${acc.auth.accessToken}&sort=date_desc${id ? `&q=${id}` : ''}`
         }))
             .mapSeries(({acc, orderRequest}) =>
                 req({uri: orderRequest, json: true})
                     .catch((e) => {
-                        if (e.statusCode && e.statusCode === 401) {
-                            console.log(`Token for ${acc.nickname} expired. Attempting to refresh and retry...`);
-                            return acc.refreshToken()
-                                .then(() => apiUrl + `?seller=${acc.id}&access_token=${acc.auth.accessToken}&sort=date_desc`)
-                                .then((newOrderRequest) =>
-                                    req({uri: newOrderRequest, json: true})
-                                );
-                        }
-                        console.log("Something bad happened... ", e);
+                        e.message = `Problem with meli orders request for ${acc.nickname}. ${e.message} `;
+                        throw e;
                     })
             );
 
@@ -86,6 +92,58 @@ class OrdersService {
         let filteredOrdersSorted = filteredOrders.sort((a, b) => new Date(a["date_closed"]) - new Date(b["date_closed"]));
 
         return filteredOrdersSorted;
+    }
+
+    /**
+     * Fetch one specific order by account and id.
+     *
+     * @param account - {mongoose account holding the order}
+     * @param id      - orderId
+     * @returns {Promise.<null>} - order object
+     */
+    static async fetchOneMeliOrder(account, id) {
+        let orders = await this.fetchMeliOrders({accounts: [account], id});
+        return (orders && orders.length > 0) ? orders[0] : null;
+    }
+
+    static async saveOrUpdateOrder(orderJson) {
+
+        /*
+         let ordersByRows = await this.ordersSheet.getAllRows();
+
+         let orderRowsById = ordersByRows.filter(o => Order.getIdFromRowObject(o) === orderJson.id);
+         orderRowsById.forEach(o => o.formapago = "caca");
+         let update = Promise.mapSeries(orderRowsById, o => {
+         console.log("Saving... ", o);
+         return o.save();
+         })
+         .then(() => console.log("Done"));
+
+         return update;
+         */
+        let orderRowPositions = await this.findOrderRowPositions(orderJson);
+
+        if (orderRowPositions && orderRowPositions.length >= 1) {
+            // update existing row(s)
+            return Promise.mapSeries(orderRowPositions, ({rowPosition}) => {
+                console.log("Updating existing order...");
+                return this.updateOrder(orderJson, rowPosition);
+            })
+        } else {
+            // save new row
+            console.log("Saving new order row...");
+            await this.saveNewOrder(orderJson);
+        }
+    }
+
+    static async findOrderRowPositions({id}) {
+        let orderIdColumn = Order.getIdColumn().colPos;
+        let ordersIdsColumn = await this.ordersSheet.getAllCellsByColumn({col: orderIdColumn});
+        let orderRowPositions = ordersIdsColumn
+            .map((orderIdCell, rowPosition) => ({orderIdCell, rowPosition}))
+            .filter(({orderIdCell}) => Order.extractIdFromCellValue(orderIdCell) === id);
+
+        return orderRowPositions;
     }
 }
 
