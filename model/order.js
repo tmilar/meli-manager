@@ -26,8 +26,8 @@ class Order {
      */
     static buildFromMeliOrder(meliOrderJson) {
         let order = new Order();
-        order.dateCreated = moment(meliOrderJson.date_closed).format("DD/MMM/YYYY");
-        order.timeCreated = moment(meliOrderJson.date_closed).format("hh:mm");
+        order.dateCreated = moment(meliOrderJson.date_created).format("DD/MMM/YYYY");
+        order.timeCreated = moment(meliOrderJson.date_created).format("HH:mm");
         order.buyerNicknameHyperlink = this._buyerProfileToHyperlink(meliOrderJson.buyer);
         order.itemQuantity = meliOrderJson.order_items[0].quantity;
         order.itemUnitPrice = meliOrderJson.order_items[0].unit_price; //TODO descontar comi + cargo envio gratis. discriminar?
