@@ -1,4 +1,4 @@
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 const columns = new Map([
     ['dateCreated',             {header: 'FechaVenta',                        column: "fechaventa",         colPos: 1   }],
@@ -26,8 +26,8 @@ class Order {
      */
     static buildFromMeliOrder(meliOrderJson) {
         let order = new Order();
-        order.dateCreated = moment(meliOrderJson.date_created).format("DD/MMM/YYYY");
-        order.timeCreated = moment(meliOrderJson.date_created).format("HH:mm");
+        order.dateCreated = moment(new Date(meliOrderJson.date_created)).tz("America/Argentina/Buenos_Aires").format("DD/MMM/YYYY");
+        order.timeCreated = moment(new Date(meliOrderJson.date_created)).tz("America/Argentina/Buenos_Aires").format("HH:mm");
         order.buyerNicknameHyperlink = this._buyerProfileToHyperlink(meliOrderJson.buyer);
         order.itemQuantity = meliOrderJson.order_items[0].quantity;
         order.itemUnitPrice = meliOrderJson.order_items[0].unit_price; //TODO descontar comi + cargo envio gratis. discriminar?
