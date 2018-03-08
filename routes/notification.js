@@ -5,13 +5,13 @@ const OrderService = require('../service/orders.service.js')
 const notificationHandler = {
   orders: async (account, orderId) => {
     console.log(`Order notification for ${account.nickname}.`)
-    let order = await OrderService.fetchOneMeliOrder(account, orderId)
+    const order = await OrderService.fetchOneMeliOrder(account, orderId)
 
     await OrderService.saveOrUpdateOrder(order)
   },
   orders_v2: async (account, orderId) => {
     console.log(`Order 'v2' notification for ${account.nickname}.`)
-    let order = await OrderService.fetchOneMeliOrder(account, orderId)
+    const order = await OrderService.fetchOneMeliOrder(account, orderId)
 
     await OrderService.saveOrUpdateOrder(order)
   },
@@ -27,8 +27,8 @@ const notificationHandler = {
 }
 
 router.post('/', async (req, res, next) => {
-  let {resource, user_id, topic} = req.body
-  let resourceId = resource.match(/(MLA)?\d+/)[0]
+  const {resource, user_id, topic} = req.body
+  const resourceId = resource.match(/(MLA)?\d+/)[0]
 
   console.log(`Received '${topic}' notification: `, req.body)
 

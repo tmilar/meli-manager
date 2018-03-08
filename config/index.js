@@ -1,7 +1,7 @@
 const config = {
-  db: process.env.NODE_ENV === 'production'
-    ? process.env.MONGODB_URL
-    : (process.env.MONGODB_URL || 'mongodb://localhost/melimgr'),
+  db: process.env.NODE_ENV === 'production' ?
+    process.env.MONGODB_URL :
+    (process.env.MONGODB_URL || 'mongodb://localhost/melimgr'),
   spreadsheet: {
     orders: {
       id: process.env.ORDERS_SPREADSHEET_ID || '1CPwBbJaDwLbv80S5__LK8_5LZOQ5NE5_zXo45um1LNQ',
