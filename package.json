@@ -14,6 +14,8 @@
   "author": "tmilar",
   "license": "ISC",
   "xo": {
+    "space": true,
+    "semicolon": false,
     "rules": {
       "camelcase": "warn",
       "no-use-extend-native/no-use-extend-native": "warn",
