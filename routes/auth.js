@@ -8,18 +8,18 @@ const Account = require('../model/account')
 
 const {clientId, clientSecret} = require('../config').auth.mercadolibre
 
-let mercadoLibreStrategy = new MercadoLibreStrategy({
+const mercadoLibreStrategy = new MercadoLibreStrategy({
   clientID: clientId,
-  clientSecret: clientSecret,
+  clientSecret,
   callbackURL: '/auth/mercadolibre/callback'
 },
-async function (accessToken, refreshToken, profile, cb) {
+  (async (accessToken, refreshToken, profile, cb) => {
   // + store/retrieve user from database, together with access token and refresh token
   // await db.users.save(profile)
-  await Account.register(profile, {accessToken, refreshToken})
+    await Account.register(profile, {accessToken, refreshToken})
 
-  return cb(null, profile)
-}
+    return cb(null, profile)
+  })
 )
 passport.use(mercadoLibreStrategy)
 refresh.use(mercadoLibreStrategy)
@@ -35,7 +35,7 @@ passport.deserializeUser((obj, cb) => {
 router.get('/mercadolibre', passport.authorize('mercadolibre'))
 
 router.get('/mercadolibre/callback', passport.authorize('mercadolibre', {failureRedirect: '/auth/error'}),
-  function (req, res) {
+  (req, res) => {
     // Successful authentication, redirect home.
     console.log('Successful login!')
     res.redirect('/auth/success')

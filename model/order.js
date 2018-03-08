@@ -1,18 +1,18 @@
 const moment = require('moment')
 
 const columns = new Map([
-  ['dateCreated', { header: 'FechaVenta', column: 'fechaventa', colPos: 1 }],
-  ['timeCreated', { header: 'Hora', column: 'hora', colPos: 2 }],
-  ['buyerNicknameHyperlink', { header: 'Cliente', column: 'cliente', colPos: 3 }],
-  ['itemHyperlink', { header: 'Item / Descripcion', column: 'itemdescripcion', colPos: 4 }],
-  ['itemQuantity', { header: 'Cantidad', column: 'cantidad', colPos: 5 }],
-  ['itemUnitPrice', { header: 'Precio', column: 'precio', colPos: 6 }],
-  ['orderDetailURL', { header: 'Link', column: 'link', colPos: 7 }],
-  ['sellerNickname', { header: 'Vendedor', column: 'vendedor', colPos: 8 }],
-  ['paymentType', { header: 'FormaPago', default: 'MP', column: 'formapago', colPos: 9 }],
-  ['shipmentType', { header: 'FormaEntrega', column: 'formaentrega', colPos: 10 }],
-  ['status', { header: 'Estado de venta', default: 'Nueva', column: 'estadodeventa', colPos: 11 }],
-  ['comments', { header: 'Comentarios', default: '', column: 'comentarios', colPos: 12 }]
+  ['dateCreated', {header: 'FechaVenta', column: 'fechaventa', colPos: 1}],
+  ['timeCreated', {header: 'Hora', column: 'hora', colPos: 2}],
+  ['buyerNicknameHyperlink', {header: 'Cliente', column: 'cliente', colPos: 3}],
+  ['itemHyperlink', {header: 'Item / Descripcion', column: 'itemdescripcion', colPos: 4}],
+  ['itemQuantity', {header: 'Cantidad', column: 'cantidad', colPos: 5}],
+  ['itemUnitPrice', {header: 'Precio', column: 'precio', colPos: 6}],
+  ['orderDetailURL', {header: 'Link', column: 'link', colPos: 7}],
+  ['sellerNickname', {header: 'Vendedor', column: 'vendedor', colPos: 8}],
+  ['paymentType', {header: 'FormaPago', default: 'MP', column: 'formapago', colPos: 9}],
+  ['shipmentType', {header: 'FormaEntrega', column: 'formaentrega', colPos: 10}],
+  ['status', {header: 'Estado de venta', default: 'Nueva', column: 'estadodeventa', colPos: 11}],
+  ['comments', {header: 'Comentarios', default: '', column: 'comentarios', colPos: 12}]
 ])
 
 const updatableColumns = ['paymentType', 'shipmentType', 'status']
@@ -23,8 +23,8 @@ class Order {
      * @param meliOrderJson
      * @returns {Order}
      */
-  static buildFromMeliOrder (meliOrderJson) {
-    let order = new Order()
+  static buildFromMeliOrder(meliOrderJson) {
+    const order = new Order()
     order.dateCreated = moment(meliOrderJson.date_created).format('DD/MMM/YYYY')
     order.timeCreated = moment(meliOrderJson.date_created).format('HH:mm')
     order.buyerNicknameHyperlink = this._buyerProfileToHyperlink(meliOrderJson.buyer)
@@ -54,12 +54,12 @@ class Order {
      * @returns {string}
      * @private
      */
-  static _itemToHyperlink ({id, title}) {
-    let base = 'http://articulo.mercadolibre.com.ar/'
-    let idstr = `${id.substring(0, 3)}-${id.substring(3)}-`
-    let titlestr = title.toLowerCase().split(' ').join('-')
-    let end = '-_JM'
-    let url = base + idstr + titlestr + end
+  static _itemToHyperlink({id, title}) {
+    const base = 'http://articulo.mercadolibre.com.ar/'
+    const idstr = `${id.substring(0, 3)}-${id.substring(3)}-`
+    const titlestr = title.toLowerCase().split(' ').join('-')
+    const end = '-_JM'
+    const url = base + idstr + titlestr + end
     return `=HYPERLINK("${url}","${title}")`
   }
 
@@ -70,10 +70,10 @@ class Order {
      * @returns {string}
      * @private
      */
-  static _buyerProfileToHyperlink ({nickname}) {
-    let base = 'https://perfil.mercadolibre.com.ar/'
-    let url = base + nickname
-    let title = nickname
+  static _buyerProfileToHyperlink({nickname}) {
+    const base = 'https://perfil.mercadolibre.com.ar/'
+    const url = base + nickname
+    const title = nickname
     return `=HYPERLINK("${url}","${title}")`
   }
 
@@ -82,18 +82,18 @@ class Order {
      *
      * @returns {Array}
      */
-  toRowArray ({update} = {}) {
-    // map Order properties to array values, in columns order.
-    let orderRow = Array.from(columns.keys())
-      .map((key) => {
+  toRowArray({update} = {}) {
+    // Map Order properties to array values, in columns order.
+    const orderRow = [...columns.keys()]
+      .map(key => {
         return (this.hasOwnProperty(key) && (!update || updatableColumns.includes(key))) ? this[key] : null
       })
 
     return orderRow
   }
 
-  static _getOrderStatus (meliOrderJSON) {
-    let {status, payments, shipping, feedback, date_closed} = meliOrderJSON
+  static _getOrderStatus(meliOrderJSON) {
+    const {status, payments, shipping, feedback, date_closed} = meliOrderJSON
     const orderStatus = {
       RESERVED: 'Reservada',
       CANCELLED: 'Cancelada',
@@ -127,7 +127,7 @@ class Order {
     }
 
     // Se confirmo la compra (no esta "paid") y los pagos estan todos "refunded" ==> "cancelada"
-    if (status === 'confirmed' && payments.length && payments.every((p) => p.status === 'refunded' || p.status === 'rejected')) {
+    if (status === 'confirmed' && payments.length && payments.every(p => p.status === 'refunded' || p.status === 'rejected')) {
       return orderStatus.CANCELLED
     }
 
@@ -150,7 +150,7 @@ class Order {
       // Pago: "MP"
       return orderStatus.DELIVERED_EXPIRED
     }
-    // se confirmo la compra (no esta "paid"), y pasaron 21 dias ==> "entregada"
+    // Se confirmo la compra (no esta "paid"), y pasaron 21 dias ==> "entregada"
     if (status === 'confirmed' && (Math.abs(moment(date_closed).diff(new Date(), 'days')) > 21)) {
       // Pago: "efectivo"
       return orderStatus.DELIVERED_EXPIRED
@@ -164,8 +164,8 @@ class Order {
     return orderStatus.UNKNOWN
   }
 
-  static _getDeliveryType (meliOrderJSON) {
-    let {shipping} = meliOrderJSON
+  static _getDeliveryType(meliOrderJSON) {
+    const {shipping} = meliOrderJSON
     const deliveryType = {
       AGREED: 'Retiro',
       ME2: 'Envio: MercadoEnvios',
@@ -192,8 +192,8 @@ class Order {
     return deliveryType.UNKNOWN
   }
 
-  static _getPaymentType (meliOrderJSON) {
-    let {status, payments, shipping, date_closed, feedback} = meliOrderJSON
+  static _getPaymentType(meliOrderJSON) {
+    const {status, payments, shipping, date_closed, feedback} = meliOrderJSON
 
     const paymentType = {
       CANCELLED: 'Cancelado',
@@ -203,9 +203,9 @@ class Order {
       UNKNOWN: null
     }
 
-    // se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
+    // Se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
     if (status === 'confirmed' && (
-      payments.length && payments.every((p) => p.status === 'refunded' || p.status === 'rejected') ||
+      payments.length && payments.every(p => p.status === 'refunded' || p.status === 'rejected') ||
                 ((feedback.purchase !== null && !feedback.purchase.fulfilled) ||
                 (feedback.sale !== null && !feedback.sale.fulfilled))
     )
@@ -213,7 +213,7 @@ class Order {
       return paymentType.CANCELLED
     }
 
-    // se pago y (pasaron 21 dias o alguno puso concretado)=> MP
+    // Se pago y (pasaron 21 dias o alguno puso concretado)=> MP
     if (status === 'paid' &&
             (
               shipping.status === 'delivered' ||
@@ -239,19 +239,19 @@ class Order {
       return paymentType.UNKNOWN
     }
 
-    if (status === 'paid' && payments.length && payments.some((p) => p.status === 'approved')) {
+    if (status === 'paid' && payments.length && payments.some(p => p.status === 'approved')) {
       return paymentType.MP_PENDING
     }
 
     return paymentType.UNKNOWN
   }
 
-  static _getPaymentMethod (meliOrderJson) {
-    let {payments} = meliOrderJson
+  static _getPaymentMethod(meliOrderJson) {
+    const {payments} = meliOrderJson
     if (!payments || !payments.length) {
       return null
     }
-    let accreditedPayments = payments.filter(p => p.status_detail === 'accredited')
+    const accreditedPayments = payments.filter(p => p.status_detail === 'accredited')
 
     if (accreditedPayments.length === 0) {
       return null
@@ -259,20 +259,20 @@ class Order {
     return accreditedPayments[0].payment_type
   }
 
-  static extractIdFromCellValue (orderDetailURL) {
-    let orderIdMatches = orderDetailURL.match(/\d+/)
+  static extractIdFromCellValue(orderDetailURL) {
+    const orderIdMatches = orderDetailURL.match(/\d+/)
     if (!(orderIdMatches && orderIdMatches.length)) {
-      // not a mercadolibre order!
+      // Not a mercadolibre order!
       return null
     }
     return Number(orderIdMatches[0])
   }
 
-  static getColumns () {
+  static getColumns() {
     return columns
   }
 
-  static getIdColumn () {
+  static getIdColumn() {
     return columns.get('orderDetailURL')
   }
 }

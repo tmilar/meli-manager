@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 mongoose.Promise = require('bluebird')
-const config = require('./index')
+const config = require('.')
 
 mongoose.connect(config.db)
 
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function () {
+db.once('open', () => {
   console.log('db connection open')
-  // we're connected!
+  // We're connected!
 })
