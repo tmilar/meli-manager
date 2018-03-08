@@ -17,6 +17,31 @@ const columns = new Map([
 
 const updatableColumns = ['paymentType', 'shipmentType', 'status'];
 
+const orderStatus = {
+    RESERVED: "Reservada",
+    CANCELLED: "Cancelada",
+    CANCELLED_QUESTION: "Cancelada?",
+    SHIPPED: "Enviada",
+    DELIVERED: "Entregada",
+    DELIVERED_EXPIRED: "Entregada Vencida",
+    UNKNOWN: "DESCONOCIDO"
+};
+
+const paymentType = {
+    CANCELLED: "Cancelado",
+    MP: "MP",
+    MP_PENDING: "MP Pendiente",
+    CASH: "Efectivo",
+    UNKNOWN: null
+};
+
+const deliveryType = {
+    AGREED: "Retiro",
+    ME2: "Envio: MercadoEnvios",
+    OTHER: "Envio: Otro",
+    UNKNOWN: "DESCONOCIDO"
+};
+
 class Order {
 
     /**
@@ -95,15 +120,7 @@ class Order {
 
     static _getOrderStatus(meliOrderJSON) {
         let {status, payments, shipping, feedback, date_closed} = meliOrderJSON;
-        const orderStatus = {
-            RESERVED: "Reservada",
-            CANCELLED: "Cancelada",
-            CANCELLED_QUESTION: "Cancelada?",
-            SHIPPED: "Enviada",
-            DELIVERED: "Entregada",
-            DELIVERED_EXPIRED: "Entregada Vencida",
-            UNKNOWN: "DESCONOCIDO"
-        };
+
         const pendingDeliveryStatuses = ["to_be_agreed", "ready_to_ship", "pending"];
 
         // Se pago y se acuerda entrega ==> "reservado"
@@ -168,12 +185,6 @@ class Order {
 
     static _getDeliveryType(meliOrderJSON) {
         let {shipping} = meliOrderJSON;
-        const deliveryType = {
-            AGREED: "Retiro",
-            ME2: "Envio: MercadoEnvios",
-            OTHER: "Envio: Otro",
-            UNKNOWN: "DESCONOCIDO"
-        };
 
         // No hay 'shipment_type' y en status 'to_be_agreed' => "Retiro"
         if (shipping.shipment_type === null && shipping.status === "to_be_agreed") {
@@ -196,14 +207,6 @@ class Order {
 
     static _getPaymentType(meliOrderJSON) {
         let {status, payments, shipping, date_closed, feedback} = meliOrderJSON;
-
-        const paymentType = {
-            CANCELLED: "Cancelado",
-            MP: "MP",
-            MP_PENDING: "MP Pendiente",
-            CASH: "Efectivo",
-            UNKNOWN: null
-        };
 
         // se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
         if (status === "confirmed" && (
