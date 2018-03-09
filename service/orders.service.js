@@ -1,6 +1,6 @@
 const req = require('request-promise')
 const Promise = require('bluebird')
-const SheetsHelper = require('../lib/sheetsHelper')
+const SheetsHelper = require('../lib/sheets-helper')
 const Order = require('../model/order.js')
 const config = require('../config')
 
