@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-const authorizeAccounts = require('./lib/authorizeAccounts')
+const authorizeAccounts = require('./lib/authorize-accounts')
 
 // Setup routes
 app.use('/', index)
