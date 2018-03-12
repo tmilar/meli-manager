@@ -9,7 +9,6 @@ class OrdersService {
      * Setup Order service spreadsheet reference.
      * TODO move this to some initial configuration place...
      *
-     * @returns {Promise.<void>}
      */
   static async setup() {
     if (this.ordersSheet) {
@@ -54,7 +53,7 @@ class OrdersService {
      * @param endDate
      * @param accounts - {mongoose model}
      * @param id - fetch by order id
-     * @returns {Promise.<void>}
+     * @returns all the meli orders for the selected accounts, ordered by date_closed.
      */
   static async fetchMeliOrders({startDate, endDate, accounts, id}) {
     const apiUrl = 'https://api.mercadolibre.com/orders/search'
