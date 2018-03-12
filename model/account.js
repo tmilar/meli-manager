@@ -1,10 +1,9 @@
 const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema
 const refresh = require('passport-oauth2-refresh')
 const Promise = require('bluebird')
 
-const accountSchema = new Schema({
+const accountSchema = new mongoose.Schema({
   id: Number,
   nickname: String,
   firstName: String,
@@ -17,7 +16,7 @@ const accountSchema = new Schema({
   }
 })
 
-accountSchema.methods.refreshToken = async function () {
+accountSchema.methods.refreshToken = async () => {
   const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken)
   const accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken)
 
@@ -29,7 +28,7 @@ accountSchema.methods.refreshToken = async function () {
   await this.save()
 }
 
-accountSchema.methods.isAuthorized = function () {
+accountSchema.methods.isAuthorized = () => {
   // If we are earlier than expiration date, then it's authorized.
   return new Date() < this.auth.expires
 }
