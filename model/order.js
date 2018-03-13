@@ -127,7 +127,7 @@ class Order {
     }
 
     // Se confirmo la compra (no esta "paid") y los pagos estan todos "refunded" ==> "cancelada"
-    if (status === 'confirmed' && payments.length && payments.every(p => p.status === 'refunded' || p.status === 'rejected')) {
+    if (status === 'confirmed' && payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected')) {
       return orderStatus.CANCELLED
     }
 
@@ -205,7 +205,7 @@ class Order {
 
     // Se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
     if (status === 'confirmed' && (
-      payments.length && payments.every(p => p.status === 'refunded' || p.status === 'rejected') ||
+      payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected') ||
                 ((feedback.purchase !== null && !feedback.purchase.fulfilled) ||
                 (feedback.sale !== null && !feedback.sale.fulfilled))
     )
@@ -239,7 +239,7 @@ class Order {
       return paymentType.UNKNOWN
     }
 
-    if (status === 'paid' && payments.length && payments.some(p => p.status === 'approved')) {
+    if (status === 'paid' && payments.length > 0 && payments.some(p => p.status === 'approved')) {
       return paymentType.MP_PENDING
     }
 
@@ -248,7 +248,7 @@ class Order {
 
   static _getPaymentMethod(meliOrderJson) {
     const {payments} = meliOrderJson
-    if (!payments || !payments.length) {
+    if (!payments || payments.length === 0) {
       return null
     }
     const accreditedPayments = payments.filter(p => p.status_detail === 'accredited')
@@ -261,7 +261,7 @@ class Order {
 
   static extractIdFromCellValue(orderDetailURL) {
     const orderIdMatches = orderDetailURL.match(/\d+/)
-    if (!(orderIdMatches && orderIdMatches.length)) {
+    if (!orderIdMatches || orderIdMatches.length === 0) {
       // Not a mercadolibre order!
       return null
     }
