@@ -205,7 +205,7 @@ class Order {
 
     // Se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
     if (status === 'confirmed' && (
-      payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected') ||
+      (payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected')) ||
                 ((feedback.purchase !== null && !feedback.purchase.fulfilled) ||
                 (feedback.sale !== null && !feedback.sale.fulfilled))
     )
