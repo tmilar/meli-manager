@@ -1,19 +1,16 @@
 # MeLi Manager
 Handle Mercadolibre events, synchronize data with Google Spredsheets.
-
+- [ ] Figure out wormholes
+  - [ ] Call @arfon
 ## Features:
-1. Store Orders in Google Spreadsheet.
-2. Bulk-store historical orders data.
-2.1. Exclude self-account purchases
-2.2. Calculate  proper 'FormaEntrega' + 'Estado de venta' + 'FormaPago' state values.
-3. Handle new Orders notifications, update data in realtime.
-4. Multi-account support.
-
-
-## Coming Next:
-- Store Customers data in Google Spreadsheet.
-- Manage Questions and Messages.
-
+- [x] Store Orders in Google Spreadsheet.
+- [x] Bulk-store historical orders data.
+  - [x] Exclude self-account purchases
+  - [x] Calculate  proper 'FormaEntrega' + 'Estado de venta' + 'FormaPago' state values.
+- [x] Handle new Orders notifications, update data in realtime.
+- [x] Multi-account support.
+- [ ] Store Customers data in Google Spreadsheet.
+- [ ] Manage Questions and Messages.
 
 ## Maybe:
 - Discount Mercadolibre charges from item price? Distinguish sale price
