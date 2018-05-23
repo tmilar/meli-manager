@@ -6,12 +6,21 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "xo"
   },
   "now": {
     "dotenv": ".env.production"
   },
   "author": "tmilar",
+  "xo": {
+    "space": true,
+    "semicolon": false,
+    "rules": {
+      "camelcase": "warn",
+      "no-use-extend-native/no-use-extend-native": "warn",
+      "import/no-unassigned-import": "off"
+    }
+  },
   "dependencies": {
     "bluebird": "3.5.1",
     "body-parser": "1.18.2",
@@ -31,6 +40,7 @@
     "serve-favicon": "2.4.5"
   },
   "devDependencies": {
-    "nodemon": "1.15.1"
+    "nodemon": "1.15.1",
+    "xo": "0.20.3"
   }
 }

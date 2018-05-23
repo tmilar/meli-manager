@@ -1,60 +1,58 @@
-// get env variables
-require('dotenv').config();
+// Get env variables
+const path = require('path')
+require('dotenv').config({path: path.resolve(__dirname, '.env')})
 
-const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const express = require('express')
+const logger = require('morgan')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 
-// mount db connection
-require("./config/db");
+// Mount db connection
+require('./config/db')
 
-const index = require('./routes/index');
-const auth = require('./routes/auth');
-const order = require('./routes/order');
-const notification = require('./routes/notification');
+const index = require('./routes')
+const auth = require('./routes/auth')
+const order = require('./routes/order')
+const notification = require('./routes/notification')
 
-const app = express();
+const app = express()
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+// View engine setup
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'hbs')
 
-// uncomment after placing your favicon in /public
+// Uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(logger('dev'))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'public')))
 
-const authorizeAccounts = require('./lib/authorizeAccounts');
+const authorizeAccounts = require('./lib/authorize-accounts')
 
-//setup routes
-app.use('/', index);
-app.use('/auth', auth);
-app.use('/order', authorizeAccounts, order);
-app.use('/notification', authorizeAccounts, notification);
+// Setup routes
+app.use('/', index)
+app.use('/auth', auth)
+app.use('/order', authorizeAccounts, order)
+app.use('/notification', authorizeAccounts, notification)
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+// Catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new Error('Not Found')
+  err.status = 404
+  next(err)
+})
 
+// Error handler
+app.use((err, req, res) => {
+  // Set locals, only providing error in development
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // Render the error page
+  res.status(err.status || 500)
+  res.render('error')
+})
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
+module.exports = app
