@@ -59,8 +59,8 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
-
+.env*
+!/.env.sample
 
 ### WebStorm+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
@@ -125,5 +125,4 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/node,webstorm+all
 /*secret*.json
-.env*
 data/
