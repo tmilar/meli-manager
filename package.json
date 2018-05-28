@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon app.js",
-    "test": "xo"
+    "test": "xo",
+    "setup": "node ./bin/setup"
   },
   "now": {
     "dotenv": ".env.production"
