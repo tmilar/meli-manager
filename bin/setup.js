@@ -11,12 +11,17 @@ const force = args[0] === '--force'
 const ENV = '.env'
 const ENV_SAMPLE = '.env.sample'
 
-if (fs.existsSync(ENV) && !force) {
-  console.log(`${ENV} file already exists!`)
-  return
+function main() {
+  if (fs.existsSync(ENV) && !force) {
+    console.log(`${ENV} file already exists!`)
+    process.exitCode = 1
+    return
+  }
+
+  fs.createReadStream(ENV_SAMPLE)
+    .pipe(fs.createWriteStream(ENV))
+
+  console.log(`Created ${ENV} file from ${ENV_SAMPLE}`)
 }
 
-fs.createReadStream(ENV_SAMPLE)
-  .pipe(fs.createWriteStream(ENV))
-
-console.log(`Created ${ENV} file from ${ENV_SAMPLE}`)
+main()
