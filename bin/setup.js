@@ -13,7 +13,7 @@ const ENV_SAMPLE = '.env.sample'
 
 function main() {
   if (fs.existsSync(ENV) && !force) {
-    console.log(`${ENV} file already exists!`)
+    console.log(`${ENV} file already exists! Add --force option to override.`)
     process.exitCode = 1
     return
   }
