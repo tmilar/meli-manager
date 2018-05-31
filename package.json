@@ -64,8 +64,14 @@
       "./node_modules/xo/config/plugins.js"
     ],
     "rules": {
-      "indent": ["error", 2],
-      "semi": ["error", "never"]
+      "indent": [
+        "error",
+        2
+      ],
+      "semi": [
+        "error",
+        "never"
+      ]
     }
   }
 }
