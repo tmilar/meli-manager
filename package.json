@@ -19,7 +19,8 @@
     "rules": {
       "camelcase": "warn",
       "no-use-extend-native/no-use-extend-native": "warn",
-      "import/no-unassigned-import": "off"
+      "import/no-unassigned-import": "off",
+      "new-cap": 0
     }
   },
   "dependencies": {
@@ -71,6 +72,14 @@
       "semi": [
         "error",
         "never"
+      ],
+      "new-cap": [
+        2,
+        {
+          "capIsNewExceptions": [
+            "Router"
+          ]
+        }
       ]
     }
   }
