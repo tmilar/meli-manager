@@ -111,7 +111,9 @@ class Order {
     // Map Order properties to array values, in columns order.
     const orderRow = [...columns.keys()]
       .map(key => {
-        return (this.hasOwnProperty(key) && (!update || updatableColumns.includes(key))) ? this[key] : null
+        return (Object.prototype.hasOwnProperty.call(this, key) && (!update || updatableColumns.includes(key))) ?
+          this[key] :
+          null
       })
 
     return orderRow
