@@ -33,6 +33,21 @@ accountSchema.methods.isAuthorized = function () {
   return new Date() < this.auth.expires
 }
 
+accountSchema.methods.checkAccessToken = async function () {
+  if (this.isAuthorized()) {
+    return
+  }
+  console.log(`Token for ${this.nickname} expired. Refreshing...`)
+  return this.refreshToken()
+    .then(() => console.log(`Refresh token success for ${this.nickname}`))
+    .catch(e => {
+      if (e.data) {
+        e.message = `Could not refresh token for ${this.nickname}.`
+      }
+      throw e
+    })
+}
+
 accountSchema.statics.register = async function (profile, auth) {
   const {id, nickname, first_name, last_name, email} = profile
   const {accessToken, refreshToken} = auth
