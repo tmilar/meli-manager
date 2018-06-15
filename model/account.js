@@ -20,6 +20,10 @@ accountSchema.methods.refreshToken = async function () {
   const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken)
   const accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken)
 
+  await this.updateAccessToken(accessToken)
+}
+
+accountSchema.methods.updateAccessToken = async function (accessToken) {
   const expires = new Date()
   expires.setSeconds(expires.getSeconds() + 21000)
 
