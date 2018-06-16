@@ -1,10 +1,12 @@
+/* eslint-disable import/first,import/order,import/no-unassigned-import */
 import test from 'ava'
-import MeliClient from '../../../lib/meli-client'
-import Account from '../../../model/account'
 
-// Load env variables
+// Load test env variables
 const envTestPath = require('path').resolve(process.cwd(), '.env.test')
 require('dotenv').config({path: envTestPath})
+
+const MeliClient = require('../../../lib/meli-client')
+const Account = require('../../../model/account')
 
 // Mount db connection
 require('../../../config/db')
