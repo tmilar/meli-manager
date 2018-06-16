@@ -37,6 +37,10 @@ accountSchema.methods.isAuthorized = function () {
   return new Date() < this.auth.expires
 }
 
+/**
+ * @deprecated
+ * @returns {Promise<T | never>}
+ */
 accountSchema.methods.checkAccessToken = async function () {
   if (this.isAuthorized()) {
     return
