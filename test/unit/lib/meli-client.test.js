@@ -9,9 +9,6 @@ require('dotenv').config({path: envTestPath})
 // Mount db connection
 require('../../../config/db')
 
-// Setup meli passport auth strategy //TODO: separate passport auth from router config...
-require('../../../routes/auth')
-
 const DEV_ACCOUNT_USERNAME = 'POKEVENTAS_JUSIMIL'
 let devAccount
 let client
