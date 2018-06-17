@@ -1,28 +1,6 @@
 const router = require('express').Router()
 
-const passport = require('passport')
-const MercadoLibreStrategy = require('passport-mercadolibre').Strategy
-const refresh = require('passport-oauth2-refresh')
-
-const Account = require('../model/account')
-
-const {clientId, clientSecret} = require('../config').auth.mercadolibre
-
-const mercadoLibreStrategy = new MercadoLibreStrategy({
-  clientID: clientId,
-  clientSecret,
-  callbackURL: '/auth/mercadolibre/callback'
-},
-  (async (accessToken, refreshToken, profile, cb) => {
-  // + store/retrieve user from database, together with access token and refresh token
-  // await db.users.save(profile)
-    await Account.register(profile, {accessToken, refreshToken})
-
-    return cb(null, profile)
-  })
-)
-passport.use(mercadoLibreStrategy)
-refresh.use(mercadoLibreStrategy)
+const {passport} = require('../lib/meli-auth')
 
 passport.serializeUser((user, cb) => {
   cb(null, user)
