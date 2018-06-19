@@ -1,8 +1,5 @@
 const mongoose = require('mongoose')
 
-const refresh = require('passport-oauth2-refresh')
-const Promise = require('bluebird')
-
 const accountSchema = new mongoose.Schema({
   id: Number,
   nickname: String,
@@ -16,12 +13,12 @@ const accountSchema = new mongoose.Schema({
   }
 })
 
-accountSchema.methods.refreshToken = async function () {
-  const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken)
-  const accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken)
-
-  await this.updateAccessToken(accessToken)
-}
+// accountSchema.methods.refreshAccessToken = async function () {
+//   const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken)
+//   const accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken)
+//
+//   await this.updateAccessToken(accessToken)
+// }
 
 accountSchema.methods.updateAccessToken = async function (accessToken) {
   const expires = new Date()
