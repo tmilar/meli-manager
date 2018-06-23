@@ -13,13 +13,6 @@ const accountSchema = new mongoose.Schema({
   }
 })
 
-// accountSchema.methods.refreshAccessToken = async function () {
-//   const requestNewAccessToken = Promise.promisify(refresh.requestNewAccessToken)
-//   const accessToken = await requestNewAccessToken('mercadolibre', this.auth.refreshToken)
-//
-//   await this.updateAccessToken(accessToken)
-// }
-
 accountSchema.methods.updateAccessToken = async function (accessToken) {
   const expires = new Date()
   expires.setSeconds(expires.getSeconds() + 21000)
@@ -32,25 +25,6 @@ accountSchema.methods.updateAccessToken = async function (accessToken) {
 accountSchema.methods.isAuthorized = function () {
   // If we are earlier than expiration date, then it's authorized.
   return new Date() < this.auth.expires
-}
-
-/**
- * @deprecated
- * @returns {Promise<T | never>}
- */
-accountSchema.methods.checkAccessToken = async function () {
-  if (this.isAuthorized()) {
-    return
-  }
-  console.log(`Token for ${this.nickname} expired. Refreshing...`)
-  return this.refreshToken()
-    .then(() => console.log(`Refresh token success for ${this.nickname}`))
-    .catch(e => {
-      if (e.data) {
-        e.message = `Could not refresh token for ${this.nickname}.`
-      }
-      throw e
-    })
 }
 
 accountSchema.statics.register = async function (profile, auth) {
