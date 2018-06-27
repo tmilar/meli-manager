@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const {passport} = require('../lib/meli-auth')
+const {passport} = require('../config/meli-auth')
 
 passport.serializeUser((user, cb) => {
   cb(null, user)
