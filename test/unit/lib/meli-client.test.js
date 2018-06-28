@@ -24,7 +24,7 @@ test.before('get dev account for testing', async t => {
   }
 })
 
-test.serial.before('initialize meli client with dev account', async t => {
+test.serial.before('initialize meli client with dev account', t => {
   client = new MeliClient()
   client.addAccount(devAccount)
   t.is(client.accounts.length, 1)
