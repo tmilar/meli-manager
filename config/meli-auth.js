@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const MercadoLibreStrategy = require('passport-mercadolibre').Strategy
+const {Strategy: MercadoLibreStrategy} = require('passport-mercadolibre')
 const passport = require('passport')
 const refresh = require('passport-oauth2-refresh')
 const Account = require('../model/account')
