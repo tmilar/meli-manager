@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 
 // Mount db connection
-require('./config/db')
+require('./config/db').connect()
 
 const index = require('./routes')
 const auth = require('./routes/auth')

@@ -9,7 +9,7 @@ const MeliClient = require('../../../lib/meli-client')
 const Account = require('../../../model/account')
 
 // Mount db connection
-require('../../../config/db')
+require('../../../config/db').connect()
 
 const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME
 let devAccount
