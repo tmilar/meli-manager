@@ -4,12 +4,15 @@
   "description": "Handle Mercadolibre data and events, synchronize to Google Sheets.",
   "main": "app.js",
   "scripts": {
-    "start": "node %NODE_DEBUG_OPTION% ./bin/www",
+    "start": "node ./bin/www",
+    "start:debug": "node %NODE_DEBUG_OPTION% ./bin/www",
     "dev": "nodemon app.js",
     "test": "ava --verbose",
+    "test:debug": "node %NODE_DEBUG_OPTION% ./node_modules/ava/cli.js",
     "test:watch": "ava --verbose --watch",
     "ava": "ava",
-    "setup": "node ./bin/setup"
+    "setup": "node ./bin/setup",
+    "meli:test-account": "node ./bin/meli-test-account"
   },
   "now": {
     "dotenv": ".env.production"
@@ -47,7 +50,7 @@
     "serve-favicon": "2.5.0"
   },
   "devDependencies": {
-    "ava": "0.25.0",
+    "ava": "1.0.0-beta.8",
     "babel-eslint": "9.0.0",
     "eslint": "5.2.0",
     "eslint-config-xo": "0.23.0",
