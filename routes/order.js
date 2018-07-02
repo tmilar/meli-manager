@@ -16,7 +16,17 @@ router.get('/', async (req, res, next) => {
   // Parse params
   const dateStart = start && moment(start, 'DD-MM-YY').toDate()
   const dateEnd = end && moment(end, 'DD-MM-YY').endOf('day').toDate()
-  const nicknamesFilter = accounts ? {nickname: {$in: JSON.parse(accounts)}} : {}
+
+  let accountsArray
+  if (accounts) {
+    try {
+      accountsArray = JSON.parse(accounts)
+    } catch (e) {
+      // Param 'accounts' is invalid JSON, split the string by ',' separator
+      accountsArray = accounts.split(',')
+    }
+  }
+  const nicknamesFilter = accountsArray ? {nickname: {$in: accountsArray}} : {}
   const shouldStore = store === 'true' || store === '1'
 
   let orders = []
@@ -24,7 +34,7 @@ router.get('/', async (req, res, next) => {
   /// / *** orders service ***
   try {
     // 1. get accounts from DB
-    const selectedAccounts = await Account.find(nicknamesFilter).exec()
+    const selectedAccounts = await Account.find(nicknamesFilter)
 
     // 2. fetch remote orders for accounts
     const meliOrderFilters = {startDate: dateStart, endDate: dateEnd, accounts: selectedAccounts}
