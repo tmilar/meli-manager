@@ -1,4 +1,7 @@
 # MeLi Manager
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/tmilar/meli-manager.svg)](https://greenkeeper.io/)
+
 Handle Mercadolibre events, synchronize data with Google Spredsheets.
 
 ## Features:
