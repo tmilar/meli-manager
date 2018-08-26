@@ -1,8 +1,9 @@
-const req = require('request-promise')
 const Promise = require('bluebird')
 const SheetsHelper = require('../lib/sheets-helper')
 const Order = require('../model/order.js')
 const config = require('../config')
+const MeliClient = require('../lib/meli-client.js')
+const Account = require('../model/account')
 
 class OrdersService {
   /**
@@ -28,6 +29,11 @@ class OrdersService {
       headerRowHeight: this.headerRowHeight,
       headerRowWidth: this.headerRowWidth
     })
+
+    this.meliClient = new MeliClient()
+    const meliAccounts = await Account.find()
+    meliAccounts.forEach(account => this.meliClient.addAccount(account))
+    console.log(`meli client initialized with accounts: ${this.meliClient.accounts.map(a => a.nickname).join(', ')}`)
   }
 
   static async saveNewOrder(newOrderJson) {
@@ -53,30 +59,14 @@ class OrdersService {
      * @param endDate
      * @param accounts - {mongoose model}
      * @param id - fetch by order id
-     * @returns all the meli orders for the selected accounts, ordered by date_closed.
+     * @returns {array} all the meli orders for the selected accounts, ordered by date_closed.
      */
   static async fetchMeliOrders({startDate, endDate, accounts, id}) {
-    const apiUrl = 'https://api.mercadolibre.com/orders/search'
-
-    // Build the request URLs for selected accounts.
-    const orderRequests = Promise.mapSeries(accounts, acc => ({
-      acc,
-      orderRequest: apiUrl + `?seller=${acc.id}&access_token=${acc.auth.accessToken}&sort=date_desc${id ? `&q=${id}` : ''}`
-    }))
-      .mapSeries(({acc, orderRequest}) =>
-        req({uri: orderRequest, json: true})
-          .catch(e => {
-            e.message = `Problem with meli orders request for ${acc.nickname}. ${e.message} `
-            throw e
-          })
-      )
-
-    // Get request responses
-    const ordersResponses = await orderRequests
+    const ordersResponses = await this.meliClient.getOrders({startDate, endDate, accounts, id})
 
     // Flatten responses to one array
     const orders = ordersResponses
-      .map(ordersResponse => ordersResponse.results)
+      .map(ordersResponse => ordersResponse.response.results)
       .reduce((arr = [], order) => arr.concat(order))
 
     // Filter orders between startDate & endDate. Also exclude orders from own accounts.

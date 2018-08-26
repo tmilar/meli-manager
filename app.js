@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 
 // Mount db connection
-require('./config/db')
+require('./config/db').connect()
 
 const index = require('./routes')
 const auth = require('./routes/auth')
@@ -29,13 +29,11 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-const authorizeAccounts = require('./lib/authorize-accounts')
-
 // Setup routes
 app.use('/', index)
 app.use('/auth', auth)
-app.use('/order', authorizeAccounts, order)
-app.use('/notification', authorizeAccounts, notification)
+app.use('/order', order)
+app.use('/notification', notification)
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
