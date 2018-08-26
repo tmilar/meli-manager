@@ -67,7 +67,7 @@ class OrdersService {
     // Flatten responses to one array
     const orders = ordersResponses
       .map(ordersResponse => ordersResponse.response.results)
-      .reduce((arr = [], order) => arr.concat(order))
+      .reduce((arr = [], order) => arr.concat(order), [])
 
     // Filter orders between startDate & endDate. Also exclude orders from own accounts.
     const filteredOrders = orders
