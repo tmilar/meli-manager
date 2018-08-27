@@ -5,6 +5,8 @@ require('../config/db').connect()
 const app = require('express')()
 const req = require('request-promise')
 const chromeLauncher = require('chrome-launcher')
+const {Spinner} = require('cli-spinner')
+
 const auth = require('../routes/auth')
 const Account = require('../model/account')
 const {refresh} = require('../config/meli-auth')
@@ -51,12 +53,36 @@ async function launchChrome(loginUrl) {
   return chrome
 }
 
+function waitLoginSpinner() {
+  const dateStart = new Date()
+  const dateEnd = new Date(dateStart.getTime() + TIMEOUT_MS)
+  const spinner = new Spinner({
+    text: `%s `,
+    stream: process.stderr,
+    onTick(msg) {
+      const now = new Date()
+      const millisLeft = dateEnd.getTime() - now.getTime()
+      const secondsLeft = Math.max(Math.ceil(millisLeft / 1000), 0)
+      const timeLeftMsg = `Waiting login... ${secondsLeft} seconds left ${millisLeft <= 0 ? '\n' : ''}`
+      this.clearLine(this.stream)
+      this.stream.write(msg + timeLeftMsg)
+      if (millisLeft <= 0) {
+        spinner.stop()
+      }
+    }
+  })
+  spinner.setSpinnerString(19)
+  spinner.start()
+  return spinner
+}
+
 async function onListen(server) {
   const {address} = server.address()
   const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
   const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
   const chrome = await launchChrome(loginUrl)
-  console.log(`${Math.round(TIMEOUT_MS / 1000)} seconds left...`)
+  const spinner = waitLoginSpinner()
+
   setTimeout(() => {
     console.log('Timeout.')
     chrome.kill()
