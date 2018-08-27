@@ -36,7 +36,7 @@
     "hbs": "4.0.1",
     "moment": "2.22.2",
     "moment-timezone": "0.5.21",
-    "mongoose": "5.2.5",
+    "mongoose": "5.2.10",
     "morgan": "1.9.0",
     "passport": "0.4.0",
     "passport-mercadolibre": "0.0.2",
