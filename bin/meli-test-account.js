@@ -4,6 +4,7 @@ require('../config/db').connect()
 
 const app = require('express')()
 const req = require('request-promise')
+const chromeLauncher = require('chrome-launcher')
 const auth = require('../routes/auth')
 const Account = require('../model/account')
 const {refresh} = require('../config/meli-auth')
@@ -41,10 +42,19 @@ function onAuthSuccess() {
   process.exit()
 }
 
-function onListen(server) {
+async function launchChrome(loginUrl) {
+  console.log(`Waiting for login on: ${loginUrl}`)
+  await chromeLauncher.launch({
+    startingUrl: loginUrl
+  })
+  console.log(`Chrome window opened.`)
+}
+
+async function onListen(server) {
   const {address} = server.address()
   const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
-  console.log(`Waiting for login on: ${hostname}:${port}/auth/mercadolibre`)
+  const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
+  await launchChrome(loginUrl)
   console.log(`${Math.round(TIMEOUT_MS / 1000)} seconds left...`)
   setTimeout(() => {
     console.log('Timeout.')
@@ -53,10 +63,14 @@ function onListen(server) {
 }
 
 function setupAuthRouter() {
+  // Setup default MercadoLibre oauth routes
   app.use('/auth', auth)
+  // Override auth success behavior
   app.use('/auth/success', onAuthSuccess)
-  const server = app.listen(port, () => {
-    onListen(server)
+
+  // Start express server
+  const server = app.listen(port, async () => {
+    await onListen(server)
   })
 }
 
