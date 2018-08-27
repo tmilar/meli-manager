@@ -44,20 +44,22 @@ function onAuthSuccess() {
 
 async function launchChrome(loginUrl) {
   console.log(`Waiting for login on: ${loginUrl}`)
-  await chromeLauncher.launch({
+  const chrome = await chromeLauncher.launch({
     startingUrl: loginUrl
   })
   console.log(`Chrome window opened.`)
+  return chrome
 }
 
 async function onListen(server) {
   const {address} = server.address()
   const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
   const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
-  await launchChrome(loginUrl)
+  const chrome = await launchChrome(loginUrl)
   console.log(`${Math.round(TIMEOUT_MS / 1000)} seconds left...`)
   setTimeout(() => {
     console.log('Timeout.')
+    chrome.kill()
     process.exit()
   }, TIMEOUT_MS)
 }
