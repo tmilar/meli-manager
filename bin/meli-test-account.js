@@ -47,7 +47,14 @@ async function requestTestAccount(devAccount) {
 }
 
 function onAuthSuccess() {
+  global.spinner.stop(true)
   console.log('Test account Register success! Exiting...')
+  process.exit()
+}
+
+function onAuthAbort() {
+  global.spinner.stop(true)
+  console.log('Chrome login window closed.')
   process.exit()
 }
 
@@ -56,11 +63,12 @@ async function launchChrome(loginUrl) {
   const chrome = await chromeLauncher.launch({
     startingUrl: loginUrl
   })
+  chrome.process.once('exit', onAuthAbort)
   console.log(`Chrome window opened.`)
   return chrome
 }
 
-function waitLoginSpinner() {
+function startWaitLoginSpinner() {
   const dateStart = new Date()
   const dateEnd = new Date(dateStart.getTime() + TIMEOUT_MS)
   const spinner = new Spinner({
@@ -88,7 +96,7 @@ async function onListen(server) {
   const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
   const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
   const chrome = await launchChrome(loginUrl)
-  const spinner = waitLoginSpinner()
+  global.spinner = startWaitLoginSpinner()
 
   setTimeout(() => {
     console.log('Timeout.')
