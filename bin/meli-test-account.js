@@ -15,8 +15,15 @@ const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME
 const port = process.env.PORT
 const TIMEOUT_MS = 60 * 1000
 
+const global = {
+  spinner: null
+}
+
 async function getDevAccount() {
   const account = await Account.findOne({nickname: devAccountUsername})
+  if (!account) {
+    throw new Error(`Dev Account username ${devAccountUsername} not found.`)
+  }
   if (!account.isAuthorized()) {
     const accessToken = await refresh.requestNewAccessToken('mercadolibre', account.auth.refreshToken)
     await account.updateAccessToken(accessToken)
