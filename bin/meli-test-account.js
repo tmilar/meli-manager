@@ -109,7 +109,13 @@ async function main() {
   try {
     response = await requestTestAccount(devAccount)
   } catch (e) {
-    return console.error(`Error requesting test account with dev account '${devAccount.nickname}'`, e)
+    let errMsg = `Error requesting test account with dev account '${devAccount.nickname}'`
+    if (e.message) {
+      errMsg += `. ${e.message}`
+    }
+    console.error(errMsg)
+    process.exitCode = 1
+    return process.exit()
   }
   console.log('Test account: ', response)
   setupAuthRouter()
@@ -120,6 +126,7 @@ async function main() {
     await main()
   } catch (e) {
     console.error('unexpected error: ', e)
+    process.exitCode = 1
     process.exit()
   }
 })()
