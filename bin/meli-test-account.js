@@ -15,7 +15,7 @@ const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME
 const port = process.env.PORT
 const TIMEOUT_MS = 60 * 1000
 
-const global = {
+const state = {
   spinner: null
 }
 
@@ -47,13 +47,13 @@ async function requestTestAccount(devAccount) {
 }
 
 function onAuthSuccess() {
-  global.spinner.stop(true)
+  state.spinner.stop(true)
   console.log('Test account Register success! Exiting...')
   process.exit()
 }
 
 function onAuthAbort() {
-  global.spinner.stop(true)
+  state.spinner.stop(true)
   console.log('Chrome login window closed.')
   process.exit()
 }
@@ -96,7 +96,7 @@ async function onListen(server) {
   const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
   const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
   const chrome = await launchChrome(loginUrl)
-  global.spinner = startWaitLoginSpinner()
+  state.spinner = startWaitLoginSpinner()
 
   setTimeout(() => {
     console.log('Timeout.')
