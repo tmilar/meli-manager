@@ -70,13 +70,13 @@ async function launchChrome(loginUrl) {
 
 function startWaitLoginSpinner() {
   const dateStart = new Date()
-  const dateEnd = new Date(dateStart.getTime() + TIMEOUT_MS)
+  const dateEnd = dateStart.getTime() + TIMEOUT_MS
   const spinner = new Spinner({
     text: `%s `,
     stream: process.stderr,
     onTick(msg) {
       const now = new Date()
-      const millisLeft = dateEnd.getTime() - now.getTime()
+      const millisLeft = dateEnd - now.getTime()
       const secondsLeft = Math.max(Math.ceil(millisLeft / 1000), 0)
       const timeLeftMsg = `Waiting login... ${secondsLeft} seconds left ${millisLeft <= 0 ? '\n' : ''}`
       this.clearLine(this.stream)
