@@ -112,9 +112,7 @@ function setupAuthRouter() {
   app.use('/auth/success', onAuthSuccess)
 
   // Start express server
-  const server = app.listen(port, async () => {
-    await onListen(server)
-  })
+  const server = app.listen(port, () => onListen(server))
 }
 
 async function main() {
