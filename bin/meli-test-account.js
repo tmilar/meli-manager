@@ -19,10 +19,25 @@ const state = {
   spinner: null
 }
 
+/**
+ * Parse MeLi dev account Username (AKA 'nickname') from command line.
+ * Defined as: '--user=VALUE' or '-u=VALUE'
+ *
+ * @returns {string | null} - username string if valid input, null otherwise.
+ */
+function getUsernameParam() {
+  const args = process.argv.slice(2)
+  const regExpUserParameter = /^-(-user|u)=((?!\s*$).+)/
+  const userParameterString = args.find(arg => regExpUserParameter.test(arg))
+  const userParameterValue = userParameterString && userParameterString.match(regExpUserParameter)[2].trim()
+  return userParameterValue || null
+}
+
 async function getDevAccount() {
-  const account = await Account.findOne({nickname: devAccountUsername})
+  const nickname = getUsernameParam() || devAccountUsername
+  const account = await Account.findOne({nickname})
   if (!account) {
-    throw new Error(`Dev Account username ${devAccountUsername} not found.`)
+    throw new Error(`Dev Account username '${nickname}' not found in db.`)
   }
   if (!account.isAuthorized()) {
     const accessToken = await refresh.requestNewAccessToken('mercadolibre', account.auth.refreshToken)
