@@ -35,6 +35,11 @@ function getUsernameParam() {
 
 async function getDevAccount() {
   const nickname = getUsernameParam() || devAccountUsername
+  if (!nickname || !(typeof nickname === 'string') || nickname.trim().length === 0) {
+    throw new Error('Must define dev account username. ' +
+      'Usage: --user=USERNAME or -u=USERNAME . ' +
+      'Can also be defined specifying env var DEV_ACCOUNT_USERMAME.')
+  }
   const account = await Account.findOne({nickname})
   if (!account) {
     throw new Error(`Dev Account username '${nickname}' not found in db.`)
