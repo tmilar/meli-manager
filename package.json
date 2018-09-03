@@ -61,7 +61,7 @@
     "eslint-plugin-promise": "3.8.0",
     "eslint-plugin-unicorn": "4.0.3",
     "nodemon": "1.18.4",
-    "xo": "0.21.1"
+    "xo": "0.23.0"
   },
   "eslintConfig": {
     "parser": "babel-eslint",
