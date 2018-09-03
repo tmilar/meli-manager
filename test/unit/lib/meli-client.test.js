@@ -53,12 +53,13 @@ test.serial.before('initialize meli client with multiple test accounts', t => {
 
 test('meli client retrieves sales orders of dev account', async t => {
   const {client, devAccount} = t.context
+  const {nickname} = devAccount
   const ordersResponse = await client.getOrders()
-  t.not(ordersResponse, null)
-  t.true(ordersResponse.length > 0)
-  t.is(ordersResponse[0].account.nickname, devAccount.nickname)
-  t.is(ordersResponse[0].error, undefined)
-  t.true(ordersResponse[0].response.results.length > 0)
+  t.not(ordersResponse, null, 'Orders response should not be null')
+  t.true(ordersResponse.length > 0, 'Orders response should not be empty')
+  t.is(ordersResponse[0].account.nickname, nickname, `Should retrieve orders of the selected account ${nickname}`)
+  t.is(ordersResponse[0].error, undefined, `Should not return any errors in orders response`)
+  t.true(Array.isArray(ordersResponse[0].response.results), `Should retrieve orders results for account '${nickname}'`)
 })
 
 test('meli client retrieves sales orders of multiple test accounts', async t => {
