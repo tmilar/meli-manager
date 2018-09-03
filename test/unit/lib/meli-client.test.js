@@ -11,7 +11,8 @@ const Account = require('../../../model/account')
 // Mount db connection
 require('../../../config/db').connect()
 
-const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME
+const testAccountUsernames = process.env.TEST_ACCOUNT_USERNAMES && process.env.TEST_ACCOUNT_USERNAMES.split(',')
+const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME || testAccountUsernames[0]
 
 test.before('get dev account for testing', async t => {
   // Find main dev account
@@ -23,12 +24,31 @@ test.before('get dev account for testing', async t => {
   Object.assign(t.context, {devAccount})
 })
 
+test.before('get test accounts for multi-account support testing', async t => {
+  t.true(Array.isArray(testAccountUsernames) && testAccountUsernames.length > 0, 'Should specify test account usernames.')
+  const testAccounts = await Account.find({nickname: {$in: testAccountUsernames}})
+
+  t.not(testAccounts, null, `Should retrieve accounts for testing (nicknames '${testAccountUsernames}') from DB.`)
+  t.is(testAccounts.length, testAccountUsernames.length, `Should find the specified test accounts (nicknames '${testAccountUsernames}').`)
+  t.deepEqual(testAccounts.map(acc => acc.nickname), testAccountUsernames)
+  Object.assign(t.context, {testAccounts})
+})
+
 test.serial.before('initialize meli client with dev account', t => {
   const client = new MeliClient()
   const {devAccount} = t.context
   client.addAccount(devAccount)
   t.is(client.accounts.length, 1)
   Object.assign(t.context, {client})
+})
+
+test.serial.before('initialize meli client with multiple test accounts', t => {
+  const multiClient = new MeliClient()
+  const {testAccounts} = t.context
+  t.true(testAccounts.length > 1, `Should specify more than 1 test account (specified: ${testAccounts.length})`)
+  testAccounts.forEach(account => multiClient.addAccount(account))
+  t.is(multiClient.accounts.length, testAccounts.length)
+  Object.assign(t.context, {multiClient})
 })
 
 test('meli client retrieves sales orders of dev account', async t => {
