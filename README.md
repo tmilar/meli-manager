@@ -24,10 +24,10 @@ Meli Manager is a set of tools to help small and medium sized sellers of Mercado
 
 ## Usage
 ### Requirements
-* Node.js 8+
-* MongoDB 3.4+
-* MercadoLibre API client keys
-* Google Spreadsheet API client keys
+* [Node.js 8+](https://nodejs.org/es/download/)
+* [MongoDB 3.4+](https://www.mongodb.com/download-center#community)
+* MercadoLibre API [client keys](https://developers.mercadolibre.com.ar/apps/create-app) ([more info](https://developers.mercadolibre.com/en_us/register-your-application))
+* Google Spreadsheet API [client keys](https://cloud.google.com/docs/authentication/api-keys)
 
 ### First time Setup
 ```
@@ -80,6 +80,10 @@ A command line utility to locally create, authorize and store a MeLi test user a
 ```
 node bin/meli-test-account --user=TEST_ACC_USERNAME
 ```
+
+#### How to: configure Spreadsheet API keys
+{{ TODO: complete }}
+
 
 Where `TEST_ACC_USERNAME` is the Dev account that will request the test user.
 If flag not specified, will try to find it in env var `DEV_ACCOUNT_USERNAME`.
