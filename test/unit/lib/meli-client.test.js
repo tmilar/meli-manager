@@ -74,3 +74,13 @@ test('meli client retrieves sales orders of multiple test accounts', async t => 
     t.true(Array.isArray(ordersResponse[i].response.results), `Should retrieve results for account ${i} '${nickname}'`)
   }
 })
+
+test('meli client retrieves questions of one account', async t => {
+  const {client, devAccount} = t.context
+  const questionsResponse = await client.getQuestions()
+  t.not(questionsResponse, null)
+  t.true(questionsResponse.length > 0)
+  t.is(questionsResponse[0].account.nickname, devAccount.nickname)
+  t.is(questionsResponse[0].error, undefined)
+  t.true(questionsResponse[0].response.results.length > 0)
+})
