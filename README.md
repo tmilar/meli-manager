@@ -4,6 +4,26 @@
 
 Node.js + MercadoLibre API + Google SpreadSheets API = :tada:
 
+## Table of Contents
+
+<!-- toc -->
+
+- [About](#about)
+  * [Features](#features)
+  * [Soon](#soon)
+  * [Planned](#planned)
+- [Usage](#usage)
+  * [Requirements](#requirements)
+  * [First time Setup](#first-time-setup)
+  * [Run](#run)
+  * [Test](#test)
+  * [Misc](#misc)
+    + [MercadoLibre test account creation](#mercadolibre-test-account-creation)
+    + [How to: configure Spreadsheet API keys](#how-to-configure-spreadsheet-api-keys)
+- [Contributing](#contributing)
+
+<!-- tocstop -->
+
 ## About
 Meli Manager is a set of tools to help small and medium sized sellers of MercadoLibre manage their operations in an easy, scalable, and more time/cost effective way in comparison to official MercadoLibre UI.
 
