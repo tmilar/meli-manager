@@ -98,14 +98,14 @@ A command line utility to locally create, authorize and store a MeLi test user a
 2. Ensure the configured Mongo DB instance is running.
 3. Run:
 ```
-node bin/meli-test-account --user=TEST_ACC_USERNAME
+node bin/meli-test-account --user=DEV_ACCOUNT_USERNAME
 ```
 
 #### How to: configure Spreadsheet API keys
 {{ TODO: complete }}
 
 
-Where `TEST_ACC_USERNAME` is the Dev account that will request the test user.
+Where `DEV_ACCOUNT_USERNAME` is the Dev account that will request the test user.
 If flag not specified, will try to find it in env var `DEV_ACCOUNT_USERNAME`.
 
 ## Contributing
