@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "bluebird": "3.5.1",
+    "bluebird": "3.5.2",
     "body-parser": "1.18.3",
     "chrome-launcher": "0.10.2",
     "cli-spinner": "0.2.8",
@@ -41,7 +41,7 @@
     "hbs": "4.0.1",
     "moment": "2.22.2",
     "moment-timezone": "0.5.21",
-    "mongoose": "5.2.5",
+    "mongoose": "5.2.13",
     "morgan": "1.9.0",
     "passport": "0.4.0",
     "passport-mercadolibre": "0.0.2",
@@ -61,7 +61,7 @@
     "eslint-plugin-promise": "3.8.0",
     "eslint-plugin-unicorn": "6.0.1",
     "nodemon": "1.18.4",
-    "xo": "0.21.1"
+    "xo": "0.23.0"
   },
   "eslintConfig": {
     "parser": "babel-eslint",
