@@ -101,13 +101,13 @@ A command line utility to locally create, authorize and store a MeLi test user a
 node bin/meli-test-account --user=DEV_ACCOUNT_USERNAME
 ```
 
-#### How to: configure Spreadsheet API keys
-{{ TODO: complete }}
-
-
 Where `DEV_ACCOUNT_USERNAME` is the Dev account that will request the test user.
 If flag not specified, will try to find it in env var `DEV_ACCOUNT_USERNAME`.
 
+#### How to: configure Spreadsheet API keys
+```
+{{ TODO: complete }}
+```
 ## Contributing
 - Create a new GitHub issue.
 - Submit a Pull Request.
