@@ -97,17 +97,23 @@ test('meli client retrieves questions of multiple test accounts', async t => {
   }
 })
 
-test('meli client getQuestion() retrieves one specific question by id, for a known account', async t => {
+test('meli client getQuestion() retrieves one question specified by id + its seller account', async t => {
   const {multiClient, testAccounts} = t.context
   const fixture = {
     questionId: 5757310895,
     sellerId: 33687004
   }
-  const testAccount = testAccounts.find(acc => acc.id === fixture.sellerId)
-  const questionResponseArr = await multiClient.getQuestion(fixture.questionId, testAccount)
-  t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should retrieve an array with one object')
+  const sellerAccount = testAccounts.find(acc => acc.id === fixture.sellerId)
+
+  // Get the question by id
+  const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
+
+  // Assert the question returned with correct seller info
+  t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
   const questionResponse = questionResponseArr[0]
-  t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key), 'Response should include the account owner + the response question'))
-  const questionBody = questionResponse.response
-  t.is(questionBody.id, fixture.questionId, `Should retrieve question data of selected id ${fixture.questionId}`)
+  t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key)), 'Response should include the account owner + the response question')
+  const {account, response} = questionResponse
+  t.is(response.id, fixture.questionId, `Should retrieve question data of selected id ${fixture.questionId}`)
+  t.is(response.seller_id, sellerAccount.id, 'Should the question seller id match the expected seller id')
+  t.is(account.id, sellerAccount.id, 'Should retrieve seller account info')
 })
