@@ -66,11 +66,9 @@ test('meli client retrieves sales orders of multiple test accounts', async t => 
   const ordersResponse = await multiClient.getOrders()
   t.not(ordersResponse, null)
   t.true(ordersResponse.length > 0)
-  for (let i = 0; i < testAccounts.length; i++) {
-    const testAccount = testAccounts[i]
-    const {nickname} = testAccount
-    t.is(ordersResponse[i].account.nickname, nickname, )
+  testAccounts.forEach(({nickname}, i) => {
+    t.is(ordersResponse[i].account.nickname, nickname)
     t.is(ordersResponse[i].error, undefined, `Should not return error on test account ${i} '${nickname}'`)
     t.true(Array.isArray(ordersResponse[i].response.results), `Should retrieve results for account ${i} '${nickname}'`)
-  }
+  })
 })
