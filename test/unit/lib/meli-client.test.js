@@ -115,3 +115,22 @@ test('meli client getQuestion() retrieves one question specified by id + its sel
   t.is(response.seller_id, sellerAccount.id, 'Should the question seller id match the expected seller id')
   t.is(account.id, sellerAccount.id, 'Should retrieve seller account info')
 })
+
+test('meli client getQuestion() returns error object and empty account when the question id is not found', async t => {
+  const {multiClient} = t.context
+  const fixture = {
+    questionId: 9999999999999
+  }
+
+  // Get the question by id
+  const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
+
+  // Assert the question returned with correct seller info
+  t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
+  const questionResponse = questionResponseArr[0]
+  t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key)), 'Response should include the account owner + the response question')
+  const {account, response} = questionResponse
+  t.truthy(response.message, 'Should return a response with an error message')
+  t.is(response.status, 404, 'Should return a response with error status 404 not found')
+  t.deepEqual(account, {}, 'Should retrieve no account seller info')
+})
