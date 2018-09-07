@@ -152,3 +152,40 @@ test('meli client getQuestion() returns a question and empty account when the qu
   t.is(response.id, fixture.questionId, `Should retrieve question data of selected id ${fixture.questionId}`)
   t.deepEqual(account, {}, 'Should retrieve no account seller info')
 })
+
+test.failing('meli client post question answer', async t => {
+  // Preconditions
+  // 1. test account with question.status === "UNANSWERED"
+  const {multiClient/* , testAccounts */} = t.context
+  const account = null /* TestAccounts.filter(acc => acc.nickname.indexOf('TETE') > -1)[0] */
+  const questionsResponse = await multiClient.getQuestions({account, status: 'UNANSWERED'})
+  const questions = questionsResponse
+    .map(({response}) => response.results)
+    .reduce((qs, q) => qs.concat(q), [])
+
+  t.true(questions.length > 0, 'Should have returned at least one unanswered question')
+  t.true(questions.every(({status}) => status === 'UNANSWERED'), 'Should all of the returned questions be unanswered.')
+
+  // Actions
+  // 1. reply answer
+  const questionToAnswer = questions[0]
+  const {id} = questionToAnswer
+  const answerText = 'Respuesta de prueba'
+  const response = await multiClient.postQuestionAnswer(id, answerText)
+  t.is(response.status, 200, 'Should respond status 200 OK, after postQuestionAnswer call.')
+
+  // Postconditions
+  // 1. question answered is excluded from 'UNANSWERED' questions
+  const questionsResponseAfter = await multiClient.getQuestions({account, status: 'UNANSWERED'})
+  const questionsAfter = questionsResponseAfter
+    .map(({response}) => response.results)
+    .reduce((qs, q) => qs.concat(q), [])
+  t.false(questionsAfter.find(q => q.id === id), 'Answered question should not come back as unanswered')
+
+  // 2. selected question appears as answered
+  const questionAnsweredResponse = await multiClient.getQuestion(id)
+  const {status, answer} = questionAnsweredResponse[0].response
+  t.is(status, 'ANSWERED', 'Question status should be \'ANSWERED\'')
+  t.truthy(answer, 'Answer body should be defined')
+  t.is(answer.text, answerText, `Question answer text should match expected: ${answerText}`)
+})
