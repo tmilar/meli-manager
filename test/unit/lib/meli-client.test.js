@@ -125,12 +125,30 @@ test('meli client getQuestion() returns error object and empty account when the 
   // Get the question by id
   const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
 
-  // Assert the question returned with correct seller info
+  // Assert the question not returned with no seller info
   t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
   const questionResponse = questionResponseArr[0]
   t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key)), 'Response should include the account owner + the response question')
   const {account, response} = questionResponse
   t.truthy(response.message, 'Should return a response with an error message')
   t.is(response.status, 404, 'Should return a response with error status 404 not found')
+  t.deepEqual(account, {}, 'Should retrieve no account seller info')
+})
+
+test('meli client getQuestion() returns a question and empty account when the question id is found, but of an unregistered seller acc', async t => {
+  const {multiClient} = t.context
+  const fixture = {
+    questionId: 1 // Existing question but of a different user
+  }
+
+  // Get the question by id
+  const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
+
+  // Assert the question returned with no seller info
+  t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
+  const questionResponse = questionResponseArr[0]
+  t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key)), 'Response should include the account owner + the response question')
+  const {account, response} = questionResponse
+  t.is(response.id, fixture.questionId, `Should retrieve question data of selected id ${fixture.questionId}`)
   t.deepEqual(account, {}, 'Should retrieve no account seller info')
 })
