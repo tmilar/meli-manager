@@ -30,7 +30,7 @@ test.before('get test accounts for multi-account support testing', async t => {
 
   t.not(testAccounts, null, `Should retrieve accounts for testing (nicknames '${testAccountUsernames}') from DB.`)
   t.is(testAccounts.length, testAccountUsernames.length, `Should find the specified test accounts (nicknames '${testAccountUsernames}').`)
-  t.true(testAccountUsernames.every(nickname => testAccounts.some(acc => acc.nickname === nickname)), `Should find all of the same specified test accounts`)
+  t.true(testAccountUsernames.every(nickname => testAccounts.some(acc => acc.nickname === nickname)), 'Should find all of the same specified test accounts')
   Object.assign(t.context, {testAccounts})
 })
 
@@ -77,7 +77,7 @@ test('meli client retrieves questions of one account', async t => {
   const {client, devAccount} = t.context
   const questionsResponse = await client.getQuestions()
   t.not(questionsResponse, null)
-  t.true(questionsResponse.length > 0)
+  t.true(questionsResponse.length > 0, 'Should at least return one {account, response} questions item')
   t.is(questionsResponse[0].account.nickname, devAccount.nickname)
   t.is(questionsResponse[0].error, undefined)
   t.true(questionsResponse[0].response.results.length > 0)
@@ -85,16 +85,14 @@ test('meli client retrieves questions of one account', async t => {
 
 test('meli client retrieves questions of multiple test accounts', async t => {
   const {multiClient, testAccounts} = t.context
-  const ordersResponse = await multiClient.getQuestions()
-  t.not(ordersResponse, null)
-  t.true(ordersResponse.length > 0)
-  for (let i = 0; i < testAccounts.length; i++) {
-    const testAccount = testAccounts[i]
-    const {nickname} = testAccount
-    t.is(ordersResponse[i].account.nickname, nickname)
-    t.is(ordersResponse[i].error, undefined, `Should not return error on test account ${i} '${nickname}'`)
-    t.true(Array.isArray(ordersResponse[i].response.results), `Should retrieve results for account ${i} '${nickname}'`)
-  }
+  const questionsResponse = await multiClient.getQuestions()
+  t.not(questionsResponse, null)
+  t.true(questionsResponse.length > 0, 'Should at least return one {account, response} questions item')
+  testAccounts.forEach(({nickname}, i) => {
+    t.is(questionsResponse[i].account.nickname, nickname)
+    t.is(questionsResponse[i].error, undefined, `Should not return error on test account ${i} '${nickname}'`)
+    t.true(Array.isArray(questionsResponse[i].response.results), `Should retrieve results for account ${i} '${nickname}'`)
+  })
 })
 
 test('meli client getQuestion() retrieves one question specified by id + its seller account', async t => {
