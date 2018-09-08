@@ -33,13 +33,17 @@ function getUsernameParam() {
   return userParameterValue || null
 }
 
-async function getDevAccount() {
-  const nickname = getUsernameParam() || devAccountUsername
+function checkNicknameParam(nickname) {
   if (!nickname || !(typeof nickname === 'string') || nickname.trim().length === 0) {
     throw new Error('Must define dev account username. ' +
       'Usage: --user=USERNAME or -u=USERNAME . ' +
       'Can also be defined specifying env var DEV_ACCOUNT_USERMAME.')
   }
+}
+
+async function getDevAccount() {
+  const nickname = getUsernameParam() || devAccountUsername
+  checkNicknameParam(nickname)
   const account = await Account.findOne({nickname})
   if (!account) {
     throw new Error(`Dev Account username '${nickname}' not found in db.`)
@@ -74,7 +78,7 @@ function onAuthSuccess() {
 
 function onAuthAbort() {
   state.spinner.stop(true)
-  console.log('Chrome login window closed.')
+  console.log('User aborted login (Chrome window closed).')
   process.exit()
 }
 
@@ -111,7 +115,7 @@ function startWaitLoginSpinner() {
   return spinner
 }
 
-async function onListen(server) {
+async function promptOauthLogin(server) {
   const {address} = server.address()
   const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
   const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
@@ -125,33 +129,40 @@ async function onListen(server) {
   }, TIMEOUT_MS)
 }
 
-function setupAuthRouter() {
+function setupOAuthRouter(app) {
   // Setup default MercadoLibre oauth routes
   app.use('/auth', auth)
   // Override auth success behavior
   app.use('/auth/success', onAuthSuccess)
-
-  // Start express server
-  const server = app.listen(port, () => onListen(server))
 }
 
-async function main() {
-  const devAccount = await getDevAccount()
-  console.log(`Requesting test account using dev account '${devAccount.nickname}'...`)
+function cliLoginFlow() {
+  setupOAuthRouter(app)
+
+  // Start express server
+  const server = app.listen(port, () => promptOauthLogin(server))
+}
+
+async function createMeliTestAccount(devAccount) {
   let response
   try {
     response = await requestTestAccount(devAccount)
   } catch (e) {
     let errMsg = `Error requesting test account with dev account '${devAccount.nickname}'`
-    if (e.message) {
-      errMsg += `. ${e.message}`
+    if (e) {
+      e.message = `${errMsg}. ${e.message}`
     }
-    console.error(errMsg)
-    process.exitCode = 1
-    return process.exit()
+    throw new Error(e || errMsg)
   }
-  console.log('Test account: ', response)
-  setupAuthRouter()
+  return response
+}
+
+async function main() {
+  const ownerAccount = await getDevAccount()
+  console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
+  let testAccount = await createMeliTestAccount(ownerAccount)
+  console.log('Test account: ', testAccount)
+  cliLoginFlow()
 }
 
 (async () => {
