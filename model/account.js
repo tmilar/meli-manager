@@ -47,9 +47,9 @@ accountSchema.statics.register = async function (profile, auth) {
     }
   }
 
-  await this.findOneAndUpdate({id}, account, {upsert: true}).exec()
-
-  console.log(`Login & save ${nickname} account auth successful!`)
+  const registered = await this.findOneAndUpdate({id}, account, {upsert: true}).exec()
+  console.log(`Registered ${nickname} mercadolibre account successfully!`)
+  return registered
 }
 
 const Account = mongoose.model('Account', accountSchema)
