@@ -157,11 +157,15 @@ async function createMeliTestAccount(devAccount) {
   return response
 }
 
-async function main() {
+async function generateTestAccount() {
   const ownerAccount = await getDevAccount()
   console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
   let testAccount = await createMeliTestAccount(ownerAccount)
-  console.log('Test account: ', testAccount)
+  console.log('Created test Account: ', testAccount)
+}
+
+async function main() {
+  await generateTestAccount()
   cliLoginFlow()
 }
 
