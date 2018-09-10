@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 require('dotenv').config({path: require('path').resolve(process.cwd(), '.env.test')})
-require('../config/db').connect()
 
 const app = require('express')()
 const req = require('request-promise')
 const chromeLauncher = require('chrome-launcher')
 const {Spinner} = require('cli-spinner')
+const db = require('../config/db')
 
 const auth = require('../routes/auth')
 const Account = require('../model/account')
@@ -165,6 +165,7 @@ async function generateTestAccount() {
 }
 
 async function main() {
+  await db.connect()
   await generateTestAccount()
   cliLoginFlow()
 }
