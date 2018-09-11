@@ -34,7 +34,7 @@
     "chrome-launcher": "0.10.2",
     "cli-spinner": "0.2.8",
     "cookie-parser": "1.4.3",
-    "debug": "3.1.0",
+    "debug": "3.2.1",
     "dotenv": "6.0.0",
     "express": "4.16.3",
     "google-spreadsheet": "2.0.5",
