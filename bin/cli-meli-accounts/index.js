@@ -25,9 +25,10 @@ async function main() {
   let choice
   do {
     choice = await prompt()
-    let selectedAction = options[choice.action]
-    if(!selectedAction) {
-      throw new Error(`Selected option is not valid: ${JSON.stringify(choice)}`)
+    const selectedAction = options[choice.action]
+    if (!selectedAction) {
+      console.error(`Selected option is not valid: ${JSON.stringify(choice)}`)
+      continue
     }
     await selectedAction()
   } while (choice.action !== 'exit')
