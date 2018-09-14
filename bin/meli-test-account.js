@@ -1,23 +1,14 @@
 #!/usr/bin/env node
 require('dotenv').config({path: require('path').resolve(process.cwd(), '.env.test')})
 
-const app = require('express')()
 const req = require('request-promise')
-const chromeLauncher = require('chrome-launcher')
-const {Spinner} = require('cli-spinner')
 const db = require('../config/db')
 
-const auth = require('../routes/auth')
 const Account = require('../model/account')
 const {refresh} = require('../config/meli-auth')
+const cliLoginFlow = require('./cli-meli-accounts/cli-login-flow')
 
 const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME
-const port = process.env.PORT
-const TIMEOUT_MS = 60 * 1000
-
-const state = {
-  spinner: null
-}
 
 /**
  * Parse MeLi dev account Username (AKA 'nickname') from command line.
@@ -70,79 +61,6 @@ async function requestTestAccount(devAccount) {
   return req(testAccountRequestOptions)
 }
 
-function onAuthSuccess() {
-  state.spinner.stop(true)
-  console.log('Test account Register success! Exiting...')
-  process.exit()
-}
-
-function onAuthAbort() {
-  state.spinner.stop(true)
-  console.log('User aborted login (Chrome window closed).')
-  process.exit()
-}
-
-async function launchChrome(loginUrl) {
-  console.log(`Waiting for login on: ${loginUrl}`)
-  const chrome = await chromeLauncher.launch({
-    startingUrl: loginUrl
-  })
-  chrome.process.once('exit', onAuthAbort)
-  console.log(`Chrome window opened.`)
-  return chrome
-}
-
-function startWaitLoginSpinner() {
-  const dateStart = new Date()
-  const dateEnd = dateStart.getTime() + TIMEOUT_MS
-  const spinner = new Spinner({
-    text: `%s `,
-    stream: process.stderr,
-    onTick(msg) {
-      const now = new Date()
-      const millisLeft = dateEnd - now.getTime()
-      const secondsLeft = Math.max(Math.ceil(millisLeft / 1000), 0)
-      const timeLeftMsg = `Waiting login... ${secondsLeft} seconds left ${millisLeft <= 0 ? '\n' : ''}`
-      this.clearLine(this.stream)
-      this.stream.write(msg + timeLeftMsg)
-      if (millisLeft <= 0) {
-        spinner.stop()
-      }
-    }
-  })
-  spinner.setSpinnerString(19)
-  spinner.start()
-  return spinner
-}
-
-async function promptOauthLogin(server) {
-  const {address} = server.address()
-  const hostname = ['::', '127.0.0.1', 'localhost'].includes(address) ? 'localhost' : address
-  const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
-  const chrome = await launchChrome(loginUrl)
-  state.spinner = startWaitLoginSpinner()
-
-  setTimeout(() => {
-    console.log('Timeout.')
-    chrome.kill()
-    process.exit()
-  }, TIMEOUT_MS)
-}
-
-function setupOAuthRouter(app) {
-  // Setup default MercadoLibre oauth routes
-  app.use('/auth', auth)
-  // Override auth success behavior
-  app.use('/auth/success', onAuthSuccess)
-}
-
-function cliLoginFlow() {
-  setupOAuthRouter(app)
-
-  // Start express server
-  const server = app.listen(port, () => promptOauthLogin(server))
-}
-
 async function createMeliTestAccount(devAccount) {
   let response
   try {
@@ -166,8 +84,11 @@ async function generateTestAccount() {
 
 async function main() {
   await db.connect()
+  await cliLoginFlow.setup()
+
   await generateTestAccount()
-  cliLoginFlow()
+  const accountData = await cliLoginFlow.run()
+  console.log('Logged in! Account data: ', accountData)
 }
 
 (async () => {
