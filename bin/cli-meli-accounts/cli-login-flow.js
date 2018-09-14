@@ -54,14 +54,15 @@ function startWaitLoginSpinner() {
       const secondsLeft = Math.max(Math.ceil(millisLeft / 1000), 0)
       const timeLeftMsg = `Waiting login... ${secondsLeft} seconds left ${millisLeft <= 0 ? '\n' : ''}`
 
-      // Update text
-      this.clearLine(this.stream)
-      this.stream.write(msg + timeLeftMsg)
-
       // Check timeout
       if (millisLeft <= 0) {
         onAuthTimeout()
+        return
       }
+
+      // Update text
+      this.clearLine(this.stream)
+      this.stream.write(msg + timeLeftMsg)
     }
   })
   spinner.setSpinnerString(19)
