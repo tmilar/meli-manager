@@ -14,8 +14,8 @@ const state = {
 
 function onAuthSuccess() {
   state.spinner.stop(true)
-  console.log('Account Auth success!')
   state.chromeWindow.kill()
+  console.log('Account Auth success!')
   process.exit()
 }
 
@@ -23,6 +23,12 @@ function onAuthAbort() {
   state.spinner.stop(true)
   console.log('User aborted login (Chrome window closed).')
   process.exit()
+}
+
+function onAuthTimeout() {
+  state.spinner.stop(true)
+  state.chromeWindow.kill()
+  console.log('Timeout.')
 }
 
 async function launchChrome(loginUrl) {
@@ -42,14 +48,19 @@ function startWaitLoginSpinner() {
     text: '%s ',
     stream: process.stderr,
     onTick(msg) {
+      // Calculate timers
       const now = new Date()
       const millisLeft = dateEnd - now.getTime()
       const secondsLeft = Math.max(Math.ceil(millisLeft / 1000), 0)
       const timeLeftMsg = `Waiting login... ${secondsLeft} seconds left ${millisLeft <= 0 ? '\n' : ''}`
+
+      // Update text
       this.clearLine(this.stream)
       this.stream.write(msg + timeLeftMsg)
+
+      // Check timeout
       if (millisLeft <= 0) {
-        spinner.stop()
+        onAuthTimeout()
       }
     }
   })
@@ -64,12 +75,6 @@ async function promptOauthLogin(server) {
   const loginUrl = `http://${hostname}:${port}/auth/mercadolibre`
   state.chromeWindow = await launchChrome(loginUrl)
   state.spinner = startWaitLoginSpinner()
-
-  setTimeout(() => {
-    console.log('Timeout.')
-    state.chromeWindow.kill()
-    process.exit()
-  }, TIMEOUT_MS)
 }
 
 function setupOAuthRouter(app) {
