@@ -14,21 +14,21 @@ const state = {
 
 function onAuthSuccess() {
   state.spinner.stop(true)
+  state.chromeWindow.process.removeListener('exit', onAuthAbort)
   state.chromeWindow.kill()
   console.log('Account Auth success!')
-  process.exit()
 }
 
 function onAuthAbort() {
   state.spinner.stop(true)
   console.log('User aborted login (Chrome window closed).')
-  process.exit()
 }
 
 function onAuthTimeout() {
   state.spinner.stop(true)
-  state.chromeWindow.kill()
   console.log('Timeout.')
+  state.chromeWindow.process.removeListener('exit', onAuthAbort)
+  state.chromeWindow.kill()
 }
 
 async function launchChrome(loginUrl) {
