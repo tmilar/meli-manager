@@ -82,13 +82,26 @@ async function generateTestAccount() {
   console.log('Created test Account: ', testAccount)
 }
 
+/**
+ * Run cli login flow, and log the result. Report error otherwise.
+ * @returns {Promise<void>} - flow exec promise
+ */
+async function runLoginFlow() {
+  let accountData
+  try {
+    accountData = await cliLoginFlow.run()
+    console.log('Logged in! Account data: ', accountData)
+  } catch (error) {
+    console.error('Could not complete authentication. Reason: ' + error.message)
+  }
+}
+
 async function main() {
   await db.connect()
   await cliLoginFlow.setup()
 
   await generateTestAccount()
-  const accountData = await cliLoginFlow.run()
-  console.log('Logged in! Account data: ', accountData)
+  await runLoginFlow()
 }
 
 (async () => {
