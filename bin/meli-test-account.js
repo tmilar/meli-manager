@@ -75,6 +75,18 @@ async function createMeliTestAccount(devAccount) {
   return response
 }
 
+/**
+ * Startup/setup main services.
+ *  - db connect
+ *  - cliLoginFlow startup
+ *
+ * @returns {Promise<void>} - flow promise
+ */
+async function setup() {
+  await db.connect()
+  await cliLoginFlow.setup()
+}
+
 async function generateTestAccount() {
   const ownerAccount = await getDevAccount()
   console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
@@ -96,12 +108,24 @@ async function runLoginFlow() {
   }
 }
 
+/**
+ * Cleanup/close opened services for a graceful process exit.
+ * Otherwise the process will keep running.
+ *
+ * @returns {Promise<void>} - exec promise
+ */
+async function exit() {
+  await cliLoginFlow.clean()
+  await db.disconnect()
+}
+
 async function main() {
-  await db.connect()
-  await cliLoginFlow.setup()
+  await setup()
 
   await generateTestAccount()
   await runLoginFlow()
+
+  await exit()
 }
 
 (async () => {

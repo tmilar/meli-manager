@@ -94,11 +94,8 @@ function setupOAuthRouter(app) {
 function startServer(app) {
   // Start express server
   const serverPromise = new Promise((resolve, reject) => {
-    try {
-      const server = app.listen(port, () => resolve(server))
-    } catch (error) {
-      reject(error)
-    }
+    const server = app.listen(port, () => resolve(server))
+    server.on('error', error => reject(error))
   })
   return serverPromise
 }
@@ -120,7 +117,7 @@ class CliLoginFlow {
    */
   async run() {
     if (!this.server) {
-      throw new Error('Express OAuth server is not running!')
+      throw new Error('Express OAuth server is not running! Please call setup() method.')
     }
 
     // Override default meli-passport-strategy Auth callback -> do no-operation, only return the result.
@@ -133,6 +130,10 @@ class CliLoginFlow {
 
     await promptOauthLogin(this.server)
     return loggedUserPromise
+  }
+
+  async clean() {
+    await this.server.close()
   }
 }
 

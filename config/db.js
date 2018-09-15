@@ -7,11 +7,18 @@ const config = require('.')
  * @returns {Promise<*>} - resolves to mongoose instance if successful, rejects otherwise.
  */
 const connect = async () => {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose
+  }
+  if (mongoose.connection.readyState === 2) {
+    console.log('DB is already connecting, please wait.')
+    return mongoose
+  }
   let ret
   try {
     ret = await mongoose.connect(config.db)
     console.log('db connection open')
-  } catch(error) {
+  } catch (error) {
     console.error('db connection error:', error.message)
     throw error
   }
@@ -19,4 +26,8 @@ const connect = async () => {
   return ret
 }
 
-module.exports = {connect}
+const disconnect = async () => {
+  await mongoose.disconnect()
+}
+
+module.exports = {connect, disconnect}
