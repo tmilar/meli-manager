@@ -59,14 +59,20 @@ async function requestTestAccount(devAccount) {
   return req(testAccountRequestOptions)
 }
 
-async function createMeliTestAccount(devAccount) {
+async function createMeliTestAccount(nickname) {
+  if (!nickname || nickname.length === 0) {
+    throw new Error('The owner account nickname is required to request a MeLi Test Account!')
+  }
+  const ownerAccount = await getDevAccount({nickname})
+  console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
+
   let response
   try {
-    response = await requestTestAccount(devAccount)
+    response = await requestTestAccount(ownerAccount)
   } catch (error) {
-    const errMsg = `Error requesting test account with dev account '${devAccount.nickname}'`
+    const errMsg = `Error requesting test account with dev account '${ownerAccount.nickname}'`
     if (error) {
-      error.message = `${errMsg}. ${error.message}`
+      error.message = `${errMsg}. ${error.message || error}`
     }
     throw new Error(error || errMsg)
   }
@@ -88,9 +94,8 @@ async function setup() {
 async function generateTestAccount() {
   const ownerAccountNickname = getUsernameParam() || devAccountUsername
   checkNicknameParam(ownerAccountNickname)
-  const ownerAccount = await getDevAccount({nickname: ownerAccountNickname})
-  console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
-  const testAccount = await createMeliTestAccount(ownerAccount)
+
+  const testAccount = await createMeliTestAccount(ownerAccountNickname)
   console.log('Created test Account: ', testAccount)
 }
 
