@@ -1,3 +1,4 @@
+const EventEmitter = require('events')
 const app = require('express')()
 const chromeLauncher = require('chrome-launcher')
 const {Spinner} = require('cli-spinner')
@@ -7,21 +8,25 @@ const meliAuth = require('../../config/meli-auth')
 const port = process.env.PORT
 const TIMEOUT_MS = 100 * 1000
 
+class AuthEventEmitter extends EventEmitter {}
+const authEventEmitter = new AuthEventEmitter()
+
 const state = {
   spinner: null,
   chromeWindow: null
 }
 
-function onAuthSuccess() {
+function onAuthSuccess(loggedUser) {
   state.spinner.stop(true)
   state.chromeWindow.process.removeListener('exit', onAuthAbort)
   state.chromeWindow.kill()
-  console.log('Account Auth success!')
+  authEventEmitter.emit('success', loggedUser)
 }
 
 function onAuthAbort() {
   state.spinner.stop(true)
   console.log('User aborted login (Chrome window closed).')
+  authEventEmitter.emit('abort')
 }
 
 function onAuthTimeout() {
@@ -29,6 +34,7 @@ function onAuthTimeout() {
   console.log('Timeout.')
   state.chromeWindow.process.removeListener('exit', onAuthAbort)
   state.chromeWindow.kill()
+  authEventEmitter.emit('timeout')
 }
 
 async function launchChrome(loginUrl) {
@@ -79,9 +85,6 @@ async function promptOauthLogin(server) {
 }
 
 function setupOAuthRouter(app) {
-  // Override auth success behavior
-  app.use('/auth/success', onAuthSuccess)
-
   // Setup default MercadoLibre oauth routes
   app.use('/auth', auth)
 }
@@ -109,6 +112,12 @@ class CliLoginFlow {
   async setup() {
     setupOAuthRouter(app)
     this.server = await startServer(app)
+
+    // Override default meli-passport-strategy Auth callback -> do no-operation, only return the result.
+    meliAuth.onAuth = (profile, tokens) => {
+      const loggedUser = {profile, tokens}
+      onAuthSuccess(loggedUser)
+    }
   }
 
   /**
@@ -120,12 +129,21 @@ class CliLoginFlow {
       throw new Error('Express OAuth server is not running! Please call setup() method.')
     }
 
-    // Override default meli-passport-strategy Auth callback -> do no-operation, only return the result.
-    const loggedUserPromise = new Promise(resolve => {
-      meliAuth.onAuth = (profile, tokens) => {
-        const loggedUser = {profile, tokens}
+    const loggedUserPromise = new Promise((resolve, reject) => {
+      authEventEmitter.once('success', loggedUser => {
+        authEventEmitter.removeAllListeners()
         resolve(loggedUser)
-      }
+      })
+
+      authEventEmitter.once('timeout', () => {
+        authEventEmitter.removeAllListeners()
+        reject(new Error('Login timeout'))
+      })
+
+      authEventEmitter.once('abort', () => {
+        authEventEmitter.removeAllListeners()
+        reject(new Error('Login abort'))
+      })
     })
 
     await promptOauthLogin(this.server)
