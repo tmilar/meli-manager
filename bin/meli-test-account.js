@@ -32,9 +32,7 @@ function checkNicknameParam(nickname) {
   }
 }
 
-async function getDevAccount() {
-  const nickname = getUsernameParam() || devAccountUsername
-  checkNicknameParam(nickname)
+async function getDevAccount({nickname}) {
   const account = await Account.findOne({nickname})
   if (!account) {
     throw new Error(`Dev Account username '${nickname}' not found in db.`)
@@ -88,9 +86,11 @@ async function setup() {
 }
 
 async function generateTestAccount() {
-  const ownerAccount = await getDevAccount()
+  const ownerAccountNickname = getUsernameParam() || devAccountUsername
+  checkNicknameParam(ownerAccountNickname)
+  const ownerAccount = await getDevAccount({nickname: ownerAccountNickname})
   console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
-  let testAccount = await createMeliTestAccount(ownerAccount)
+  const testAccount = await createMeliTestAccount(ownerAccount)
   console.log('Created test Account: ', testAccount)
 }
 
