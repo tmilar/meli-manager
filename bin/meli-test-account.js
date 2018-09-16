@@ -84,13 +84,21 @@ async function createMeliTestAccount(nickname) {
  *  - db connect
  *  - cliLoginFlow startup
  *
- * @returns {Promise<void>} - flow promise
+ * @returns {Promise<void>} - exec promise
  */
 async function setup() {
   await db.connect()
   await cliLoginFlow.setup()
 }
 
+/**
+ * Generates a test account by using an existing dev Account access token.
+ *
+ * @throws error if
+ *    * dev account nickname credentials are invalid
+ *    * Mercadolibre API is not available
+ * @returns {Promise<void>} - exec promise
+ */
 async function generateTestAccount() {
   const ownerAccountNickname = getUsernameParam() || devAccountUsername
   checkNicknameParam(ownerAccountNickname)
