@@ -65,12 +65,12 @@ async function createMeliTestAccount(devAccount) {
   let response
   try {
     response = await requestTestAccount(devAccount)
-  } catch (e) {
-    let errMsg = `Error requesting test account with dev account '${devAccount.nickname}'`
-    if (e) {
-      e.message = `${errMsg}. ${e.message}`
+  } catch (error) {
+    const errMsg = `Error requesting test account with dev account '${devAccount.nickname}'`
+    if (error) {
+      error.message = `${errMsg}. ${error.message}`
     }
-    throw new Error(e || errMsg)
+    throw new Error(error || errMsg)
   }
   return response
 }
@@ -131,8 +131,8 @@ async function main() {
 (async () => {
   try {
     await main()
-  } catch (e) {
-    console.error('unexpected error: ', e)
+  } catch (error) {
+    console.error('unexpected error: ', error)
     process.exitCode = 1
     process.exit()
   }
