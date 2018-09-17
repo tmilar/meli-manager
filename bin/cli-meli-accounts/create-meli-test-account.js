@@ -36,6 +36,17 @@ function requestTestAccount(devAccount) {
   return req(testAccountRequestOptions)
 }
 
+/**
+ * Create a MercadoLibre test account issuing a POST request to MercadoLibre API.
+ *
+ *
+ * @param {string} nickname - the owner account to use for the request
+ * @throws error if:
+ *         - owner account nickname not found
+ *         - account is unauthorized or other failures contacting MercadoLibre API
+ *         - test accounts creation quota exceeded for the MeLi App client ID (currently, maximum is 10 accounts).
+ * @returns {Promise<Object>} - created account credentials
+ */
 async function createMeliTestAccount(nickname) {
   if (!nickname || nickname.length === 0) {
     // TODO instead of throwing, just fetch any valid/authorized account -> if none, ask first a new user login/register.
