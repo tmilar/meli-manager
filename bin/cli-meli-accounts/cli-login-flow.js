@@ -6,6 +6,9 @@ const auth = require('../../routes/auth')
 const meliAuth = require('../../config/meli-auth')
 
 const port = process.env.PORT
+if (!port) {
+  throw new Error('CliLoginFlow: express OAuth server PORT env variable must be defined!')
+}
 const TIMEOUT_MS = 100 * 1000
 
 class AuthEventEmitter extends EventEmitter {}
