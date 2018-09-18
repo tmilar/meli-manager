@@ -6,9 +6,16 @@ const Account = require('../model/account')
 
 const {clientId, clientSecret} = require('.').auth.mercadolibre
 
+if (!clientId) {
+  throw new Error('MercadoLibre clientId must be defined in MELI_CLIENT_ID env variable')
+}
+if (!clientSecret) {
+  throw new Error('MercadoLibre clientSecret must be defined in MELI_CLIENT_SECRET env variable')
+}
+
 const meliAuth = {
   onAuth: async (profile, tokens) => {
-    // default: register profile to DB, together with access and refresh tokens
+    // Default: register profile to DB, together with access and refresh tokens
     await Account.register(profile, tokens)
   },
   passport,
@@ -41,7 +48,7 @@ const mercadoLibreStrategy = new MercadoLibreStrategy({
   clientSecret,
   callbackURL: '/auth/mercadolibre/callback'
 },
-  authorizedCb
+authorizedCb
 )
 passport.use(mercadoLibreStrategy)
 
