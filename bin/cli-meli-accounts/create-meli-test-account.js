@@ -49,7 +49,6 @@ function requestTestAccount(devAccount) {
  */
 async function createMeliTestAccount(nickname) {
   if (!nickname || nickname.length === 0) {
-    // TODO instead of throwing, just fetch any valid/authorized account -> if none, ask first a new user login/register.
     throw new Error('The owner account nickname is required to request a MeLi Test Account!')
   }
 

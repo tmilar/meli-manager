@@ -7,7 +7,7 @@ const choices = [
     short: 'Test account'
   },
   {
-    name: 'Login & Register existing account',
+    name: 'Login existing account',
     value: 'existingAccount',
     short: 'Existing account'
   },
@@ -31,5 +31,6 @@ const questions = [actionQuestion]
  * Exports inquirer question.
  *
  * Promise resolves to selected choice value.
+ * @returns {Promise<string>} - resolves to selected answer {action: 'selected'}
  */
 module.exports = () => inquirer.prompt(questions)
