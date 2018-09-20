@@ -2,13 +2,27 @@
 const envPath = require('path').resolve(__dirname, '.env')
 require('dotenv').config({path: envPath})
 
+const program = require('commander')
+
+program
+  .version('0.1.0')
+  .description('Interactive MercadoLibre user accounts CLI management.')
+  .option('-u, --user <nickname>', 'Run using specified Account nickname for Meli API requests.')
+  .parse(process.argv)
+
+if (!program.user) {
+  console.log('Please specify --user <nickname> option.')
+  program.outputHelp()
+  process.exit()
+}
+
 const db = require('../../config/db')
 const prompt = require('./prompt')
 
 const cliLoginFlow = require('./cli-login-flow')
 const createMeliTestAccount = require('./create-meli-test-account')
 
-const devAccountNickname = 'POKEVENTAS_JUSIMIL' // TODO retrieve from command-line args instead of hardcoding
+const devAccountNickname = program.user
 
 async function doLoginFlow() {
   let accountTokens

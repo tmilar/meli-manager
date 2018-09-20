@@ -33,6 +33,7 @@
     "body-parser": "1.18.3",
     "chrome-launcher": "0.10.2",
     "cli-spinner": "0.2.8",
+    "commander": "2.18.0",
     "cookie-parser": "1.4.3",
     "debug": "3.1.0",
     "dotenv": "6.0.0",
