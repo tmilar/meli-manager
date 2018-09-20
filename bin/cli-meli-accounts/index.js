@@ -15,8 +15,7 @@ async function doLoginFlow() {
   try {
     accountTokens = await cliLoginFlow.run()
   } catch (error) {
-    console.error('Ups, could not login:', error.message)
-    return
+    throw new Error(`Ups, could not login:${error.message || error}`)
   }
   console.log('Logged in!')
   console.log('[Mock registering] Tokens: ', accountTokens)
@@ -28,8 +27,7 @@ async function generateTestAccount() {
     testAccount = await createMeliTestAccount(devAccountNickname)
   } catch (error) {
     // TODO if error is lack of dev account, retry? suggest a different client id?
-    console.error('Whoops, could not create a test account:', error.message)
-    return
+    throw new Error(`Whoops, could not create a test account:${error.message || error}`)
   }
   console.log('Test account is: ', testAccount)
 }
@@ -37,13 +35,23 @@ async function generateTestAccount() {
 const options = {
   newTestAccount: async () => {
     console.log('Creating test account...')
-    await generateTestAccount()
-    await doLoginFlow()
+    try {
+      await generateTestAccount()
+      await doLoginFlow()
+    } catch (error) {
+      console.error(error.message || error)
+      return
+    }
     console.log('Done.')
   },
   existingAccount: async () => {
     console.log('Please log in with an existing account.')
-    await doLoginFlow()
+    try {
+      await doLoginFlow()
+    } catch (error) {
+      console.error(error.message || error)
+      return
+    }
     console.log('Done.')
   },
   exit: () => {
