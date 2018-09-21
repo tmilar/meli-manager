@@ -12,7 +12,8 @@ const accountSchema = new mongoose.Schema({
     accessToken: String,
     refreshToken: String,
     expires: Date
-  }
+  },
+  isTestAccount: Boolean
 }, {
   timestamps: true
 })
@@ -56,7 +57,8 @@ accountSchema.statics.register = async function (profile, auth) {
       accessToken,
       refreshToken,
       expires
-    }
+    },
+    isTestAccount: /TETE.+?/.test(nickname)
   }
 
   const registered = await this.findOneAndUpdate({id}, account, {upsert: true}).exec()
