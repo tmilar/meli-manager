@@ -17,6 +17,7 @@ if (!program.user) {
 }
 
 const db = require('../../config/db')
+const Account = require('../../model/account')
 const prompt = require('./prompt')
 
 const cliLoginFlow = require('./cli-login-flow')
@@ -29,10 +30,10 @@ async function doLoginFlow() {
   try {
     accountTokens = await cliLoginFlow.run()
   } catch (error) {
-    throw new Error(`Ups, could not login:${error.message || error}`)
+    throw new Error(`Ups, could not authenticate: ${error.message || error}`)
   }
   console.log('Logged in!')
-  console.log('[Mock registering] Tokens: ', accountTokens)
+  return accountTokens
 }
 
 async function generateTestAccount() {
@@ -41,9 +42,20 @@ async function generateTestAccount() {
     testAccount = await createMeliTestAccount(devAccountNickname)
   } catch (error) {
     // TODO if error is lack of dev account, retry? suggest a different client id?
-    throw new Error(`Whoops, could not create a test account:${error.message || error}`)
+    throw new Error(`Whoops, could not create a test account: ${error.message || error.data || error}`)
   }
   console.log('Test account is: ', testAccount)
+}
+
+async function registerAccount({profile, tokens}) {
+  let account
+  try {
+    account = await Account.register(profile, tokens)
+  } catch (error) {
+    throw new Error('Problem registering account: ' + (error.message || error))
+  }
+  const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
+  console.log(`${verbMsg} ${account.isTestAccount ? 'test' : ''}account '${account.nickname}' succesfully.`)
 }
 
 const options = {
@@ -51,22 +63,22 @@ const options = {
     console.log('Creating test account...')
     try {
       await generateTestAccount()
-      await doLoginFlow()
+      const loggedUser = await doLoginFlow()
+      await registerAccount(loggedUser)
     } catch (error) {
       console.error(error.message || error)
       return
     }
-    console.log('Done.')
   },
   existingAccount: async () => {
     console.log('Please log in with an existing account.')
     try {
-      await doLoginFlow()
+      const loggedUser = await doLoginFlow()
+      await registerAccount(loggedUser)
     } catch (error) {
       console.error(error.message || error)
       return
     }
-    console.log('Done.')
   },
   exit: () => {
     console.log('Bye!')
