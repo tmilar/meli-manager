@@ -101,7 +101,13 @@ function startServer(app) {
   // Start express server
   const serverPromise = new Promise((resolve, reject) => {
     const server = app.listen(port, () => resolve(server))
-    server.on('error', error => reject(error))
+    server.on('error', error => {
+      if (!error) {
+        error = new Error()
+      }
+      error.message = `Could not start express server in cli-login-flow: ${error.message || error}`
+      reject(error)
+    })
   })
   return serverPromise
 }
