@@ -67,7 +67,6 @@ const options = {
       await registerAccount(loggedUser)
     } catch (error) {
       console.error(error.message || error)
-      return
     }
   },
   existingAccount: async () => {
@@ -77,7 +76,6 @@ const options = {
       await registerAccount(loggedUser)
     } catch (error) {
       console.error(error.message || error)
-      return
     }
   },
   exit: () => {
@@ -124,4 +122,11 @@ async function main() {
   await exit()
 }
 
-main()
+(async () => {
+  try {
+    await main()
+  } catch (error) {
+    console.error('unexpected error: ', error)
+    process.exit(1)
+  }
+})()
