@@ -12,7 +12,7 @@
     "test:watch": "ava --verbose --watch",
     "ava": "ava",
     "setup": "node ./bin/setup",
-    "meli:test-account": "node ./bin/meli-test-account"
+    "meli:test-account": "node ./bin/cli-meli-accounts"
   },
   "now": {
     "dotenv": ".env.production"
