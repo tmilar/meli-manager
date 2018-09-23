@@ -17,7 +17,6 @@ const connect = async () => {
   let ret
   try {
     ret = await mongoose.connect(config.db)
-    console.log('db connection open')
   } catch (error) {
     console.error('db connection error:', error.message)
     throw error
