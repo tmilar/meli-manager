@@ -1,20 +1,22 @@
 #!/usr/bin/env node
 const envPath = require('path').resolve(__dirname, '.env')
 require('dotenv').config({path: envPath})
-
+const chalk = require('chalk')
 const program = require('commander')
 
 program
   .version('0.1.0')
-  .description('Interactive MercadoLibre user accounts CLI management.')
-  .option('-u, --user <nickname>', 'Run using specified Account nickname for Meli API requests.')
+  .description('Interactive CLI for MercadoLibre user Accounts management.')
+  .option('-u, --user <nickname>', 'Run using specified nickname Account keys for MeLi API requests.')
   .parse(process.argv)
 
 if (!program.user) {
-  console.log('Please specify --user <nickname> option.')
+  console.error(chalk.yellow(`Please specify ${chalk.bold('-u|--user <nickname>')} option.`))
   program.outputHelp()
   process.exit()
 }
+
+const devAccountNickname = program.user
 
 const db = require('../../config/db')
 const Account = require('../../model/account')
@@ -23,14 +25,12 @@ const prompt = require('./prompt')
 const cliLoginFlow = require('./cli-login-flow')
 const createMeliTestAccount = require('./create-meli-test-account')
 
-const devAccountNickname = program.user
-
 async function doLoginFlow() {
   let accountTokens
   try {
     accountTokens = await cliLoginFlow.run()
   } catch (error) {
-    throw new Error(`Ups, could not authenticate: ${error.message || error}`)
+    throw new Error(`Could not complete authentication. Reason: ${error.message || error}`)
   }
   console.log('Logged in!')
   return accountTokens
@@ -55,7 +55,7 @@ async function registerAccount({profile, tokens}) {
     throw new Error('Problem registering account: ' + (error.message || error))
   }
   const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
-  console.log(`${verbMsg} ${account.isTestAccount ? 'test' : ''}account '${account.nickname}' succesfully.`)
+  console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'test' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
 }
 
 const options = {
@@ -66,7 +66,7 @@ const options = {
       const loggedUser = await doLoginFlow()
       await registerAccount(loggedUser)
     } catch (error) {
-      console.error(error.message || error)
+      console.error(chalk.red(error.message || error))
     }
   },
   existingAccount: async () => {
@@ -75,11 +75,11 @@ const options = {
       const loggedUser = await doLoginFlow()
       await registerAccount(loggedUser)
     } catch (error) {
-      console.error(error.message || error)
+      console.error(chalk.red(error.message || error))
     }
   },
   exit: () => {
-    console.log('Bye!')
+    console.log(chalk.bold.green('Bye!'))
   }
 }
 
@@ -106,14 +106,14 @@ async function exit() {
 
 async function main() {
   await setup()
-  console.log('Welcome!')
+  console.log(chalk.cyan('Welcome!'))
 
   let choice
   do {
     choice = await prompt()
     const selectedAction = options[choice.action]
     if (!selectedAction) {
-      console.error(`Selected option is not valid: ${JSON.stringify(choice)}`)
+      console.error(chalk.bold.red(`Selected option is not valid: ${chalk.red(JSON.stringify(choice))}`))
       continue
     }
     await selectedAction()
@@ -126,7 +126,7 @@ async function main() {
   try {
     await main()
   } catch (error) {
-    console.error('unexpected error: ', error)
+    console.error(chalk.bold.red('unexpected error: '), error)
     process.exit(1)
   }
 })()
