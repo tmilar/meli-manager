@@ -1,22 +1,28 @@
 const inquirer = require('inquirer')
 
-const choices = [
-  {
-    name: 'Create a new Test account',
-    value: 'newTestAccount',
-    short: 'Test account'
-  },
-  {
-    name: 'Login existing account',
-    value: 'existingAccount',
-    short: 'Existing account'
-  },
-  new inquirer.Separator(),
-  {
-    name: 'Exit',
-    value: 'exit'
-  }
-]
+const state = {
+  isDbConnected: false,
+}
+
+const choices = () => {
+  return [
+    {
+      name: 'Create a new Test account',
+      value: 'newTestAccount',
+      short: 'Test account'
+    },
+    {
+      name: `Login ${state.isDbConnected ? '& Register ' : ''}existing account`,
+      value: 'existingAccount',
+      short: 'Existing account'
+    },
+    new inquirer.Separator(),
+    {
+      name: 'Exit',
+      value: 'exit'
+    }
+  ]
+}
 
 const actionQuestion = {
   type: 'list',
@@ -28,9 +34,16 @@ const actionQuestion = {
 const questions = [actionQuestion]
 
 /**
- * Exports inquirer question.
+ * Inquirer question prompt promise.
  *
- * Promise resolves to selected choice value.
- * @returns {Promise<string>} - resolves to selected answer {action: 'selected'}
+ * @param {Object}  currentState
+ * @param {boolean} currentState.isDbConnected
+
+ * @returns {Promise<Object>} - resolves to selected answer {action: 'selected'}
  */
-module.exports = () => inquirer.prompt(questions)
+module.exports = ({isDbConnected} = {}) => {
+  // Update internal state first
+  Object.assign(state, {isDbConnected})
+  // Render inquirer questions
+  return inquirer.prompt(questions)
+}
