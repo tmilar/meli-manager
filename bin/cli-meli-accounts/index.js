@@ -110,7 +110,9 @@ async function main() {
 
   let choice
   do {
-    choice = await prompt()
+    const isDbConnected = await db.isConnected()
+    const currentState = {isDbConnected}
+    choice = await prompt(currentState)
     const selectedAction = options[choice.action]
     if (!selectedAction) {
       console.error(chalk.bold.red(`Selected option is not valid: ${chalk.red(JSON.stringify(choice))}`))
