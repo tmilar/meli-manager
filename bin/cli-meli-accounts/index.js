@@ -105,14 +105,14 @@ async function exit() {
 }
 
 async function main() {
-  await setup()
   console.log(chalk.cyan('Welcome!'))
+  await setup()
+  const isFirstLogin = !(await Account.findAnyAuthorized())
 
   let choice
   do {
     const isDbConnected = await db.isConnected()
-    const currentState = {isDbConnected}
-    choice = await prompt(currentState)
+    choice = await prompt({isDbConnected, isFirstLogin})
     const selectedAction = options[choice.action]
     if (!selectedAction) {
       console.error(chalk.bold.red(`Selected option is not valid: ${chalk.red(JSON.stringify(choice))}`))
