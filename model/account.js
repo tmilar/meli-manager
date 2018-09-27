@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const {auth: {mercadolibre: {clientId: currentClientId}}} = require('../config')
 
 const TIME_NEW_ACCOUNT_MILLIS = 1000 * 60 // 1 minute
 
@@ -74,6 +75,22 @@ accountSchema.statics.findAnyAuthorized = function () {
   return this.findOne({
     'auth.expires': {$gt: new Date()},
     'auth.accessToken': {$exists: true}
+  })
+}
+
+/**
+ * Find any authorized account, or that can be authorized for current application ID.
+ *
+ * @returns {Promise<Account|void>} - resolves to an Account instance if found, null otherwise.
+ */
+accountSchema.statics.findAnyAuthorizable = function () {
+  return this.findOne({
+    $or: [{
+      'auth.expires': {$gt: new Date()},
+      'auth.accessToken': {$exists: true}
+    }, {
+      'auth.clientId': currentClientId
+    }]
   })
 }
 
