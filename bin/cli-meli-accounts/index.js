@@ -17,6 +17,7 @@ if (!program.user) {
 }
 
 const devAccountNickname = program.user
+let clientOwnerData = null
 
 const db = require('../../config/db')
 const Account = require('../../model/account')
@@ -85,6 +86,32 @@ const options = {
 }
 
 /**
+ * Find the current clientOwner user data and store it locally.
+ *
+ * This is needed to properly create and maintain test accounts,
+ * and useful to register and refresh regular accounts as well.
+ *
+ * @returns {Promise<void>} - exec promise
+ */
+async function retrieveClientOwnerData() {
+  let ownerAccount
+  try {
+    ownerAccount = await getOwnerAccount()
+  } catch (error) {
+    const errMsgReason = error.message || error.data || error
+    console.error(chalk.yellow('Could not retrieve client owner account data. ' +
+      `${errMsgReason ? chalk.yellow.bold(`Reason: ${errMsgReason}`) : ''} ` +
+      'Please log in with any account and try again.'))
+    const {profile, tokens} = await cliLoginFlow.run()
+    await registerAccount({profile, tokens})
+    ownerAccount = await getOwnerAccount()
+  }
+
+  // Response: set to clientOwnerData
+  clientOwnerData = ownerAccount.clientOwnerData
+}
+
+/**
  * Initialize needed services.
  *
  * @returns {Promise<void>} - exec promise
@@ -92,6 +119,7 @@ const options = {
 async function setup() {
   await db.connect()
   await cliLoginFlow.setup()
+  await retrieveClientOwnerData()
 }
 
 /**
@@ -108,7 +136,7 @@ async function exit() {
 async function main() {
   console.log(chalk.cyan('Welcome!'))
   await setup()
-  const isFirstLogin = !(await Account.findAnyAuthorized())
+  const isFirstLogin = !clientOwnerData && !(await Account.findAnyAuthorized())
 
   let choice
   do {
