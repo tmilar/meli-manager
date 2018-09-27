@@ -65,6 +65,18 @@ accountSchema.statics.register = async function (profile, auth) {
   return registered
 }
 
+/**
+ * Find any authorized account.
+ *
+ * @returns {Promise<Account|void>} - resolves to an Account instance if found, null otherwise.
+ */
+accountSchema.statics.findAnyAuthorized = function () {
+  return this.findOne({
+    'auth.expires': {$gt: new Date()},
+    'auth.accessToken': {$exists: true}
+  })
+}
+
 const Account = mongoose.model('Account', accountSchema)
 
 module.exports = Account
