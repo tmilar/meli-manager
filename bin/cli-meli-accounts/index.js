@@ -24,6 +24,7 @@ const prompt = require('./prompt')
 
 const cliLoginFlow = require('./cli-login-flow')
 const createMeliTestAccount = require('./create-meli-test-account')
+const getOwnerAccount = require('./get-owner-account')
 
 async function doLoginFlow() {
   let accountTokens
