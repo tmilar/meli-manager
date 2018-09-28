@@ -121,14 +121,13 @@ Interactive CLI for MercadoLibre user Accounts management.
 Options:
 
   -V, --version          output the version number
-  -u, --user <nickname>  Run using specified nickname Account keys for MeLi API requests.
   -h, --help             output usage information
 ```
 
-_Additionaly, it could be run doing_ `npm run meli:test-account -- -u "TEST USER 123"`
+_Additionaly, it could be run doing_ `npm run meli:test-account`
 
 > example:
->  `node bin/cli-meli-accounts -u "TEST USER 123"`
+>  `node bin/cli-meli-accounts`
 > would output:
 >
 > ```

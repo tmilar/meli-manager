@@ -7,16 +7,8 @@ const program = require('commander')
 program
   .version('0.1.0')
   .description('Interactive CLI for MercadoLibre user Accounts management.')
-  .option('-u, --user <nickname>', 'Run using specified nickname Account keys for MeLi API requests.')
   .parse(process.argv)
 
-if (!program.user) {
-  console.error(chalk.yellow(`Please specify ${chalk.bold('-u|--user <nickname>')} option.`))
-  program.outputHelp()
-  process.exit()
-}
-
-const devAccountNickname = program.user
 let clientOwnerData = null
 
 const db = require('../../config/db')
