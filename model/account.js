@@ -68,14 +68,18 @@ accountSchema.statics.register = async function (profile, auth) {
 
 /**
  * Find any authorized account.
+ * @param {Object} [andCriteria]  - optional: extra criteria for the Account.findOne query.
  *
  * @returns {Promise<Account|void>} - resolves to an Account instance if found, null otherwise.
  */
-accountSchema.statics.findAnyAuthorized = function () {
-  return this.findOne({
+accountSchema.statics.findAnyAuthorized = function (andCriteria = null) {
+  const anyAuthorizedCriteria = {
     'auth.expires': {$gt: new Date()},
     'auth.accessToken': {$exists: true}
-  })
+  }
+  const criteria = andCriteria ? {$and: [anyAuthorizedCriteria, andCriteria]} : anyAuthorizedCriteria
+
+  return this.findOne(criteria)
 }
 
 /**
