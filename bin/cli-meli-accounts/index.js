@@ -41,10 +41,9 @@ async function doLoginFlow() {
 async function generateTestAccount() {
   let testAccount
   try {
-    testAccount = await createMeliTestAccount(devAccountNickname)
+    testAccount = await createMeliTestAccount()
   } catch (error) {
-    // TODO if error is lack of dev account, retry? suggest a different client id?
-    throw new Error(`Whoops, could not create a test account: ${error.message || error.data || error}`)
+    throw new Error(`Could not create a test account: ${error.message || error.data || error}`)
   }
   console.log('Test account is: ', testAccount)
 }

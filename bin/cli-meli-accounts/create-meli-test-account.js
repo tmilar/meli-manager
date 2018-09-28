@@ -1,18 +1,6 @@
 const req = require('request-promise')
-const {refresh} = require('../../config/meli-auth')
 const Account = require('../../model/account')
-
-async function getDevAccount({nickname}) {
-  const account = await Account.findOne({nickname})
-  if (!account) {
-    throw new Error(`Dev Account username '${nickname}' not found in db.`)
-  }
-  if (!account.isAuthorized()) {
-    const accessToken = await refresh.requestNewAccessToken('mercadolibre', account.auth.refreshToken)
-    await account.updateAccessToken(accessToken)
-  }
-  return account
-}
+const {auth: {mercadolibre: {clientId: currentClientId}}} = require('../../config')
 
 /**
  *
@@ -38,34 +26,37 @@ function requestTestAccount(devAccount) {
 
 /**
  * Create a MercadoLibre test account issuing a POST request to MercadoLibre API.
+ * Resolves to created account credentials {nickname, password}
  *
- *
- * @param {string} nickname - the owner account to use for the request
  * @throws error if:
  *         - owner account nickname not found
- *         - account is unauthorized or other failures contacting MercadoLibre API
+ *         - account is unauthorized or other failure when contacting MercadoLibre API
  *         - test accounts creation quota exceeded for the MeLi App client ID (currently, maximum is 10 accounts).
- * @returns {Promise<Object>} - created account credentials
+ * @returns {Promise<Object>} - testAccountCredentials request promise
  */
-async function createMeliTestAccount(nickname) {
-  if (!nickname || nickname.length === 0) {
-    throw new Error('The owner account nickname is required to request a MeLi Test Account!')
+async function createMeliTestAccount() {
+  // The requester account needs to be authorized in the same clientOwner Account app realm.
+  const requesterAccount = await Account.findAnyAuthorized({
+    'auth.clientId': currentClientId
+  })
+
+  if (!requesterAccount) {
+    throw new Error('Couldn\'t find any authorized account for the current Meli Client ID.')
   }
 
-  const ownerAccount = await getDevAccount({nickname})
-  console.log(`Requesting test account using dev account '${ownerAccount.nickname}'...`)
+  console.log(`Requesting test account using selected account '${requesterAccount.nickname}'...`)
 
-  let response
+  let testAccountCredentials
   try {
-    response = await requestTestAccount(ownerAccount)
+    testAccountCredentials = await requestTestAccount(requesterAccount)
   } catch (error) {
-    const errMsg = `Error requesting test account with dev account '${ownerAccount.nickname}'`
+    const errMsg = `Error requesting test account with selected account '${requesterAccount.nickname}'`
     if (error) {
-      error.message = `${errMsg}. ${error.message || error}`
+      error.message = `${errMsg}. ${error.message || error.data || error}`
     }
     throw new Error(error || errMsg)
   }
-  return response
+  return testAccountCredentials
 }
 
 module.exports = createMeliTestAccount
