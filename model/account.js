@@ -12,7 +12,9 @@ const accountSchema = new mongoose.Schema({
   auth: {
     accessToken: String,
     refreshToken: String,
-    expires: Date
+    expires: Date,
+    clientId: Number,
+    clientOwnerNickname: String,
   },
   isTestAccount: Boolean
 }, {
@@ -41,7 +43,17 @@ accountSchema.methods.isNewAccount = function () {
   return (new Date() - this.createdAt) < TIME_NEW_ACCOUNT_MILLIS
 }
 
-accountSchema.statics.register = async function (profile, auth) {
+/**
+ * Register a new user account. If it exists, updates the account info instead.
+ *
+ * @param {Object} profile <id, nickname, first_name, last_name, email>   - mercadolibre account profile
+ * @param {Object} auth <accessToken, refreshToken>                       - mercadolibre access tokens
+ * @param {string} [clientOwnerData]                                      - the current client owner
+ * @param {string} [clientOwnerData.nickname]                             - the current client owner nickname
+ *
+ * @returns {Promise<Account>} - mongoose promise, resolves to the saved Account object.
+ */
+accountSchema.statics.register = async function (profile, auth, {nickname: clientOwnerNickname} = {}) {
   const {id, nickname, first_name, last_name, email} = profile
   const {accessToken, refreshToken} = auth
 
@@ -58,11 +70,12 @@ accountSchema.statics.register = async function (profile, auth) {
       accessToken,
       refreshToken,
       expires,
-      clientId: currentClientId
+      clientId: currentClientId,
+      clientOwnerNickname
     }
   }
 
-  const registered = await this.findOneAndUpdate({id}, account, {upsert: true}).exec()
+  const registered = await this.findOneAndUpdate({id}, account, {upsert: true, new: true})
   return registered
 }
 

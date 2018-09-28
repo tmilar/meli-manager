@@ -20,14 +20,13 @@ const createMeliTestAccount = require('./create-meli-test-account')
 const getOwnerAccount = require('./get-owner-account')
 
 async function doLoginFlow() {
-  let accountTokens
+  let accountData
   try {
-    accountTokens = await cliLoginFlow.run()
+    accountData = await cliLoginFlow.run()
   } catch (error) {
     throw new Error(`Could not complete authentication. Reason: ${error.message || error}`)
   }
-  console.log('Logged in!')
-  return accountTokens
+  return accountData
 }
 
 async function generateTestAccount() {
@@ -40,10 +39,19 @@ async function generateTestAccount() {
   console.log('Test account is: ', testAccount)
 }
 
+/**
+ *
+ * @param {Object} loggedUser             - the mercadolibre logged user info
+ * @param {Object} loggedUser.profile     - mercadolibre account profile info
+ * @param {Object} loggedUser.tokens.<accessToken, refreshToken>
+ *                                        - mercadolibre account tokens
+ *
+ * @returns {Promise<void>} - exec promise
+ */
 async function registerAccount({profile, tokens}) {
   let account
   try {
-    account = await Account.register(profile, tokens)
+    account = await Account.register(profile, tokens, clientOwnerData)
   } catch (error) {
     throw new Error('Problem registering account: ' + (error.message || error))
   }

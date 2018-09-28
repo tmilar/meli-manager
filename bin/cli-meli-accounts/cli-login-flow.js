@@ -131,7 +131,8 @@ class CliLoginFlow {
 
   /**
    * Run authentication Flow.
-   * @returns {Promise<any>} - resolves to the logged user {profile, tokens}
+   *
+   * @returns {Promise<{profile: *, tokens: *}>} - resolves to the logged user {profile, tokens}
    */
   async run() {
     if (!this.server) {
