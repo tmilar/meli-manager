@@ -57,9 +57,9 @@ accountSchema.statics.register = async function (profile, auth) {
     auth: {
       accessToken,
       refreshToken,
-      expires
-    },
-    isTestAccount: /TETE.+?/.test(nickname)
+      expires,
+      clientId: currentClientId
+    }
   }
 
   const registered = await this.findOneAndUpdate({id}, account, {upsert: true}).exec()
