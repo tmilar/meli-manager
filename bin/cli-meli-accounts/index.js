@@ -106,9 +106,12 @@ async function retrieveClientOwnerData() {
     await registerAccount({profile, tokens})
     ownerAccount = await getOwnerAccount()
   }
+  const {applicationData: {name, short_name: shortName}} = ownerAccount
 
   // Response: set to clientOwnerData
   clientOwnerData = ownerAccount.clientOwnerData
+  console.log(chalk.gray(`Connected to '${chalk.blueBright(clientOwnerData.nickname)}' ` +
+    `MercadoLibre Application '${chalk.cyanBright(name)}' (short name: '${shortName}')`))
 }
 
 /**
