@@ -92,10 +92,10 @@ const options = {
  *
  * @returns {Promise<void>} - exec promise
  */
-async function retrieveClientOwnerData() {
+async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
   let ownerAccount
   try {
-    ownerAccount = await getOwnerAccount()
+    ownerAccount = await getOwnerAccount(accessToken)
   } catch (error) {
     const errMsgReason = error.message || error.data || error
     console.error(chalk.yellow('Could not retrieve client owner account data. ' +

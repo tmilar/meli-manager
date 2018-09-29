@@ -5,15 +5,12 @@ const Account = require('../../model/account')
 const {auth: {mercadolibre: {clientId}}} = require('../../config')
 
 /**
- * Get current MercadoLibre Application Client owner Account info.
+ * Find or retrieve any valid accessToken from stored accounts
  *
- * @returns {Promise<{applicationData: *, clientOwnerData: *}>} - resolves to Application + Owner User data
- * @throws if:
- *  - no authoriz-able Account could be retrieved from DB
- *  - Meli API request failure
+ * @returns {Promise<string>} - resolves to the accessToken
+ * @trows error if none found or none could be retrieved
  */
-async function getOwnerAccount() {
-  // 1. get <any> valid (OR retrievable) access_token from any registered account in DB
+async function findAnyAccessToken() {
   const account = await Account.findAnyAuthorizable()
 
   // 2. if none, fail.
@@ -26,7 +23,24 @@ async function getOwnerAccount() {
     await account.updateAccessToken(accessToken)
   }
 
-  const {accessToken} = account.auth
+  return account.auth.accessToken
+}
+
+/**
+ * Get current MercadoLibre Application Client owner Account info.
+ *
+ * @param {string} [accessToken] - if provided, use this accessToken for the request.
+ *
+ * @returns {Promise<{applicationData: *, clientOwnerData: *}>} - resolves to Application + Owner User data
+ * @throws if:
+ *  - no authoriz-able Account could be retrieved from DB
+ *  - Meli API request failure
+ */
+async function getOwnerAccount(accessToken) {
+  // 1. get <any> valid (OR retrievable) access_token from any registered account in DB
+  if (!accessToken) {
+    accessToken = await findAnyAccessToken()
+  }
 
   // 3. request application data: GET /applications/:clientId
   let applicationData
