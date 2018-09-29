@@ -36,11 +36,15 @@ accountSchema.methods.isAuthorized = function () {
 }
 
 accountSchema.methods.isNewAccount = function () {
-  // An account is new if it was created in the last TIME_NEW_ACCOUNT_MILLIS time.
+  // An account is new if:
+  //  > it was created in the last TIME_NEW_ACCOUNT_MILLIS time
+  //  > no 'updatedAt' field, or 'updatedAt' === 'createdAt'
   if (!this.createdAt) {
     return false
   }
-  return (new Date() - this.createdAt) < TIME_NEW_ACCOUNT_MILLIS
+  const isFresh = (new Date() - this.createdAt) < TIME_NEW_ACCOUNT_MILLIS
+  const wasUpdated = this.updatedAt && this.updatedAt > this.createdAt
+  return isFresh && !wasUpdated
 }
 
 /**
