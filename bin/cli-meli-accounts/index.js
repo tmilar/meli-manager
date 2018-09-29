@@ -79,9 +79,24 @@ const options = {
       console.error(chalk.red(error.message || error))
     }
   },
+  firstUserLogin: async () => {
+    // This is the First login ever -> do login & register -> retrieve clientOwner application + account
+    console.log('To get started, please log in with an existing account.')
+    try {
+      const loggedUser = await doLoginFlow()
+      await retrieveClientOwnerData(loggedUser)
+      await registerAccount(loggedUser)
+    } catch (error) {
+      console.error(chalk.red(error.message || error))
+    }
+  },
   exit: () => {
     console.log(chalk.bold.green('Bye!'))
   }
+}
+
+async function checkIsLoginRequired() {
+  return !clientOwnerData && !(await Account.findAnyAuthorized()) && !(await Account.countDocuments())
 }
 
 /**
@@ -115,7 +130,7 @@ async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
 
   // Log connected application info
   const {applicationData: {name, short_name: shortName}} = ownerAccount
-  console.log(chalk.gray(`Connected to '${chalk.blueBright(clientOwnerData.nickname)}' ` +
+  console.log(chalk.gray(`Connected to ${chalk.blueBright(clientOwnerData.nickname)} ` +
     `MercadoLibre Application '${chalk.cyanBright(name)}' (short name: '${shortName}')`))
 }
 
@@ -159,7 +174,8 @@ async function main() {
   let choice
   do {
     const isDbConnected = await db.isConnected()
-    choice = await prompt({isDbConnected, isFirstLogin})
+    const isLoginRequired = await checkIsLoginRequired()
+    choice = await prompt({isDbConnected, isLoginRequired})
     const selectedAction = options[choice.action]
     if (!selectedAction) {
       console.error(chalk.bold.red(`Selected option is not valid: ${chalk.red(JSON.stringify(choice))}`))
