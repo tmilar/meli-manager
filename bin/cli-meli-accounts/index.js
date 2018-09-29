@@ -91,24 +91,22 @@ const options = {
  * and useful to register and refresh regular accounts as well.
  *
  * @returns {Promise<void>} - exec promise
+ * @throws error if couldn't fetch owner account/application data.
  */
 async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
   let ownerAccount
   try {
     ownerAccount = await getOwnerAccount(accessToken)
   } catch (error) {
-    const errMsgReason = error.message || error.data || error
-    console.error(chalk.yellow('Could not retrieve client owner account data. ' +
-      `${errMsgReason ? chalk.yellow.bold(`Reason: ${errMsgReason}`) : ''} ` +
-      'Please log in with any account and try again.'))
-    const {profile, tokens} = await cliLoginFlow.run()
-    await registerAccount({profile, tokens})
-    ownerAccount = await getOwnerAccount()
+    const errMsgReason = error.message || error.data || error || ''
+    const errMsg = `Could not retrieve client owner account data. ${errMsgReason}`
+    throw new Error(errMsg)
   }
-  const {applicationData: {name, short_name: shortName}} = ownerAccount
-
   // Response: set to clientOwnerData
   clientOwnerData = ownerAccount.clientOwnerData
+
+  // Log connected application info
+  const {applicationData: {name, short_name: shortName}} = ownerAccount
   console.log(chalk.gray(`Connected to '${chalk.blueBright(clientOwnerData.nickname)}' ` +
     `MercadoLibre Application '${chalk.cyanBright(name)}' (short name: '${shortName}')`))
 }
@@ -121,7 +119,6 @@ async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
 async function setup() {
   await db.connect()
   await cliLoginFlow.setup()
-  await retrieveClientOwnerData()
 }
 
 /**
@@ -138,6 +135,9 @@ async function exit() {
 async function main() {
   console.log(chalk.cyan('Welcome!'))
   await setup()
+  if(!await checkIsLoginRequired()) {
+    await retrieveClientOwnerData()
+  }
   const isFirstLogin = !clientOwnerData && !(await Account.findAnyAuthorized())
 
   let choice
