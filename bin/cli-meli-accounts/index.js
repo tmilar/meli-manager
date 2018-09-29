@@ -85,6 +85,14 @@ const options = {
 }
 
 /**
+ * Check if is a first time usage.
+ * @returns {Promise<boolean>} - resolves true if no existing accounts
+ */
+async function checkIsFirstTimeUsage() {
+  return !(await Account.countDocuments())
+}
+
+/**
  * Find the current clientOwner user data and store it locally.
  *
  * This is needed to properly create and maintain test accounts,
@@ -111,6 +119,18 @@ async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
     `MercadoLibre Application '${chalk.cyanBright(name)}' (short name: '${shortName}')`))
 }
 
+async function welcomeFlow() {
+  const isFirstTimeUser = await checkIsFirstTimeUsage()
+  if (isFirstTimeUser) {
+    console.log(chalk.cyan('Welcome!'))
+    console.log(chalk.bold.gray('This command-line tool will help you manage your MercadoLibre accounts. ' +
+      'Create and store MercadoLibre Test accounts, manage existing ones, and more!'))
+  } else {
+    console.log(chalk.cyan('Welcome back!'))
+    await retrieveClientOwnerData()
+  }
+}
+
 /**
  * Initialize needed services.
  *
@@ -133,12 +153,8 @@ async function exit() {
 }
 
 async function main() {
-  console.log(chalk.cyan('Welcome!'))
   await setup()
-  if(!await checkIsLoginRequired()) {
-    await retrieveClientOwnerData()
-  }
-  const isFirstLogin = !clientOwnerData && !(await Account.findAnyAuthorized())
+  await welcomeFlow()
 
   let choice
   do {
