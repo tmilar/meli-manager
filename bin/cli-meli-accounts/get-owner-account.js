@@ -19,6 +19,7 @@ async function findAnyAccessToken() {
   }
 
   if (!account.isAuthorized()) {
+    account.checkRefreshable()
     const accessToken = await refresh.requestNewAccessToken('mercadolibre', account.auth.refreshToken)
     await account.updateAccessToken(accessToken)
   }

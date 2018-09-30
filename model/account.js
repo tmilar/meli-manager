@@ -35,6 +35,29 @@ accountSchema.methods.isAuthorized = function () {
   return new Date() < this.auth.expires
 }
 
+/**
+ * Check if the account can be refreshed.
+ * Only possible when the auth keys correspond to the current env MELI_CLIENT_ID / application.
+ *
+ * @returns {boolean} - canBeRefreshed
+ */
+accountSchema.methods.canBeRefreshed = function () {
+  return Number(this.auth.clientId) === Number(currentClientId)
+}
+
+/**
+ * @throws if account can't be refreshed for the current Application Client ID
+ */
+accountSchema.methods.checkRefreshable = function () {
+  if (!this.canBeRefreshed()) {
+    throw new Error(`Account '${this.nickname}' can't be refreshed, ` +
+      `the current MELI_CLIENT_ID is '${currentClientId}' ` +
+      `but the account tokens belong to Application clientId '${this.auth.clientId}'. ` +
+      'Please restart the environment, using such clientId app keys. ' +
+      `The Client Application owner is '${this.auth.clientOwnerNickname}'.`)
+  }
+}
+
 accountSchema.methods.isNewAccount = function () {
   // An account is new if:
   //  > it was created in the last TIME_NEW_ACCOUNT_MILLIS time
