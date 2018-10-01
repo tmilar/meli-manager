@@ -47,7 +47,29 @@ Meli Manager is a set of tools to help small and medium sized sellers of Mercado
 * [Node.js 8+](https://nodejs.org/es/download/)
 * [MongoDB 3.4+](https://www.mongodb.com/download-center#community)
 * MercadoLibre API [client keys](https://developers.mercadolibre.com.ar/apps/create-app) ([more info](https://developers.mercadolibre.com/en_us/register-your-application))
-* Google Spreadsheet API [client keys](https://cloud.google.com/docs/authentication/api-keys)
+* Google Spreadsheet API [client keys]
+
+#### Google Spreadsheet Keys Setup
+
+To write to your own spreadsheet you need to set up “Service Account Keys”. Follow these steps:
+
+1. Go to [https://console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)
+
+2. Get Click on “Create credentials”; choose “Service account key”
+
+3. Select JSON when it asks you how to download the key.
+
+4. The service account key you have just generated includes a client_email:  Go to you google spreadsheet that will hold the data and allow this client_email to have write access on this document.
+
+5. With the downloaded JSON data now you have to fill the properties in the .env file:
+
+    SPREADSHEET_PRIVATE_KEY_ID=
+    SPREADSHEET_PRIVATE_KEY= 
+    SPREADSHEET_CLIENT_EMAIL= 
+    SPREADSHEET_CLIENT_ID=
+
+
+
 
 ### First time Setup
 ```
