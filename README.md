@@ -59,9 +59,9 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
 
 3. Select JSON when it asks you how to download the key.
 
-4. The service account key you have just generated includes a client_email:  Go to you google spreadsheet that will hold the data and allow this client_email to have Write access on this document.
+4. The service account key you have just generated includes a client_email. Navigate to your google spreadsheet that will hold the data and allow this client_email to have Write access on the document.
 
-5. With the downloaded JSON data now you have to fill the properties in the .env file:
+5. With the downloaded JSON data, now you have to fill the properties in the .env file:
 ```
     SPREADSHEET_PRIVATE_KEY_ID=
     SPREADSHEET_PRIVATE_KEY= 
