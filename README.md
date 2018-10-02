@@ -126,9 +126,9 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
         SPREADSHEET_CLIENT_ID=<client_id>
     ```
 
-    > Note: the rest of the JSON properties are already set by default in the `config/index.js` file.
+    > Note: the rest of the JSON properties are already set by default in the [`config/index.js`](../master/config/index.js) file.
 
-6. For this specific project, we'll also need the Document Id and Sheet Name where we'll save the Orders data:
+6. For this specific project, we'll also need the Document Id and Sheet Name where we'll save the MercadoLibre Orders data:
 
     > The spreadsheet id can be found in the document URL. For example, in:
     > <https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>
