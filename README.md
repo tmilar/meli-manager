@@ -69,7 +69,28 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
     SPREADSHEET_CLIENT_ID=
 ```
 
+#### Setup your Spreadsheet id and sheet name
 
+In order to indicate your spreadsheet, where the application will store the data, we need to find the spreadsheet
+ Id and also the sheet name. Follow these steps:
+
+1. Create your spreadsheet if it does not exist
+
+2. Open your spreadsheet in the browser and copy the Spreadsheet id from your browser url
+
+    *For example, in the following url:
+    <https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>
+    The spreadsheet Id is: 1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw*
+
+3. Put the the Spreadsheet id value in the following property:
+    ```
+        ORDERS_SPREADSHEET_ID=
+    ```
+
+4. Finally, check on your sheet name and put it in this property:
+    ```
+        ORDERS_SPREADSHEET_SHEETNAME=
+    ```
 
 ### First time Setup
 ```
