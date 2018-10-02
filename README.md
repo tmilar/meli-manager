@@ -59,35 +59,32 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
 
 3. Select JSON when it asks you how to download the key.
 
-4. The service account key you have just generated includes a client_email. Navigate to your google spreadsheet that will hold the data and allow this client_email to have Write access on the document.
+4. The service account key you have just generated includes a client_email. Navigate to your google spreadsheet that will hold the data and allow the client_email to have Write access on the document.
 
 5. With the downloaded JSON data, now you have to fill the properties in the .env file:
-```
-    SPREADSHEET_PRIVATE_KEY_ID=
-    SPREADSHEET_PRIVATE_KEY= 
-    SPREADSHEET_CLIENT_EMAIL= 
-    SPREADSHEET_CLIENT_ID=
-```
 
-#### Setup your Spreadsheet id and sheet name
+    ```
+        SPREADSHEET_PRIVATE_KEY_ID=<private_key_id>
+        SPREADSHEET_PRIVATE_KEY=<private_key>
+        SPREADSHEET_CLIENT_EMAIL=<client_email>
+        SPREADSHEET_CLIENT_ID=<client_id>
+    ```
 
-In order to indicate your spreadsheet, where the application will store the data, we need to find the spreadsheet
- Id and also the sheet name. Follow these steps:
+    > Note: the rest of the JSON properties are already set by default in the `config/index.js` file.
 
-1. Create your spreadsheet if it does not exist
+6. For this specific project, we also need the Spreadsheet document id and sheet name where we'll save the data:
 
-2. Open your spreadsheet in the browser and copy the Spreadsheet id from your browser url
+    > The spreadsheet id can be found in the document URL. For example, in:
+    > <https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>
+    > the spreadsheet Id is: __1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw__
 
-    *For example, in the following url:
-    <https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>
-    The spreadsheet Id is: 1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw*
-
-3. Put the the Spreadsheet id value in the following property:
     ```
         ORDERS_SPREADSHEET_ID=
     ```
 
-4. Finally, check on your sheet name and put it in this property:
+    > The SHEETNAME is the literal name of the sheet to be used.
+    > Usually defaults to "Sheet 1", but can be otherwise.
+
     ```
         ORDERS_SPREADSHEET_SHEETNAME=
     ```
