@@ -36,7 +36,30 @@ async function generateTestAccount() {
   } catch (error) {
     throw new Error(`Could not create a test account: ${error.message || error.data || error}`)
   }
-  console.log('Test account is: ', testAccount)
+  return testAccount
+}
+
+/**
+ *
+ *
+ * @param {Object} loggedUser             - the mercadolibre logged user info
+ * @param {Object} loggedUser.profile     - mercadolibre account profile info
+ * @param {Object} loggedUser.tokens.<accessToken, refreshToken>
+ *                                        - mercadolibre account tokens
+ * @param {Object} testAccountCredentials          - the mercadolibre test account data
+ * @param {string} testAccountCredentials.nickname - test account nickname
+ * @param {string} testAccountCredentials.password - test account generated password
+ *
+ * @returns {Promise<Account>} - resolves to the registered Account
+ */
+async function registerTestAccount({profile, tokens}, testAccountCredentials) {
+  let account
+  try {
+    account = await Account.registerTestUser(profile, tokens, clientOwnerData, testAccountCredentials)
+  } catch (error) {
+    throw new Error('Problem registering test account: ' + (error.message || error))
+  }
+  return account
 }
 
 /**
@@ -56,16 +79,19 @@ async function registerAccount({profile, tokens}) {
     throw new Error('Problem registering account: ' + (error.message || error))
   }
   const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
-  console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'test' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
+  console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
 }
 
 const options = {
   newTestAccount: async () => {
     console.log('Creating test account...')
     try {
-      await generateTestAccount()
-      const loggedUser = await doLoginFlow()
-      await registerAccount(loggedUser)
+      const {nickname, password} = await generateTestAccount()
+      console.log('Success! Please log in now with the created test account:',
+        chalk.bold.yellow(`{ nickname: '${nickname}', password: '${password}' }`))
+      let loggedUser = await doLoginFlow()
+      await registerTestAccount(loggedUser, {nickname, password})
+      console.log(chalk.green(`Registered new test account '${chalk.bold.green(nickname)}' succesfully.`))
     } catch (error) {
       console.error(chalk.red(error.message || error))
     }
