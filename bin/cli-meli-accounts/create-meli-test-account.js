@@ -4,17 +4,17 @@ const {auth: {mercadolibre: {clientId: currentClientId}}} = require('../../confi
 
 /**
  *
- * @param {Account} devAccount - dev acc
+ * @param {Account} authorizedAccount                                - account with valid access_token for the request
  *
- * @return {Promise<object>} - resolves to created test account {username, password},
- *                             or rejects on API error otherwise.
+ * @return {Promise<{nickname: string, password: string, _}>} - resolves to created test account
+ * @throws on Mercadolibre API error response.
  */
-function requestTestAccount(devAccount) {
+function requestTestAccount(authorizedAccount) {
   const testAccountRequestOptions = {
     method: 'POST',
     uri: 'https://api.mercadolibre.com/users/test_user',
     qs: {
-      access_token: devAccount.auth.accessToken
+      access_token: authorizedAccount.auth.accessToken
     },
     body: {
       site_id: 'MLA'
@@ -32,7 +32,7 @@ function requestTestAccount(devAccount) {
  *         - owner account nickname not found
  *         - account is unauthorized or other failure when contacting MercadoLibre API
  *         - test accounts creation quota exceeded for the MeLi App client ID (currently, maximum is 10 accounts).
- * @returns {Promise<Object>} - testAccountCredentials request promise
+ * @returns {Promise<{nickname: string, password: string}>} - testAccountCredentials request promise
  */
 async function createMeliTestAccount() {
   // The requester account needs to be authorized in the same clientOwner Account app realm.
@@ -41,20 +41,27 @@ async function createMeliTestAccount() {
   })
 
   if (!requesterAccount) {
-    throw new Error('Couldn\'t find any authorized account for the current Meli Client ID.')
+    // there might be accounts, but none authorized.
+    const errMsg = 'to create a new Test account, we need to use any authorized Account in the current Meli Client ID realm, ' +
+      'but none was found. Please Login & Register again first. '
+    throw new Error(errMsg)
   }
-
-  console.log(`Requesting test account using selected account '${requesterAccount.nickname}'...`)
 
   let testAccountCredentials
   try {
     testAccountCredentials = await requestTestAccount(requesterAccount)
   } catch (error) {
-    const errMsg = `Error requesting test account with selected account '${requesterAccount.nickname}'`
+    const errMsg = 'Error requesting test account'
     if (error) {
-      error.message = `${errMsg}. ${error.message || error.data || error}`
+      const maximumTestAccountsError = error && error.statusCode && error.statusCode === 403
+      if (maximumTestAccountsError) {
+        error.message = `${errMsg}. Maximum of 10 created accounts reached for the client owner '${requesterAccount.auth.clientOwnerNickname}'. ` +
+          'Please try again using a different client owner.'
+      } else {
+        error.message = `${errMsg}. ${error.message || error.data || error}`
+      }
     }
-    throw new Error(error || errMsg)
+    throw new Error(error.message || error || errMsg)
   }
   return testAccountCredentials
 }
