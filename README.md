@@ -19,7 +19,7 @@ Node.js + MercadoLibre API + Google SpreadSheets API = :tada:
   * [Test](#test)
   * [Misc](#misc)
     + [MercadoLibre test account creation](#mercadolibre-test-account-creation)
-    + [How to: configure Spreadsheet API keys](#how-to-configure-spreadsheet-api-keys)
+    + [Google Spreadsheet API Keys Setup](#google-spreadsheet-api-keys-setup)
 - [Contributing](#contributing)
 
 <!-- tocstop -->
@@ -47,7 +47,8 @@ Meli Manager is a set of tools to help small and medium sized sellers of Mercado
 * [Node.js 8+](https://nodejs.org/es/download/)
 * [MongoDB 3.4+](https://www.mongodb.com/download-center#community)
 * MercadoLibre API [client keys](https://developers.mercadolibre.com.ar/apps/create-app) ([more info](https://developers.mercadolibre.com/en_us/register-your-application))
-* Google Spreadsheet API [client keys](https://cloud.google.com/docs/authentication/api-keys)
+* Google Spreadsheet API [client keys](https://cloud.google.com/docs/authentication/api-keys) (see [setup steps](#google-spreadsheet-api-keys-setup))
+
 
 ### First time Setup
 ```
@@ -104,10 +105,46 @@ node bin/meli-test-account --user=DEV_ACCOUNT_USERNAME
 Where `DEV_ACCOUNT_USERNAME` is the Dev account that will request the test user.
 If `--user=` (or equivalent `-u=`) flag is not specified, will try to find it in environment variable `DEV_ACCOUNT_USERNAME`.
 
-#### How to: configure Spreadsheet API keys
-```
-{{ TODO: complete }}
-```
+#### Google Spreadsheet API Keys Setup
+
+To write to your own spreadsheet you need to set up “Service Account Keys”. Follow these steps:
+
+1. Go to [https://console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)
+
+2. Click on “Create credentials”; choose “Service account key”
+
+3. Select JSON when it asks you how to download the key.
+
+4. The service account key you have just generated includes a client_email. Navigate to your google spreadsheet that will hold the data and allow the client_email to have Write access on the document.
+
+5. With the downloaded JSON data, now you have to fill the properties in the .env file:
+
+    ```
+        SPREADSHEET_PRIVATE_KEY_ID=<private_key_id>
+        SPREADSHEET_PRIVATE_KEY=<private_key>
+        SPREADSHEET_CLIENT_EMAIL=<client_email>
+        SPREADSHEET_CLIENT_ID=<client_id>
+    ```
+
+    > Note: the rest of the JSON properties are already set by default in the [`config/index.js`](../master/config/index.js) file.
+
+6. For this specific project, we'll also need the Document Id and Sheet Name where we'll save the MercadoLibre Orders data:
+
+    > The spreadsheet id can be found in the document URL. For example, in:
+    > <https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>
+    > the spreadsheet Id is: __1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw__
+
+    ```
+        ORDERS_SPREADSHEET_ID=
+    ```
+
+    > The SHEETNAME is the literal name of the sheet to be used.
+    > Usually defaults to "Sheet 1", but can be otherwise.
+
+    ```
+        ORDERS_SPREADSHEET_SHEETNAME=
+    ```
+
 
 ## Contributing
 - Create a new GitHub issue.
