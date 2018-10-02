@@ -9,14 +9,17 @@ const accountSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   email: String,
+  isTestAccount: Boolean,
   auth: {
     accessToken: String,
     refreshToken: String,
     expires: Date,
     clientId: Number,
     clientOwnerNickname: String,
-  },
-  isTestAccount: Boolean
+    testAccountInfo: {
+      password: String
+    }
+  }
 }, {
   timestamps: true
 })
@@ -75,7 +78,7 @@ accountSchema.methods.isNewAccount = function () {
  *
  * @param {Object} profile <id, nickname, first_name, last_name, email>   - mercadolibre account profile
  * @param {Object} auth <accessToken, refreshToken>                       - mercadolibre access tokens
- * @param {string} [clientOwnerData]                                      - the current client owner
+ * @param {Object} [clientOwnerData]                                      - the current client owner
  * @param {string} [clientOwnerData.nickname]                             - the current client owner nickname
  *
  * @returns {Promise<Account>} - mongoose promise, resolves to the saved Account object.
@@ -103,6 +106,25 @@ accountSchema.statics.register = async function (profile, auth, {nickname: clien
   }
 
   const registered = await this.findOneAndUpdate({id}, account, {upsert: true, new: true})
+  return registered
+}
+
+/**
+ * Register a Test user account. Includes login credentials.
+ *
+ * @param {Object} profile <id, nickname, first_name, last_name, email>   - mercadolibre account profile
+ * @param {Object} auth <accessToken, refreshToken>                       - mercadolibre access tokens
+ * @param {Object} [clientOwnerData]                                      - the current client owner
+ * @param {string} [clientOwnerData.nickname]                             - the current client owner nickname
+ * @param {Object} testAccountInfo <password, ...>                        - test account credentials
+ *
+ * @returns {Promise<Account>} - mongoose promise, resolves to the saved Account object.
+ */
+accountSchema.statics.registerTestUser = async function (profile, auth, clientOwnerData, testAccountInfo) {
+  const registered = await this.register(profile, auth, clientOwnerData)
+  registered.isTestAccount = true
+  registered.auth.testAccountInfo = {...testAccountInfo}
+  await registered.save()
   return registered
 }
 
