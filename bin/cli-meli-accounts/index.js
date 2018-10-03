@@ -82,6 +82,14 @@ async function registerAccount({profile, tokens}) {
   console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
 }
 
+async function tryEnsureExpectedLogin(loggedUser, expectedNickname) {
+  while (loggedUser.profile.nickname !== expectedNickname) {
+    console.log(chalk.red(`Error: must log in with the created test user '${expectedNickname}'`))
+    loggedUser = await doLoginFlow()
+  }
+  return loggedUser
+}
+
 const options = {
   newTestAccount: async () => {
     console.log('Creating test account...')
@@ -90,6 +98,7 @@ const options = {
       console.log('Success! Please log in now with the created test account:',
         chalk.bold.yellow(`{ nickname: '${nickname}', password: '${password}' }`))
       let loggedUser = await doLoginFlow()
+      loggedUser = await tryEnsureExpectedLogin(loggedUser, nickname)
       await registerTestAccount(loggedUser, {nickname, password})
       console.log(chalk.green(`Registered new test account '${chalk.bold.green(nickname)}' succesfully.`))
     } catch (error) {
