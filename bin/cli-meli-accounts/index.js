@@ -165,8 +165,8 @@ async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
 
   // Log connected application info
   const {applicationData: {name, short_name: shortName}} = ownerAccount
-  console.log(chalk.gray(`Connected to ${chalk.blueBright(clientOwnerData.nickname)} ` +
-    `MercadoLibre Application '${chalk.cyanBright(name)}' (short name: '${shortName}')`))
+  console.log(chalk.gray(`Using client owner ${chalk.blueBright(clientOwnerData.nickname)}` +
+    ` MercadoLibre Application '${chalk.cyanBright(name)}' (short name: '${shortName}')`))
 }
 
 async function welcomeFlow() {
