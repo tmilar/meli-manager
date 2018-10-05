@@ -7,13 +7,13 @@ const state = {
 
 const choices = () => {
   const isFirstLoginChoice = state.isLoginRequired && {
-    name: `Login ${state.isDbConnected ? '& Register ' : ''}existing account`,
+    name: `Login ${state.isDbConnected ? '& Save ' : ''}existing account`,
     value: 'firstUserLogin',
-    short: `Login ${state.isDbConnected ? '& Register ' : ''}`
+    short: `Login ${state.isDbConnected ? '& Save ' : ''}`
   }
 
   const loginExistingAccountChoice = {
-    name: `Login ${state.isDbConnected ? '& Register ' : ''}existing account`,
+    name: `Login ${state.isDbConnected ? '& Save ' : ''}existing account`,
     value: 'existingAccount',
     short: 'Existing account'
   }

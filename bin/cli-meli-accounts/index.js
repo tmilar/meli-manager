@@ -59,6 +59,9 @@ async function registerTestAccount({profile, tokens}, testAccountCredentials) {
   } catch (error) {
     throw new Error('Problem registering test account: ' + (error.message || error))
   }
+  const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
+  console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST ' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
+
   return account
 }
 
@@ -79,7 +82,7 @@ async function registerAccount({profile, tokens}) {
     throw new Error('Problem registering account: ' + (error.message || error))
   }
   const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
-  console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
+  console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST ' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
 }
 
 async function tryEnsureExpectedLogin(loggedUser, expectedNickname) {
@@ -100,7 +103,6 @@ const options = {
       let loggedUser = await doLoginFlow()
       loggedUser = await tryEnsureExpectedLogin(loggedUser, nickname)
       await registerTestAccount(loggedUser, {nickname, password})
-      console.log(chalk.green(`Registered new test account '${chalk.bold.green(nickname)}' succesfully.`))
     } catch (error) {
       console.error(chalk.red(error.message || error))
     }
