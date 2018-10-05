@@ -21,6 +21,7 @@ router.get('/mercadolibre/callback', passport.authorize('mercadolibre', {failure
 
 router.get('/success', (req, res) => res.send('You have successfully logged in'))
 
-router.get('/error', (req, res) => res.send('error logging in'))
+router.get('/error', (req, res) => res.send('error logging in. ' +
+  `${req.query && req.query.length && `MercadoLibre responded with params: ${JSON.stringify(req.query)}`}`))
 
 module.exports = router
