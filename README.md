@@ -131,12 +131,12 @@ _Additionaly, it could be run doing_ `npm run meli:test-account`
 > would output:
 >
 > ```
->| Welcome!
- | ? What do you want to do? (Use arrow keys)
- | > Create a new Test account
- |   Login & Register existing account
- |   ──────────────
- |   Exit
+> Welcome!
+> ? What do you want to do? (Use arrow keys)
+> > Create a new Test account
+>   Login & Register existing account
+>   ──────────────
+>   Exit
 > ```
 
 
