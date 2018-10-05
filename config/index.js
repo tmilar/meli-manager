@@ -13,7 +13,7 @@ const config = {
   },
   auth: {
     mercadolibre: {
-      clientId: process.env.MELI_CLIENT_ID,
+      clientId: Number(process.env.MELI_CLIENT_ID),
       clientSecret: process.env.MELI_CLIENT_SECRET
     },
     spreadsheet: {
