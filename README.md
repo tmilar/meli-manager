@@ -95,11 +95,14 @@ npm test
 A command line utility to locally create, authorize and store a MeLi test user account is provided.
 
 __How to use__
-1. Setup env variables in `.env` file: `bin/cli-meli-acocunts/.env`
-
+1. Setup env variables in `bin/cli-meli-accounts` path:
 ```
-# Port to use for oauth server. Suggested '3001'
-PORT=
+$ npm run meli:test-account:setup
+```
+This will initialize a fresh `bin/cli-meli-accounts/.env` file like this, for you to complete:
+```
+# Port to use for oauth server. 3001 is suggested.
+PORT=3001
 
 # Mongo DB URL where to register/retrieve user Accounts.
 MONGODB_URL=
