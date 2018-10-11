@@ -47,7 +47,11 @@
     "passport-mercadolibre": "0.0.2",
     "passport-oauth2-refresh": "1.1.0",
     "request-promise": "4.2.2",
-    "serve-favicon": "2.5.0"
+    "serve-favicon": "2.5.0",
+    "bcrypt-nodejs": "*",
+    "jwt-simple": "*",
+    "passport-jwt": "*",
+    "passport-local": "*"
   },
   "devDependencies": {
     "ava": "1.0.0-beta.8",
