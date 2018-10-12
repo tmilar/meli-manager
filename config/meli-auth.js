@@ -11,11 +11,11 @@ const mercadoLibreStrategy = new MercadoLibreStrategy({
   clientSecret,
   callbackURL: '/auth/mercadolibre/callback'
 },
-  (async (accessToken, refreshToken, profile, cb) => {
-    // + store/retrieve user from database, together with access token and refresh token
-    await Account.register(profile, {accessToken, refreshToken})
-    return cb(null, profile)
-  })
+(async (accessToken, refreshToken, profile, cb) => {
+  // + store/retrieve user from database, together with access token and refresh token
+  await Account.register(profile, {accessToken, refreshToken})
+  return cb(null, profile)
+})
 )
 passport.use(mercadoLibreStrategy)
 

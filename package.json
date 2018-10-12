@@ -29,6 +29,7 @@
     }
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "bluebird": "3.5.2",
     "body-parser": "1.18.3",
     "chrome-launcher": "0.10.2",
@@ -39,19 +40,19 @@
     "express": "4.16.3",
     "google-spreadsheet": "2.0.5",
     "hbs": "4.0.1",
+    "jwt-simple": "0.5.5",
     "moment": "2.22.2",
     "moment-timezone": "0.5.21",
     "mongoose": "5.2.13",
+    "mongoose-type-email": "1.0.9",
     "morgan": "1.9.1",
     "passport": "0.4.0",
+    "passport-jwt": "4.0.0",
+    "passport-local": "1.0.0",
     "passport-mercadolibre": "0.0.2",
     "passport-oauth2-refresh": "1.1.0",
     "request-promise": "4.2.2",
-    "serve-favicon": "2.5.0",
-    "bcrypt-nodejs": "*",
-    "jwt-simple": "*",
-    "passport-jwt": "*",
-    "passport-local": "*"
+    "serve-favicon": "2.5.0"
   },
   "devDependencies": {
     "ava": "1.0.0-beta.8",

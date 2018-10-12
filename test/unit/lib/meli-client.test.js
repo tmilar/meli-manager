@@ -30,7 +30,7 @@ test.before('get test accounts for multi-account support testing', async t => {
 
   t.not(testAccounts, null, `Should retrieve accounts for testing (nicknames '${testAccountUsernames}') from DB.`)
   t.is(testAccounts.length, testAccountUsernames.length, `Should find the specified test accounts (nicknames '${testAccountUsernames}').`)
-  t.true(testAccountUsernames.every(nickname => testAccounts.some(acc => acc.nickname === nickname)), `Should find all of the same specified test accounts`)
+  t.true(testAccountUsernames.every(nickname => testAccounts.some(acc => acc.nickname === nickname)), 'Should find all of the same specified test accounts')
   Object.assign(t.context, {testAccounts})
 })
 

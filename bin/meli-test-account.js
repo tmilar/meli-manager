@@ -84,7 +84,7 @@ async function launchChrome(loginUrl) {
     startingUrl: loginUrl
   })
   chrome.process.once('exit', onAuthAbort)
-  console.log(`Chrome window opened.`)
+  console.log('Chrome window opened.')
   return chrome
 }
 
@@ -92,7 +92,7 @@ function startWaitLoginSpinner() {
   const dateStart = new Date()
   const dateEnd = dateStart.getTime() + TIMEOUT_MS
   const spinner = new Spinner({
-    text: `%s `,
+    text: '%s ',
     stream: process.stderr,
     onTick(msg) {
       const now = new Date()
