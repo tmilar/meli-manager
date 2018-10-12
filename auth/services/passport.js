@@ -49,11 +49,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
   } catch (error) {
     return done(error, false)
   }
-  if (user) {
-    done(null, user)
-  } else {
-    done(null, false)
-  }
+  done(null, user || false)
 })
 
 // Tell passport to use this strategy

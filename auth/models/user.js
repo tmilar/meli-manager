@@ -11,27 +11,20 @@ const userSchema = new Schema({
 
 // On Save Hook, encrypt password
 // Before saving a model, run this function
-userSchema.pre('save', function(next) {
+userSchema.pre('save', async function (next) {
   // Get access to the user model
   const user = this
 
   // Generate a salt then run callback
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) {
-      return next(err)
-    }
-
-    // Hash (encrypt) our password using the salt
-    bcrypt.hash(user.password, salt, null, (err, hash) => {
-      if (err) {
-        return next(err)
-      }
-
-      // Overwrite plain text password with encrypted password
-      user.password = hash
-      next()
-    })
-  })
+  let salt, hash
+  try {
+    salt = await bcrypt.genSalt(10, () => {})
+    hash = await bcrypt.hash(user.password, salt, null, () => {})
+  } catch (error) {
+    return next(error)
+  }
+  user.password = hash
+  next()
 })
 
 userSchema.methods.comparePassword = function (candidatePassword, callback) {
