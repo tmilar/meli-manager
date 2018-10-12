@@ -7,19 +7,12 @@ const passport = require('passport');
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireSignin = passport.authenticate('local', { session: false });
 
-// module.exports = function(app) {
-//     app.get('/', requireAuth, function(req, res) {
-//         res.send({ hi: 'there' });
-//     });
-//     app.post('/signin', requireSignin, Authentication.signin);
-//     app.post('/signup', Authentication.signup);
-// }
-
-
+router.post('/signin', requireSignin, Authentication.signin)
+router.post('/signup', Authentication.signup)
 
 /* GET home page. */
-router.get('/', requireAuth, (req, res) => {
-  res.render('index', {title: 'Express'})
+router.get('/*', requireAuth, (req, res, next) => {
+  next()
 })
 
 module.exports = router
