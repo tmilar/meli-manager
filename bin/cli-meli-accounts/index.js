@@ -121,11 +121,8 @@ async function main() {
   await exit()
 }
 
-(async () => {
-  try {
-    await main()
-  } catch (error) {
+main()
+  .catch(error => {
     console.error(chalk.bold.red('unexpected error: '), error)
     process.exit(1)
-  }
-})()
+  })

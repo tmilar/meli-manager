@@ -25,8 +25,13 @@ const connect = async () => {
   return ret
 }
 
-const disconnect = async () => {
-  await mongoose.disconnect()
+/**
+ * Explicitly close mongo db connection.
+ *
+ * @returns {Promise<void>} - exec promise
+ */
+const disconnect = () => {
+  return mongoose.disconnect()
 }
 
 module.exports = {connect, disconnect}
