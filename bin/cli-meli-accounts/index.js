@@ -3,6 +3,7 @@ const envPath = require('path').resolve(__dirname, '.env')
 require('dotenv').config({path: envPath})
 const chalk = require('chalk')
 const program = require('commander')
+const Promise = require('bluebird')
 
 program
   .version('0.1.0')
@@ -188,20 +189,18 @@ async function welcomeFlow() {
  *
  * @returns {Promise<void>} - exec promise
  */
-async function setup() {
-  await db.connect()
-  await cliLoginFlow.setup()
+function setup() {
+  return Promise.all([db.connect(), cliLoginFlow.setup()])
 }
 
 /**
  * Cleanup/close opened services for a graceful process exit.
- * Otherwise the process will keep running.
+ * Otherwise, the process will keep running.
  *
  * @returns {Promise<void>} - exec promise
  */
-async function exit() {
-  await cliLoginFlow.clean()
-  await db.disconnect()
+function exit() {
+  return Promise.all([db.disconnect(), cliLoginFlow.clean()])
 }
 
 async function main() {
@@ -224,11 +223,8 @@ async function main() {
   await exit()
 }
 
-(async () => {
-  try {
-    await main()
-  } catch (error) {
+main()
+  .catch(error => {
     console.error(chalk.bold.red('unexpected error: '), error)
     process.exit(1)
-  }
-})()
+  })

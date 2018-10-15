@@ -95,7 +95,7 @@ function setupOAuthRouter(app) {
 /**
  * Start express server
  * @param {object} app - express instance
- * @returns {Promise<any>} - resolves to server instance
+ * @returns {Promise<http.Server>} - resolves to server instance
  */
 function startServer(app) {
   // Start express server
@@ -160,8 +160,13 @@ class CliLoginFlow {
     return loggedUserPromise
   }
 
-  async clean() {
-    await this.server.close()
+  /**
+   * Cleanup: explictly close the server.
+   *
+   * @returns {Promise<void>} - exec promise
+   */
+  clean() {
+    return this.server.close()
   }
 }
 
