@@ -14,7 +14,7 @@ if (!clientSecret) {
 }
 
 const meliAuth = {
-  onAuth: async (profile, tokens) => {
+  onAuthSuccess: async (profile, tokens) => {
     // Default: register profile to DB, together with access and refresh tokens
     await Account.register(profile, tokens)
   },
@@ -24,7 +24,7 @@ const meliAuth = {
 
 /**
  * Callback after Mercadolibre authorization.
- * Uses default meliAuth.onAuth() callback, but it can be overwritten for custom logic ie. CLI app.
+ * Uses default meliAuth.onAuthSuccess() callback, but it can be overwritten for custom logic ie. CLI app.
  *
  * @param accessToken
  * @param refreshToken
@@ -34,7 +34,7 @@ const meliAuth = {
  */
 const authorizedCb = async (accessToken, refreshToken, profile, done) => {
   const tokens = {accessToken, refreshToken}
-  await meliAuth.onAuth(profile, tokens)
+  await meliAuth.onAuthSuccess(profile, tokens)
   return done(null, profile)
 }
 

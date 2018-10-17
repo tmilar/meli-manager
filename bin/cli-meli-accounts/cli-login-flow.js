@@ -123,7 +123,7 @@ class CliLoginFlow {
     this.server = await startServer(app)
 
     // Override default meli-passport-strategy Auth callback -> do no-operation, only return the result.
-    meliAuth.onAuth = (profile, tokens) => {
+    meliAuth.onAuthSuccess = (profile, tokens) => {
       const loggedUser = {profile, tokens}
       onAuthSuccess(loggedUser)
     }
