@@ -122,7 +122,7 @@ const options = {
     console.log('To get started, please log in with an existing account.')
     try {
       const loggedUser = await doLoginFlow()
-      await retrieveClientOwnerData(loggedUser)
+      await retrieveAndDisplayApplicationOwnerData(loggedUser)
       await registerAccount(loggedUser)
     } catch (error) {
       console.error(chalk.red(error.message || error))
@@ -154,13 +154,14 @@ async function checkIsFirstTimeUsage() {
  * @returns {Promise<void>} - exec promise
  * @throws error if couldn't fetch owner account/application data.
  */
-async function retrieveClientOwnerData({tokens: {accessToken}} = {tokens: {}}) {
+async function retrieveAndDisplayApplicationOwnerData({tokens: {accessToken}} = {tokens: {}}) {
   let ownerAccount
   try {
     ownerAccount = await getOwnerAccount(accessToken)
   } catch (error) {
     const errMsgReason = error.message || error.data || error || ''
-    const errMsg = `Could not retrieve client owner account data. ${errMsgReason}`
+    const errMsg = `Could not retrieve client owner account data.${` ${errMsgReason}. \n`} `
+      + `Please make sure the saved accounts data is valid and try again. `
     throw new Error(errMsg)
   }
   // Response: set to clientOwnerData
@@ -178,10 +179,10 @@ async function welcomeFlow() {
     console.log(chalk.cyan('Welcome!'))
     console.log(chalk.bold.gray('This command-line tool will help you manage your MercadoLibre accounts. ' +
       'Create and store MercadoLibre Test accounts, manage existing ones, and more!'))
-  } else {
-    console.log(chalk.cyan('Welcome back!'))
-    await retrieveClientOwnerData()
+    return
   }
+  console.log(chalk.cyan('Welcome back!'))
+  await retrieveAndDisplayApplicationOwnerData()
 }
 
 /**
