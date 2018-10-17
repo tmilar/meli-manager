@@ -94,6 +94,21 @@ async function tryEnsureExpectedLogin(loggedUser, expectedNickname) {
   return loggedUser
 }
 
+/**
+ * Display selected meli accounts nicknames.
+ *
+ * @param {Array<Account>} accounts   - the accounts to display
+ */
+function diplayAccountsList(accounts) {
+  if(!accounts || !accounts.length) {
+    console.log(chalk.red('No accounts available for the current clientId.'))
+    return
+  }
+  console.log("Available accounts are: ")
+  const accountsList = accounts.map(acc => acc.nickname).join("\n")
+  console.log(chalk.magenta(accountsList))
+}
+
 const options = {
   newTestAccount: async () => {
     console.log('Creating test account...')
@@ -124,6 +139,14 @@ const options = {
       const loggedUser = await doLoginFlow()
       await retrieveAndDisplayApplicationOwnerData(loggedUser)
       await registerAccount(loggedUser)
+    } catch (error) {
+      console.error(chalk.red(error.message || error))
+    }
+  },
+  listAccounts: async () => {
+    try {
+      const accounts = await Account.findAllByCurrentClientId()
+      diplayAccountsList(accounts)
     } catch (error) {
       console.error(chalk.red(error.message || error))
     }
