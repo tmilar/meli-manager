@@ -1,26 +1,19 @@
-const router = require('express').Router()
+const express = require('express')
+const router = express.Router()
+const passport = require('passport')
+const {signup, signin} = require('../controllers/authentication')
+const {setup: authSetup} = require('../service/passportAuth')
 
-const {passport} = require('../config/meli-auth')
+authSetup()
+const requireAuth = passport.authenticate('jwt', {session: false})
+const requireSignin = passport.authenticate('local', {session: false})
 
-passport.serializeUser((user, cb) => {
-  cb(null, user)
+router.post('/signin', requireSignin, signin)
+router.post('/signup', signup)
+
+/* GET home page. */
+router.get('/*', requireAuth, (req, res, next) => {
+  next()
 })
-
-passport.deserializeUser((obj, cb) => {
-  cb(null, obj)
-})
-
-router.get('/mercadolibre', passport.authorize('mercadolibre'))
-
-router.get('/mercadolibre/callback', passport.authorize('mercadolibre', {failureRedirect: '/auth/error'}),
-  (req, res) => {
-    // Successful authentication, redirect home.
-    console.log('Successful login!')
-    res.redirect('/auth/success')
-  })
-
-router.get('/success', (req, res) => res.send('You have successfully logged in'))
-
-router.get('/error', (req, res) => res.send('error logging in'))
 
 module.exports = router
