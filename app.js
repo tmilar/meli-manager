@@ -10,8 +10,8 @@ const bodyParser = require('body-parser')
 // Mount db connection
 require('./config/db').connect()
 
-const index = require('./routes')
 const auth = require('./routes/auth')
+const meliAuth = require('./routes/meliAuth')
 const order = require('./routes/order')
 const notification = require('./routes/notification')
 
@@ -30,8 +30,8 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Setup routes
-app.use('/', index)
-app.use('/auth', auth)
+app.use('/', auth)
+app.use('/auth', meliAuth)
 app.use('/order', order)
 app.use('/notification', notification)
 
