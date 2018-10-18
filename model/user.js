@@ -76,11 +76,18 @@ userSchema.statics.signin = async function (email, password) {
   let isMatch
   try {
     user = await User.findOne({email})
+  } catch (error) {
+    throw new UserError('Error searching for user', 404)
+  }
+  if (!user) {
+    throw new UserError('User not found', 404)
+  }
+  try {
     isMatch = await user.comparePassword(password)
   } catch (error) {
-    throw new UserError('Error signing in', 401)
+    throw new UserError('Invalid credentials', 401)
   }
-  if (!user || !isMatch) {
+  if (!isMatch) {
     throw new UserError('Error signing in', 401)
   }
   return user
