@@ -12,7 +12,8 @@
     "test:watch": "ava --verbose --watch",
     "ava": "ava",
     "setup": "node ./bin/setup",
-    "meli:test-account": "node ./bin/meli-test-account"
+    "meli:test-account": "node ./bin/cli-meli-accounts",
+    "meli:test-account:setup": "npm run setup -- --path=./bin/cli-meli-accounts"
   },
   "now": {
     "dotenv": ".env.production"
@@ -29,19 +30,22 @@
     }
   },
   "dependencies": {
-    "bluebird": "3.5.1",
+    "bluebird": "3.5.2",
     "body-parser": "1.18.3",
+    "chalk": "2.4.1",
     "chrome-launcher": "0.10.2",
     "cli-spinner": "0.2.8",
+    "commander": "2.18.0",
     "cookie-parser": "1.4.3",
     "debug": "3.1.0",
     "dotenv": "6.0.0",
     "express": "4.16.3",
     "google-spreadsheet": "2.0.5",
     "hbs": "4.0.1",
+    "inquirer": "6.2.0",
     "moment": "2.22.2",
     "moment-timezone": "0.5.21",
-    "mongoose": "5.2.5",
+    "mongoose": "5.2.13",
     "morgan": "1.9.0",
     "passport": "0.4.0",
     "passport-mercadolibre": "0.0.2",
@@ -53,15 +57,15 @@
     "ava": "1.0.0-beta.8",
     "babel-eslint": "9.0.0",
     "eslint": "5.2.0",
-    "eslint-config-xo": "0.23.0",
+    "eslint-config-xo": "0.25.0",
     "eslint-plugin-ava": "5.0.0",
     "eslint-plugin-import": "2.13.0",
     "eslint-plugin-no-use-extend-native": "0.3.12",
     "eslint-plugin-node": "7.0.1",
     "eslint-plugin-promise": "3.8.0",
-    "eslint-plugin-unicorn": "4.0.3",
+    "eslint-plugin-unicorn": "6.0.1",
     "nodemon": "1.18.4",
-    "xo": "0.21.1"
+    "xo": "0.23.0"
   },
   "eslintConfig": {
     "parser": "babel-eslint",
