@@ -26,6 +26,11 @@ const choices = () => {
       disabled: state.isLoginRequired && 'Please Login first.'
     },
     isFirstLoginChoice || loginExistingAccountChoice,
+    {
+      name: 'List saved accounts',
+      value: 'listAccounts',
+      short: 'List accounts'
+    },
     new inquirer.Separator(),
     {
       name: 'Exit',

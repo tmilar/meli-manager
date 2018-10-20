@@ -160,6 +160,12 @@ accountSchema.statics.findAnyAuthorizable = function () {
   })
 }
 
+accountSchema.statics.findAllByCurrentClientId = function () {
+  return this.find({
+    'auth.clientId': currentClientId
+  })
+}
+
 const Account = mongoose.model('Account', accountSchema)
 
 module.exports = Account
