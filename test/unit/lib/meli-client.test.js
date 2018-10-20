@@ -51,6 +51,13 @@ test.serial.before('initialize meli client with multiple test accounts', t => {
   Object.assign(t.context, {multiClient})
 })
 
+test.serial.before('ensure meli client test accounts are authorized', async t => {
+  const {client, multiClient} = t.context
+  await client.getOrders()
+  await multiClient.getOrders()
+  t.pass("meli client requests succeded for all accounts")
+})
+
 test('meli client retrieves sales orders of dev account', async t => {
   const {client, devAccount} = t.context
   const ordersResponse = await client.getOrders()
