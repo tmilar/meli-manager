@@ -157,7 +157,7 @@ const options = {
 }
 
 async function checkIsLoginRequired() {
-  return !clientOwnerData && !(await Account.findAnyAuthorized()) && !(await Account.countDocuments())
+  return !clientOwnerData || !(await Account.findAnyAuthorized()) || !(await Account.countDocuments())
 }
 
 /**
@@ -183,7 +183,7 @@ async function retrieveAndDisplayApplicationOwnerData({tokens: {accessToken}} = 
     ownerAccount = await getOwnerAccount(accessToken)
   } catch (error) {
     const errMsgReason = error.message || error.data || error || ''
-    const errMsg = `Could not retrieve client owner account data.${` ${errMsgReason}. \n`} `
+    const errMsg = `Could not retrieve client owner account data.${` ${errMsgReason}\n`}`
       + `Please make sure the saved accounts data is valid and try again. `
     throw new Error(errMsg)
   }
@@ -205,7 +205,14 @@ async function welcomeFlow() {
     return
   }
   console.log(chalk.cyan('Welcome back!'))
-  await retrieveAndDisplayApplicationOwnerData()
+  try {
+    await retrieveAndDisplayApplicationOwnerData()
+  } catch (error) {
+    const errMsg = error.message || error.data || error || ''
+    if(errMsg.length > 0) {
+      console.log(errMsg)
+    }
+  }
 }
 
 /**
