@@ -144,25 +144,6 @@ test('meli client getQuestion() returns error object and empty account when the 
   t.deepEqual(account, {}, 'Should retrieve no account seller info')
 })
 
-// TODO temporarily ignored test - the questionId is returning 404 response with no error. Fix the test.
-test.failing('meli client getQuestion() returns a question and empty account when the question id is found, but of an unregistered seller acc', async t => {
-  const {multiClient} = t.context
-  const fixture = {
-    questionId: 1 // Existing question but of a different user
-  }
-
-  // Get the question by id
-  const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
-
-  // Assert the question returned with no seller info
-  t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
-  const questionResponse = questionResponseArr[0]
-  t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key)), 'Response should include the account owner + the response question')
-  const {account, response} = questionResponse
-  t.is(response.id, fixture.questionId, `Should retrieve question data of selected id ${fixture.questionId}`)
-  t.deepEqual(account, {}, 'Should retrieve no account seller info')
-})
-
 test.failing('meli client post question answer', async t => {
   // Preconditions
   // 1. test account with question.status === "UNANSWERED"
