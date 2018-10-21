@@ -106,9 +106,11 @@ test('meli client getQuestion() retrieves one question specified by id + its sel
   const {multiClient, testAccounts} = t.context
   const fixture = {
     questionId: 5757310895,
-    sellerId: 33687004
+    sellerNickname: 'POKEVENTAS_JUSIMIL'
   }
-  const sellerAccount = testAccounts.find(acc => acc.id === fixture.sellerId)
+  const sellerAccount = testAccounts.find(acc => acc.nickname === fixture.sellerNickname)
+  t.truthy(sellerAccount, `Seller account ${fixture.sellerNickname} `
+    + `not included in selected testAccounts (${testAccounts.map(a => `'${a.nickname}'`).join(",")})`)
 
   // Get the question by id
   const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
