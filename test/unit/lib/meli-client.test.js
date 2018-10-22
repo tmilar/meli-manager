@@ -1,4 +1,4 @@
-/* eslint-disable import/first,import/order,import/no-unassigned-import */
+/* eslint-disable import/first,import/order,import/no-unassigned-import,camelcase */
 import test from 'ava'
 
 // Load test env variables
@@ -53,9 +53,10 @@ test.serial.before('initialize meli client with multiple test accounts', t => {
 
 test.serial.before('ensure meli client test accounts are authorized', async t => {
   const {client, multiClient} = t.context
-  await client.getOrders()
-  await multiClient.getOrders()
-  t.pass("meli client requests succeded for all accounts")
+  const orders = await client.getOrders()
+  const multiOrders = await multiClient.getOrders()
+  t.true(Array.isArray(orders), 'should have responded with orders array')
+  t.true(Array.isArray(multiOrders), 'should have responded with orders array')
 })
 
 test('meli client retrieves sales orders of dev account', async t => {
@@ -109,8 +110,8 @@ test('meli client getQuestion() retrieves one question specified by id + its sel
     sellerNickname: 'POKEVENTAS_JUSIMIL'
   }
   const sellerAccount = testAccounts.find(acc => acc.nickname === fixture.sellerNickname)
-  t.truthy(sellerAccount, `Seller account ${fixture.sellerNickname} `
-    + `not included in selected testAccounts (${testAccounts.map(a => `'${a.nickname}'`).join(",")})`)
+  t.truthy(sellerAccount, `Seller account ${fixture.sellerNickname} ` +
+    `not included in selected testAccounts (${testAccounts.map(a => `'${a.nickname}'`).join(',')})`)
 
   // Get the question by id
   const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
