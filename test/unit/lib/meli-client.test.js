@@ -164,7 +164,12 @@ const testItemJson = {
   ]
 }
 
-async function _createTestListing(account, meliClient) {
+async function _getOrCreateTestActiveListing(account, meliClient) {
+  const listings = await meliClient.getListings(account)
+  const activeListings = listings.filter(l => l.status === 'active')
+  if (activeListings && activeListings.length > 0) {
+    return activeListings[0]
+  }
   return meliClient.createListing(account, testItemJson)
 }
 
