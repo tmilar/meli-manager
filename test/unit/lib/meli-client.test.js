@@ -145,6 +145,29 @@ test('meli client getQuestion() returns error object and empty account when the 
   t.deepEqual(account, {}, 'Should retrieve no account seller info')
 })
 
+const testItemJson = {
+  title: 'Item de test - No Ofertar',
+  category_id: 'MLA3530', // 'OTHERS' category
+  price: 10,
+  currency_id: 'ARS',
+  available_quantity: 1,
+  buying_mode: 'buy_it_now',
+  listing_type_id: 'bronze',
+  condition: 'new',
+  description: {
+    plain_text: 'Item: Ray-Ban WAYFARER Gloss Black RB2140 901  Model: RB2140. Size: 50mm. Name: WAYFARER. Color: Gloss Black. Includes Ray-Ban Carrying Case and Cleaning Cloth. New in Box'
+  },
+  warranty: '12 months by Ray Ban',
+  pictures: [
+    {source: 'http://upload.wikimedia.org/wikipedia/commons/f/fd/Ray_Ban_Original_Wayfarer.jpg'},
+    {source: 'http://en.wikipedia.org/wiki/File:Teashades.gif'}
+  ]
+}
+
+async function _createTestListing(account, meliClient) {
+  return meliClient.createListing(account, testItemJson)
+}
+
 test.failing('meli client post question answer', async t => {
   // Preconditions
   // 1. test account with question.status === "UNANSWERED"
