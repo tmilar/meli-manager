@@ -173,6 +173,22 @@ async function _getOrCreateTestActiveListing(account, meliClient) {
   return meliClient.createListing(account, testItemJson)
 }
 
+function _createQuestion(askingAccount, itemId, meliClient) {
+  const questionText = `pregunta de prueba ${JSON.stringify(new Date())}`
+  console.log(`now posting the question '${questionText}' to the account: '${askingAccount.nickname}' to the item '${itemId}'`)
+  return meliClient.postQuestion(askingAccount, itemId, questionText)
+}
+
+async function _createQuestionOnTestAccount(askingAccount, respondingAccount, meliClient, t) {
+  const {id: itemId} = await _getOrCreateTestActiveListing(respondingAccount, meliClient)
+  t.truthy(itemId, 'Should exist or create an active listing to create the question.')
+  const question = await _createQuestion(askingAccount, itemId, meliClient)
+  t.truthy(question, 'Should exist a new question')
+  t.is(question.status, 'UNANSWERED')
+  t.is(question.item_id, itemId, 'Should exist the question in the specified item id')
+  return question
+}
+
 test.failing('meli client post question answer', async t => {
   // Preconditions
   // 1. test account with question.status === "UNANSWERED"
