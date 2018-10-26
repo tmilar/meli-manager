@@ -189,6 +189,16 @@ async function _createQuestionOnTestAccount(askingAccount, respondingAccount, me
   return question
 }
 
+async function _getAccountUnansweredQuestions(account, multiClient) {
+  const accounts = [account]
+  const questionsResponse = await multiClient.getQuestions({accounts, status: 'UNANSWERED'})
+
+  return questionsResponse
+    .filter(({account: {id}}) => id === account.id)
+    .map(({response}) => response.results)
+    .reduce((qs, q) => qs.concat(q), [])
+}
+
 test.failing('meli client post question answer', async t => {
   // Preconditions
   // 1. test account with question.status === "UNANSWERED"
