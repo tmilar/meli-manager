@@ -199,39 +199,46 @@ async function _getAccountUnansweredQuestions(account, multiClient) {
     .reduce((qs, q) => qs.concat(q), [])
 }
 
-test.failing('meli client post question answer', async t => {
+test('meli client post question answer', async t => {
   // Preconditions
   // 1. test account with question.status === "UNANSWERED"
-  const {multiClient/* , testAccounts */} = t.context
-  const account = null /* TestAccounts.filter(acc => acc.nickname.indexOf('TETE') > -1)[0] */
-  const questionsResponse = await multiClient.getQuestions({account, status: 'UNANSWERED'})
-  const questions = questionsResponse
-    .map(({response}) => response.results)
-    .reduce((qs, q) => qs.concat(q), [])
+  const {multiClient, testAccounts} = t.context
+  const meliTestAccounts = testAccounts.filter(acc => acc.isTestAccount)
+  t.true(meliTestAccounts.length >= 2, 'Should use 2 different test accounts to create a test question.')
+  const [askingAccount, respondingAccount] = meliTestAccounts
+
+  let questions = await _getAccountUnansweredQuestions(respondingAccount, multiClient)
+  if (!questions || questions.length === 0) {
+    await _createQuestionOnTestAccount(askingAccount, respondingAccount, multiClient, t)
+    questions = await _getAccountUnansweredQuestions(respondingAccount, multiClient)
+  }
 
   t.true(questions.length > 0, 'Should have returned at least one unanswered question')
   t.true(questions.every(({status}) => status === 'UNANSWERED'), 'Should all of the returned questions be unanswered.')
+  t.true(questions.every(({seller_id}) => seller_id === respondingAccount.id), 'Should all of the questions belong to the selected respondingAccount')
 
   // Actions
   // 1. reply answer
   const questionToAnswer = questions[0]
-  const {id} = questionToAnswer
-  const answerText = 'Respuesta de prueba'
-  const response = await multiClient.postQuestionAnswer(id, answerText)
-  t.is(response.status, 200, 'Should respond status 200 OK, after postQuestionAnswer call.')
+  const {id: answerQuestionId} = questionToAnswer
+  const answerText = `Respuesta de prueba ${JSON.stringify(new Date())}`
+  const response = await multiClient.postQuestionAnswer(respondingAccount, answerQuestionId, answerText)
+  t.truthy(response, 'Should return a response, after postQuestionAnswer call.')
+  t.is(response.id, answerQuestionId, 'Should respond with the specified question id')
+  t.is(response.answer && response.answer.text, answerText, 'Should contain the answer text in the response')
+  t.is(response.answer && response.answer.status, 'ACTIVE', 'Should contain the answer status as "ACTIVE"')
 
   // Postconditions
   // 1. question answered is excluded from 'UNANSWERED' questions
-  const questionsResponseAfter = await multiClient.getQuestions({account, status: 'UNANSWERED'})
-  const questionsAfter = questionsResponseAfter
-    .map(({response}) => response.results)
-    .reduce((qs, q) => qs.concat(q), [])
-  t.false(questionsAfter.find(q => q.id === id), 'Answered question should not come back as unanswered')
+  const questionsAfter = await await _getAccountUnansweredQuestions(respondingAccount, multiClient)
+  t.falsy(questionsAfter.find(q => q.id === answerQuestionId), 'Answered question should not come back as unanswered')
 
   // 2. selected question appears as answered
-  const questionAnsweredResponse = await multiClient.getQuestion(id)
+  const questionAnsweredResponse = await multiClient.getQuestion(answerQuestionId)
+  // Const questionAnsweredResponse = await multiClient.getQuestion_new(id)
   const {status, answer} = questionAnsweredResponse[0].response
   t.is(status, 'ANSWERED', 'Question status should be \'ANSWERED\'')
   t.truthy(answer, 'Answer body should be defined')
   t.is(answer.text, answerText, `Question answer text should match expected: ${answerText}`)
+  t.is(answer.status, 'ACTIVE', 'Question answer status should be "ACTIVE"')
 })
