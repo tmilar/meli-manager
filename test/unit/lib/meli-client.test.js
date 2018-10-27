@@ -175,7 +175,6 @@ async function _getOrCreateTestActiveListing(account, meliClient) {
 
 function _createQuestion(askingAccount, itemId, meliClient) {
   const questionText = `pregunta de prueba ${JSON.stringify(new Date())}`
-  console.log(`now posting the question '${questionText}' to the account: '${askingAccount.nickname}' to the item '${itemId}'`)
   return meliClient.postQuestion(askingAccount, itemId, questionText)
 }
 
@@ -217,10 +216,10 @@ test('meli client post question answer', async t => {
   // 1. test account with question.status === "UNANSWERED"
   const {multiClient, testAccounts} = t.context
   const meliTestAccounts = testAccounts.filter(acc => acc.isTestAccount)
-  t.true(meliTestAccounts.length >= 2, 'Should use 2 different test accounts to create a test question.')
+
+  t.true(meliTestAccounts.length >= 2, 'Should use 2 different accounts to create a test question.')
+  t.true(meliTestAccounts.every(acc => acc.isTestAccount), 'Should use test accounts to create a test question.')
   const [askingAccount, respondingAccount] = meliTestAccounts
-
-
 
   // 2. exists a test question status 'UNANSWERED' to be answered
   const questionToAnswer = await _getOrCreateQuestionToAnswer(askingAccount, respondingAccount, multiClient, t)
@@ -240,14 +239,14 @@ test('meli client post question answer', async t => {
   t.is(response.answer && response.answer.status, 'ACTIVE', 'Should contain the answer status as "ACTIVE"')
 
   // Postconditions
-  // 1. question answered is excluded from 'UNANSWERED' questions
+  // 1. existing questions status 'UNANSWERED' don't include the answered question.
   const questionsAfter = await await _getAccountUnansweredQuestions(respondingAccount, multiClient)
   t.falsy(questionsAfter.find(q => q.id === answerQuestionId), 'Answered question should not come back as unanswered')
 
-  // 2. selected question appears as answered
+  // 2. the answered question can be retrieved with status 'ANSWERED'
   const questionAnsweredResponse = await multiClient.getQuestion(answerQuestionId)
-  // Const questionAnsweredResponse = await multiClient.getQuestion_new(id)
   const {status, answer} = questionAnsweredResponse[0].response
+
   t.is(status, 'ANSWERED', 'Question status should be \'ANSWERED\'')
   t.truthy(answer, 'Answer body should be defined')
   t.is(answer.text, answerText, `Question answer text should match expected: ${answerText}`)
