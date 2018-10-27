@@ -188,14 +188,26 @@ async function _createQuestionOnTestAccount(askingAccount, respondingAccount, me
   return question
 }
 
+/**
+ * Delay in MS to await before requesting MeLi updated data.
+ * This is needed because sometimes an update to MeLi API is not impacted immediately.
+ * @type {number}
+ */
+const MELI_API_REFRESH_DELAY = 1500
+
 async function _getAccountUnansweredQuestions(account, multiClient) {
   const accounts = [account]
+
+  // Await a delay to make sure the following questions request is up-to-date
+  await new Promise(resolve => setTimeout(resolve, MELI_API_REFRESH_DELAY))
   const questionsResponse = await multiClient.getQuestions({accounts, status: 'UNANSWERED'})
 
-  return questionsResponse
+  const questionsUnanswered = questionsResponse
     .filter(({account: {id}}) => id === account.id)
     .map(({response}) => response.results)
     .reduce((qs, q) => qs.concat(q), [])
+
+  return questionsUnanswered
 }
 
 async function _getOrCreateQuestionToAnswer(askingAccount, respondingAccount, multiClient, t) {
