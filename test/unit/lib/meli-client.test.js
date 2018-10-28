@@ -213,8 +213,10 @@ async function _getAccountUnansweredQuestions(account, multiClient) {
 async function _getOrCreateQuestionToAnswer(askingAccount, respondingAccount, multiClient, t) {
   let questions = await _getAccountUnansweredQuestions(respondingAccount, multiClient)
   if (!questions || questions.length === 0) {
-    await _createQuestionOnTestAccount(askingAccount, respondingAccount, multiClient, t)
+    const freshQuestion = await _createQuestionOnTestAccount(askingAccount, respondingAccount, multiClient, t)
     questions = await _getAccountUnansweredQuestions(respondingAccount, multiClient)
+    t.true(questions.length === 1 && questions[0].id === freshQuestion.id, 'Should return with the freshly created question')
+    t.true(questions[0].text === freshQuestion.text, 'Should return with the freshly created question')
   }
   t.true(questions.length > 0, 'Should have returned at least one unanswered question')
   t.true(questions.every(({status}) => status === 'UNANSWERED'), 'Should all of the returned questions be unanswered.')
@@ -252,7 +254,7 @@ test('meli client post question answer', async t => {
 
   // Postconditions
   // 1. existing questions status 'UNANSWERED' don't include the answered question.
-  const questionsAfter = await await _getAccountUnansweredQuestions(respondingAccount, multiClient)
+  const questionsAfter = await _getAccountUnansweredQuestions(respondingAccount, multiClient)
   t.falsy(questionsAfter.find(q => q.id === answerQuestionId), 'Answered question should not come back as unanswered')
 
   // 2. the answered question can be retrieved with status 'ANSWERED'
