@@ -14,6 +14,16 @@ require('../../../config/db').connect()
 const testAccountUsernames = process.env.TEST_ACCOUNT_USERNAMES && process.env.TEST_ACCOUNT_USERNAMES.split(',')
 const devAccountUsername = process.env.DEV_ACCOUNT_USERNAME || testAccountUsernames[0]
 
+const fixture = {
+  SAMPLE_QUESTION: {
+    questionId: 6364505957,
+    sellerNickname: 'TETE8780371'
+  },
+  NULL_QUESTION: {
+    questionId: 9999999999
+  }
+}
+
 test.before('get dev account for testing', async t => {
   // Find main dev account
   const devAccount = await Account.findOne({nickname: devAccountUsername})
@@ -105,35 +115,30 @@ test('meli client retrieves questions of multiple test accounts', async t => {
 
 test('meli client getQuestion() retrieves one question specified by id + its seller account', async t => {
   const {multiClient, testAccounts} = t.context
-  const fixture = {
-    questionId: 5757310895,
-    sellerNickname: 'POKEVENTAS_JUSIMIL'
-  }
-  const sellerAccount = testAccounts.find(acc => acc.nickname === fixture.sellerNickname)
-  t.truthy(sellerAccount, `Seller account ${fixture.sellerNickname} ` +
+
+  const sellerAccount = testAccounts.find(acc => acc.nickname === fixture.SAMPLE_QUESTION.sellerNickname)
+  t.truthy(sellerAccount, `Seller account ${fixture.SAMPLE_QUESTION.sellerNickname} ` +
     `not included in selected testAccounts (${testAccounts.map(a => `'${a.nickname}'`).join(',')})`)
 
   // Get the question by id
-  const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
+  const questionResponseArr = await multiClient.getQuestion(fixture.SAMPLE_QUESTION.questionId)
 
   // Assert the question returned with correct seller info
   t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
   const questionResponse = questionResponseArr[0]
   t.true(Object.keys(questionResponse).every(key => ['account', 'response'].includes(key)), 'Response should include the account owner + the response question')
   const {account, response} = questionResponse
-  t.is(response.id, fixture.questionId, `Should retrieve question data of selected id ${fixture.questionId}`)
+  t.is(response.id, fixture.SAMPLE_QUESTION.questionId,
+    `Should retrieve question data of selected id ${fixture.SAMPLE_QUESTION.questionId}`)
   t.is(response.seller_id, sellerAccount.id, 'Should the question seller id match the expected seller id')
   t.is(account.id, sellerAccount.id, 'Should retrieve seller account info')
 })
 
 test('meli client getQuestion() returns error object and empty account when the question id is not found', async t => {
   const {multiClient} = t.context
-  const fixture = {
-    questionId: 9999999999999
-  }
 
   // Get the question by id
-  const questionResponseArr = await multiClient.getQuestion(fixture.questionId)
+  const questionResponseArr = await multiClient.getQuestion(fixture.NULL_QUESTION.questionId)
 
   // Assert the question not returned with no seller info
   t.true(Array.isArray(questionResponseArr) && questionResponseArr.length === 1, 'Should return an array with one object')
@@ -148,7 +153,7 @@ test('meli client getQuestion() returns error object and empty account when the 
 const testItemJson = {
   title: 'Item de test - No Ofertar',
   category_id: 'MLA3530', // 'OTHERS' category
-  price: 10,
+  price: 15,
   currency_id: 'ARS',
   available_quantity: 1,
   buying_mode: 'buy_it_now',
@@ -193,7 +198,7 @@ async function _createQuestionOnTestAccount(askingAccount, respondingAccount, me
  * This is needed because sometimes an update to MeLi API is not impacted immediately.
  * @type {number}
  */
-const MELI_API_REFRESH_DELAY = 1500
+const MELI_API_REFRESH_DELAY = 1800
 
 async function _getAccountUnansweredQuestions(account, multiClient) {
   const accounts = [account]
