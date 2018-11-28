@@ -179,7 +179,7 @@ async function _getOrCreateTestActiveListing(account, meliClient) {
 }
 
 function _createQuestion(askingAccount, itemId, meliClient) {
-  const questionText = `pregunta de prueba ${JSON.stringify(new Date())}`
+  const questionText = `pregunta de prueba`
   return meliClient.postQuestion(askingAccount, itemId, questionText)
 }
 
@@ -249,7 +249,7 @@ test('meli client post question answer', async t => {
   // Actions
   // 1. reply answer
   const {id: answerQuestionId} = questionToAnswer
-  const answerText = `Respuesta de prueba ${JSON.stringify(new Date())}`
+  const answerText = 'Respuesta de prueba'
   const response = await multiClient.postQuestionAnswer(respondingAccount, answerQuestionId, answerText)
 
   t.truthy(response, 'Should return a response, after postQuestionAnswer call.')
