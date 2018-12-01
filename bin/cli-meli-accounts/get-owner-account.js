@@ -8,7 +8,7 @@ const {auth: {mercadolibre: {clientId}}} = require('../../config')
  * Find or retrieve any valid accessToken from stored accounts
  *
  * @returns {Promise<string>} - resolves to the accessToken
- * @trows error if none found or none could be retrieved
+ * @throws error if none found or none could be retrieved
  */
 async function findAnyAccessToken() {
   const account = await Account.findAnyAuthorizable()
