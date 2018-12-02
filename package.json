@@ -12,7 +12,8 @@
     "test:watch": "ava --verbose --watch",
     "ava": "ava",
     "setup": "node ./bin/setup",
-    "meli:test-account": "node ./bin/meli-test-account"
+    "meli:test-account": "node ./bin/cli-meli-accounts",
+    "meli:test-account:setup": "npm run setup -- --path=./bin/cli-meli-accounts"
   },
   "now": {
     "dotenv": ".env.production"
@@ -31,14 +32,17 @@
   "dependencies": {
     "bluebird": "3.5.3",
     "body-parser": "1.18.3",
+    "chalk": "2.4.1",
     "chrome-launcher": "0.10.2",
     "cli-spinner": "0.2.8",
+    "commander": "2.18.0",
     "cookie-parser": "1.4.3",
     "debug": "4.1.0",
     "dotenv": "6.1.0",
     "express": "4.16.3",
     "google-spreadsheet": "2.0.6",
     "hbs": "4.0.1",
+    "inquirer": "6.2.0",
     "moment": "2.22.2",
     "moment-timezone": "0.5.22",
     "mongoose": "5.2.13",

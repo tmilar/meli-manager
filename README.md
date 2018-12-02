@@ -18,8 +18,8 @@ Node.js + MercadoLibre API + Google SpreadSheets API = :tada:
   * [Run](#run)
   * [Test](#test)
   * [Misc](#misc)
-    + [MercadoLibre test account creation](#mercadolibre-test-account-creation)
-    + [Google Spreadsheet API Keys Setup](#google-spreadsheet-api-keys-setup)
+    + [MercadoLibre Test Accounts CLI tool](#mercadolibre-test-accounts-cli-tool)
+    + [How to: configure Spreadsheet API keys](#how-to-configure-spreadsheet-api-keys)
 - [Contributing](#contributing)
 
 <!-- tocstop -->
@@ -92,18 +92,58 @@ npm test
 ```
 ### Misc
 
-#### MercadoLibre test account creation
-A command line utility to locally create, authorize and store a MeLi test user account has been provided.
+#### MercadoLibre Test Accounts CLI tool
+A command line utility to locally create, authorize and store a MeLi test user account is provided.
 
-1. Ensure `.env.test` file exists similar to `.env` for test env variables.
+__How to use__
+1. Setup env variables in `bin/cli-meli-accounts` path:
+```
+$ npm run meli:test-account:setup
+```
+This will initialize a fresh `bin/cli-meli-accounts/.env` file like this, for you to complete:
+```
+# Port to use for oauth server. 3001 is suggested.
+PORT=3001
+
+# Mongo DB URL where to register/retrieve user Accounts.
+MONGODB_URL=
+
+# MercadoLibre Application keys used to create Test accounts & refresh Account access tokens.
+MELI_CLIENT_ID=
+MELI_CLIENT_SECRET=
+```
+
 2. Ensure the configured Mongo DB instance is running.
-3. Then:
+3. Run it:
+
 ```
-node bin/meli-test-account --user=DEV_ACCOUNT_USERNAME
+$ node bin/cli-meli-accounts/ -h
+Usage: cli-meli-accounts [options]
+
+Interactive CLI for MercadoLibre user Accounts management.
+
+Options:
+
+  -V, --version          output the version number
+  -h, --help             output usage information
 ```
 
-Where `DEV_ACCOUNT_USERNAME` is the Dev account that will request the test user.
-If `--user=` (or equivalent `-u=`) flag is not specified, will try to find it in environment variable `DEV_ACCOUNT_USERNAME`.
+_Additionaly, it could be run doing_ `npm run meli:test-account`
+
+> example:
+>  `node bin/cli-meli-accounts`
+> would output:
+>
+> ```
+> Welcome!
+> ? What do you want to do? (Use arrow keys)
+> > Create a new Test account
+>   Login & Register existing account
+>   List saved accounts
+>   ──────────────
+>   Exit
+> ```
+
 
 #### Google Spreadsheet API Keys Setup
 
