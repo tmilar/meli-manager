@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 mongoose.Promise = require('bluebird')
 const debugDbConnecting = require('debug')('db:connecting')
-const config = require('.')
+const {db: dbUrl} = require('.')
 
 /**
  * Connect to mongo DB.
@@ -17,7 +17,7 @@ const connect = async () => {
   }
   let ret
   try {
-    ret = await mongoose.connect(config.db)
+    ret = await mongoose.connect(dbUrl, {useNewUrlParser: true})
   } catch (error) {
     console.error('db connection error:', error.message)
     throw error
