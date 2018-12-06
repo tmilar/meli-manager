@@ -41,7 +41,7 @@ async function createMeliTestAccount() {
   })
 
   if (!requesterAccount) {
-    // there might be accounts, but none authorized.
+    // There might be accounts, but none authorized.
     const errMsg = 'to create a new Test account, we need to use any authorized Account in the current Meli Client ID realm, ' +
       'but none was found. Please Login & Register again first. '
     throw new Error(errMsg)

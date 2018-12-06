@@ -87,10 +87,12 @@ async function registerAccount({profile, tokens}) {
 }
 
 async function tryEnsureExpectedLogin(loggedUser, expectedNickname) {
+  /* eslint-disable no-await-in-loop */
   while (loggedUser.profile.nickname !== expectedNickname) {
     console.log(chalk.red(`Error: must log in with the created test user '${expectedNickname}'`))
     loggedUser = await doLoginFlow()
   }
+  /* eslint-enable no-await-in-loop */
   return loggedUser
 }
 
@@ -100,12 +102,12 @@ async function tryEnsureExpectedLogin(loggedUser, expectedNickname) {
  * @param {Array<Account>} accounts   - the accounts to display
  */
 function diplayAccountsList(accounts) {
-  if(!accounts || !accounts.length) {
+  if (!accounts || accounts.length === 0) {
     console.log(chalk.red('No accounts available for the current clientId.'))
     return
   }
-  console.log("Available accounts are: ")
-  const accountsList = accounts.map(acc => acc.nickname).join("\n")
+  console.log('Available accounts are: ')
+  const accountsList = accounts.map(({nickname}) => nickname).join('\n')
   console.log(chalk.magenta(accountsList))
 }
 
@@ -183,8 +185,8 @@ async function retrieveAndDisplayApplicationOwnerData({tokens: {accessToken}} = 
     ownerAccount = await getOwnerAccount(accessToken)
   } catch (error) {
     const errMsgReason = error.message || error.data || error || ''
-    const errMsg = `Could not retrieve client owner account data.${` ${errMsgReason}\n`}`
-      + `Please make sure the saved accounts data is valid and try again. `
+    const errMsg = `Could not retrieve client owner account data.${` ${errMsgReason}\n`}` +
+      'Please make sure the saved accounts data is valid and try again. '
     throw new Error(errMsg)
   }
   // Response: set to clientOwnerData
@@ -209,7 +211,7 @@ async function welcomeFlow() {
     await retrieveAndDisplayApplicationOwnerData()
   } catch (error) {
     const errMsg = error.message || error.data || error || ''
-    if(errMsg.length > 0) {
+    if (errMsg.length > 0) {
       console.log(errMsg)
     }
   }
@@ -239,6 +241,7 @@ async function main() {
   await welcomeFlow()
 
   let choice
+  /* eslint-disable no-await-in-loop */
   do {
     const isDbConnected = await db.isConnected()
     const isLoginRequired = await checkIsLoginRequired()
@@ -250,7 +253,7 @@ async function main() {
     }
     await selectedAction()
   } while (choice.action !== 'exit')
-
+  /* eslint-enable no-await-in-loop */
   await exit()
 }
 
