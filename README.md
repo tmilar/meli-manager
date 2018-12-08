@@ -34,7 +34,8 @@ Meli Manager is a set of tools to help small and medium sized sellers of Mercado
 - [x] Simplify order status information (delivery and payment statuses).
 
 ### Soon
-- [ ] Manage customer Questions and Messages.
+- [ ] Manage customer Questions.
+- [ ] Manage customer Messages.
 - [ ] Synchronize Customers data related to Orders.
 - [ ] Build Customers profiles and relate to questions and messages.
 
@@ -76,8 +77,13 @@ MONGODB_URL=
 
 # Google Spreadsheet document ID where to store MeLi Orders
 ORDERS_SPREADSHEET_ID=
-# Google Spreadsheet sheet name (ie. 'Sheet 1', 'Ventas'...)
+# Orders sheet name (ie. 'Sheet 1', 'Ventas'...)
 ORDERS_SPREADSHEET_SHEETNAME=
+
+# Google Spreadsheet document ID where to store MeLi Questions
+QUESTIONS_SPREADSHEET_ID=
+# Questions sheet name (ie. 'Sheet 1', 'Ventas'...)
+QUESTIONS_SPREADSHEET_SHEETNAME=
 ```
 ### Run
 Ensure Mongo DB instance is running (specified in `.env` file). Then:
@@ -183,6 +189,15 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
 
     ```
         ORDERS_SPREADSHEET_SHEETNAME=
+    ```
+
+7. Repeat step (6) for Questions sheet, if you'd like.
+
+    ```
+        QUESTIONS_SPREADSHEET_ID=
+    ```
+    ```
+        QUESTIONS_SPREADSHEET_SHEETNAME=
     ```
 
 
