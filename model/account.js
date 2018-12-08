@@ -56,8 +56,8 @@ accountSchema.methods.checkRefreshable = function () {
     throw new Error(`Account '${this.nickname}' can't be refreshed, ` +
       `the current MELI_CLIENT_ID is '${currentClientId}' ` +
       `but the account tokens belong to Application clientId '${this.auth.clientId}'. ` +
-      'Please restart the environment, using such clientId app keys. ' +
-      `The Client Application owner is '${this.auth.clientOwnerNickname}'.`)
+      'Please reconfigure the environment, using such clientId app keys. ' +
+      `Tip: the Client Application owner is '${this.auth.clientOwnerNickname}'.`)
   }
 }
 

@@ -21,7 +21,7 @@ router.get('/', async (req, res, next) => {
   if (accounts) {
     try {
       accountsArray = JSON.parse(accounts)
-    } catch (e) {
+    } catch (error) {
       // Param 'accounts' is invalid JSON, split the string by ',' separator
       accountsArray = accounts.split(',')
     }
@@ -45,9 +45,9 @@ router.get('/', async (req, res, next) => {
       req.setTimeout(0) // No timeout, so client can wait for the result.
       await Promise.mapSeries(orders, o => OrderService.saveNewOrder(o))
     }
-  } catch (e) {
-    console.log('Something bad happened at /order', e)
-    return next(e)
+  } catch (error) {
+    console.log('Something bad happened at /order', error)
+    return next(error)
   }
 
   res.json(orders)

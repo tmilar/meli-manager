@@ -179,7 +179,7 @@ async function _getOrCreateTestActiveListing(account, meliClient) {
 }
 
 function _createQuestion(askingAccount, itemId, meliClient) {
-  const questionText = `pregunta de prueba`
+  const questionText = 'pregunta de prueba'
   return meliClient.postQuestion(askingAccount, itemId, questionText)
 }
 

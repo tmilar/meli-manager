@@ -38,11 +38,11 @@ router.post('/', async (req, res, next) => {
     if (typeof handler === 'function') {
       await handler(account, resourceId)
     } else {
-      console.log(`Notiifcation topic '${topic}' not yet handled.`)
+      console.log(`Notification topic '${topic}' not yet handled.`)
     }
-  } catch (e) {
-    console.log(e.message, e.stack)
-    return next(e)
+  } catch (error) {
+    console.log(error.message, error.stack)
+    return next(error)
   }
   res.sendStatus(200)
 })
