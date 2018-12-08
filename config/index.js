@@ -9,6 +9,10 @@ const config = {
     customers: {
       id: process.env.CUSTOMERS_SPREADSHEET_ID,
       sheet: process.env.CUSTOMERS_SPREADSHEET_SHEETNAME
+    },
+    questions: {
+      id: process.env.QUESTIONS_SPREADSHEET_ID,
+      sheet: process.env.QUESTIONS_SPREADSHEET_SHEETNAME
     }
   },
   auth: {
