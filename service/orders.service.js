@@ -39,9 +39,7 @@ class OrdersService {
   static async saveNewOrder(newOrderJson) {
     const newOrder = Order.buildFromMeliOrder(newOrderJson)
     const orderRow = newOrder.toRowArray()
-    const newRowPosition = await this.ordersSheet.getNextEmptyRowPosition()
-    await this.ordersSheet.ensureSheetSpace(newRowPosition)
-    await this.ordersSheet.setRowValuesInRowCells(orderRow, newRowPosition)
+    await this.ordersSheet.appendNewRow(orderRow)
   }
 
   static async updateOrder(updatedOrderJson, rowPosition) {
