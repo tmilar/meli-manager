@@ -245,6 +245,7 @@ test('meli client post question answer', async t => {
 
   t.true(questionToAnswer.status === 'UNANSWERED', 'Should all of the returned questions be unanswered.')
   t.true(questionToAnswer.seller_id === respondingAccount.id, 'Should all of the questions belong to the selected respondingAccount')
+  t.is(questionToAnswer.from.id, askingAccount.id, 'Question to answer \'from\' id should match askingAccount \'id\'')
 
   // Actions
   // 1. reply answer
@@ -262,12 +263,13 @@ test('meli client post question answer', async t => {
   const questionsAfter = await _getAccountUnansweredQuestions(respondingAccount, multiClient)
   t.falsy(questionsAfter.find(q => q.id === answerQuestionId), 'Answered question should not come back as unanswered')
 
-  // 2. the answered question can be retrieved with status 'ANSWERED'
-  const questionAnsweredResponse = await multiClient.getQuestion(answerQuestionId)
-  const {status, answer} = questionAnsweredResponse[0].response
+  // 2. the answered question can be retrieved with status 'ANSWERED' (by the responding account)
+  const questionAnsweredResponse = await multiClient.getQuestion(answerQuestionId, respondingAccount)
+  const {status, answer, from} = questionAnsweredResponse[0].response
 
   t.is(status, 'ANSWERED', 'Question status should be \'ANSWERED\'')
   t.truthy(answer, 'Answer body should be defined')
+  t.is(from.id, askingAccount.id, 'From data should be defined')
   t.is(answer.text, answerText, `Question answer text should match expected: ${answerText}`)
   t.is(answer.status, 'ACTIVE', 'Question answer status should be "ACTIVE"')
 })
