@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const Account = require('../model/account')
 const OrderService = require('../service/orders.service.js')
+const QuestionsService = require('../service/questions.service.js')
 
 const notificationHandler = {
   orders: async (account, orderId) => {
@@ -16,7 +17,8 @@ const notificationHandler = {
     await OrderService.saveOrUpdateOrder(order)
   },
   questions: async (account, questionId) => {
-    console.log(`New question for ${account.nickname}! Not yet handled. `, questionId)
+    console.log(`New question for ${account.nickname}! Question id: ${questionId}`)
+    await QuestionsService.saveNewQuestion(account, questionId)
   },
   messages: async (account, messageId) => {
     console.log(`New message for ${account.nickname}! Not yet handled.`, messageId)
