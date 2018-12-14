@@ -37,12 +37,11 @@ class QuestionsService {
   }
 
   static async saveNewQuestion(account, questionId) {
-    const {account: seller, response: question} = await this.meliClient.getQuestion(questionId)
+    const [{account: seller, response: question}] = await this.meliClient.getQuestion(questionId, account)
 
     console.log('Question body is: ', question)
 
-    // TODO convert question to row array data
-    const questionRow = [1, 2, 3, 4, 5]
+    const questionRow = QuestionMapper.mapMeliQuestionToRow(question, seller)
     await this.questionsSheet.appendNewRow(questionRow)
   }
 }
