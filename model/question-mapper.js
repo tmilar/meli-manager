@@ -1,6 +1,7 @@
 const moment = require('moment-timezone')
 moment.tz.setDefault('America/Argentina/Buenos_Aires')
 const dateToString = date => date ? moment(date).format('YYYY-MM-DD HH:MM:SS') : undefined
+const urlToSheetsHyperlink = (url, title = '') => `=HYPERLINK("${url}", "${title}")`
 
 const columns = new Map([
   ['sellerNickname', {header: 'Vendedor', column: 'Vendedor', colPos: 1}],
@@ -17,7 +18,7 @@ const columns = new Map([
 ])
 
 class Question {
-  static buildFromMeliQuestion(meliQuestion, seller) {
+  static buildFromMeliQuestion(meliQuestion, seller, customer, item) {
     if (!meliQuestion.answer) {
       meliQuestion.answer = undefined
     }
@@ -43,12 +44,21 @@ class Question {
       nickname: sellerNickname
     } = seller
 
+    const {
+      nickname: customerNickname
+    } = customer
+
+    const {
+      title,
+      permalink
+    } = item
+
     const question = new Question()
 
     question.id = id
     question.date = dateToString(date)
     question.itemId = itemId
-    question.itemTitle = '-' //TODO retrieve itemTitle (and URL?)
+    question.itemTitle = urlToSheetsHyperlink(permalink, title)
     question.sellerId = sellerId
     question.sellerNickname = sellerNickname
     question.questionStatus = questionStatus
@@ -57,7 +67,7 @@ class Question {
     question.answerStatus = answerStatus
     question.answerDate = dateToString(answerDate)
     question.customerId = customerId
-    question.customerNickname = '-' //TODO retrieve customerNickname
+    question.customerNickname = customerNickname
 
     return question
   }
@@ -82,8 +92,8 @@ class QuestionMapper {
     return row
   }
 
-  static mapMeliQuestionToRow(meliQuestion, seller, customer) {
-    const question = Question.buildFromMeliQuestion(meliQuestion, seller, customer)
+  static mapMeliQuestionToRow(meliQuestion, seller, customer, item) {
+    const question = Question.buildFromMeliQuestion(meliQuestion, seller, customer, item)
     const row = this.questionToRow(question)
     return row
   }
