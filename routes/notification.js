@@ -18,7 +18,7 @@ const notificationHandler = {
   },
   questions: async (account, questionId) => {
     console.log(`New question for ${account.nickname}! Question id: ${questionId}`)
-    await QuestionsService.saveNewQuestion(account, questionId)
+    await QuestionsService.saveOrUpdateQuestion(account, questionId)
   },
   messages: async (account, messageId) => {
     console.log(`New message for ${account.nickname}! Not yet handled.`, messageId)

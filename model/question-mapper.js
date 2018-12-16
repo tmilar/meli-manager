@@ -97,6 +97,10 @@ class QuestionMapper {
     const row = this.questionToRow(question)
     return row
   }
+
+  static getIdColumnPosition() {
+    return columns.get('id').colPos
+  }
 }
 
 module.exports = QuestionMapper

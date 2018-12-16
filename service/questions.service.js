@@ -36,7 +36,7 @@ class QuestionsService {
     })
   }
 
-  static async saveNewQuestion(sellerAccount, questionId) {
+  static async saveOrUpdateQuestion(sellerAccount, questionId) {
     const [{account: seller, response: question}] = await this.meliClient.getQuestion(questionId, sellerAccount)
     const customer = await this.meliClient.getUser(question.from.id)
     const item = await this.meliClient.getListingById(question.item_id, sellerAccount)
@@ -44,7 +44,8 @@ class QuestionsService {
     console.log('Question body is: ', question)
 
     const questionRow = QuestionMapper.mapMeliQuestionToRow(question, seller, customer, item)
-    await this.questionsSheet.appendNewRow(questionRow)
+    const idColumn = QuestionMapper.getIdColumnPosition()
+    await this.questionsSheet.updateOrAppendRow(questionRow, idColumn)
   }
 }
 
