@@ -13,8 +13,10 @@ const columns = new Map([
   ['itemId', {header: 'id_publicacion', column: 'id_publicacion', colPos: 7}],
   ['questionText', {header: 'Pregunta', column: 'Pregunta', colPos: 8}],
   ['date', {header: 'Fecha Pregunta', column: 'Fecha Pregunta', colPos: 9}],
-  ['answerText', {header: 'Respuesta', column: 'Respuesta', colPos: 10}],
-  ['answerDate', {header: 'Fecha Respuesta', column: 'Fecha Respuesta', colPos: 11}]
+  ['questionStatus', {header: 'Estado Pregunta', column: 'Estado Pregunta', colPos: 10}],
+  ['answerText', {header: 'Respuesta', column: 'Respuesta', colPos: 11}],
+  ['answerDate', {header: 'Fecha Respuesta', column: 'Fecha Respuesta', colPos: 12}],
+  ['answerStatus', {header: 'Estado Respuesta', column: 'Estado Respuesta', colPos: 13}]
 ])
 
 class Question {
