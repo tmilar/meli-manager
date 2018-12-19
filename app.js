@@ -15,6 +15,7 @@ require('./config/db').connect()
 const index = require('./routes')
 const auth = require('./routes/auth')
 const order = require('./routes/order')
+const question = require('./routes/question')
 const notification = require('./routes/notification')
 
 const app = express()
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', index)
 app.use('/auth', auth)
 app.use('/order', order)
+app.use('/question', question)
 app.use('/notification', notification)
 
 // Catch 404 and forward to error handler

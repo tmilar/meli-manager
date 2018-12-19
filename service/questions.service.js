@@ -47,6 +47,11 @@ class QuestionsService {
     const idColumn = QuestionMapper.getIdColumnPosition()
     await this.questionsSheet.updateOrAppendRow(questionRow, idColumn)
   }
+
+  static async answerQuestion(sellerId, questionId, answerText) {
+    const answeringAccount = await this.meliClient.getUser(sellerId)
+    return this.meliClient.postQuestionAnswer(answeringAccount, questionId, answerText)
+  }
 }
 
 QuestionsService
