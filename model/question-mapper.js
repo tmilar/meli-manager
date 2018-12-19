@@ -1,6 +1,6 @@
 const moment = require('moment-timezone')
 moment.tz.setDefault('America/Argentina/Buenos_Aires')
-const dateToString = date => date ? moment(date).format('YYYY-MM-DD HH:MM:SS') : undefined
+const dateToString = date => date ? moment(date).format('YYYY-MM-DD HH:mm:SS') : undefined
 const urlToSheetsHyperlink = (url, title = '') => `=HYPERLINK("${url}", "${title}")`
 
 const columns = new Map([
