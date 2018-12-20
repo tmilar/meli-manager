@@ -52,6 +52,10 @@ class QuestionsService {
     const answeringAccount = await this.meliClient.getUser(sellerId)
     return this.meliClient.postQuestionAnswer(answeringAccount, questionId, answerText)
   }
+
+  static async getQuestions({accounts, status}) {
+    return this.meliClient.getQuestions({accounts, status})
+  }
 }
 
 QuestionsService
