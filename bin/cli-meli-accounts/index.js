@@ -107,7 +107,9 @@ function diplayAccountsList(accounts) {
     return
   }
   console.log('Available accounts are: ')
-  const accountsList = accounts.map(({nickname}) => nickname).join('\n')
+  const accountsList = accounts
+    .map(({nickname, isTestAccount}) => `${nickname}${chalk.gray(isTestAccount ? ' (test)' : '')}`)
+    .join('\n')
   console.log(chalk.magenta(accountsList))
 }
 
