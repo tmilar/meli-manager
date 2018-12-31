@@ -90,12 +90,15 @@ accountSchema.statics.register = async function (profile, auth, {nickname: clien
   const expires = new Date()
   expires.setSeconds(expires.getSeconds() + 21000)
 
+  const isTestAccount = ['TEST', 'TETE'].some(testPrefix => nickname.match(new RegExp(`^${testPrefix}`)))
+
   const account = {
     id,
     nickname,
     firstName: first_name,
     lastName: last_name,
     email,
+    isTestAccount,
     auth: {
       accessToken,
       refreshToken,
