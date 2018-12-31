@@ -219,13 +219,19 @@ async function welcomeFlow() {
   }
 }
 
+function setupDbConnection() {
+  return db.connect()
+    .then(({connection: {name, host, port}}) => console.log(`db connected: ${host}:${port}/${name}`))
+    .catch(error => console.error('Could not connect to DB.', error))
+}
+
 /**
  * Initialize needed services.
  *
  * @returns {Promise<void>} - exec promise
  */
 function setup() {
-  return Promise.all([db.connect(), cliLoginFlow.setup()])
+  return Promise.all([setupDbConnection(), cliLoginFlow.setup()])
 }
 
 /**

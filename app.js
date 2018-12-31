@@ -9,7 +9,7 @@ const bodyParser = require('body-parser')
 
 // Mount db connection
 require('./config/db').connect()
-  .then(({connection: {name}}) => console.log(`db connection open: ${name}`))
+  .then(({connection: {name, host, port}}) => console.log(`db connection open: ${host}:${port}/${name}`))
   .catch(() => process.exit(1))
 
 const index = require('./routes')
