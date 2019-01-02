@@ -29,13 +29,17 @@ const notificationHandler = {
 }
 
 router.post('/', async (req, res, next) => {
-  const {resource, user_id, topic} = req.body
+  const {resource, user_id: userId, topic} = req.body
   const resourceId = resource.match(/(MLA)?\d+/)[0]
 
   console.log(`Received '${topic}' notification: `, req.body)
 
   try {
-    const account = await Account.findOne({id: user_id})
+    const account = await Account.findOne({id: userId})
+    if (!account) {
+      const errMsg = `Notification can't be handled: user id ${userId} is not registered in DB. `
+      return next(errMsg)
+    }
     const handler = notificationHandler[topic]
     if (typeof handler === 'function') {
       await handler(account, resourceId)
