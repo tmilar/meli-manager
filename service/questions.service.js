@@ -37,7 +37,7 @@ class QuestionsService {
   }
 
   static async saveOrUpdateQuestion(sellerAccount, question) {
-    if (typeof question === 'number') {
+    if (typeof question === 'number' || typeof question === 'string') {
       // 'question' is id - retrieve remaining question data
       const questionId = question
       const [{account, response}] = await this.meliClient.getQuestion(questionId, sellerAccount)
