@@ -67,14 +67,10 @@ class OrdersService {
       .map(ordersResponse => ordersResponse.response.results)
       .reduce((arr = [], order) => arr.concat(order), [])
 
-    // Filter orders between startDate & endDate. Also exclude orders from own accounts.
-    const filteredOrders = orders
-      .filter(order =>
-        (!startDate || (new Date(order.date_closed) >= startDate)) &&
-                (!endDate || (new Date(order.date_closed) <= endDate))
-      ).filter(order => // Not from one of our accounts
-        !accounts.map(a => a.nickname).includes(order.buyer.nickname)
-      )
+    // Exclude orders that are from our own accounts.
+    const filteredOrders = orders.filter(order =>
+      !accounts.map(a => a.nickname).includes(order.buyer.nickname)
+    )
 
     // Sort orders by "date_closed" asc.
     const filteredOrdersSorted = filteredOrders.sort((a, b) => new Date(a.date_closed) - new Date(b.date_closed))
