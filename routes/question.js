@@ -75,8 +75,8 @@ router.get('/', async (req, res, next) => {
     if (shouldStore) {
       req.setTimeout(0) // No timeout, so client can wait for the result.
       await Promise.mapSeries(questionsResponse,
-        ({account, response: {questions}}) =>
-          Promise.mapSeries(questions, q => QuestionService.saveOrUpdateQuestion(account, q))
+        ({account, response: {results}}) =>
+          Promise.mapSeries(results, question => QuestionService.saveOrUpdateQuestion(account, question))
       )
     }
   } catch (error) {
