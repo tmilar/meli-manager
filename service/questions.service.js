@@ -58,8 +58,8 @@ class QuestionsService {
     return this.meliClient.postQuestionAnswer(answeringAccount, questionId, answerText)
   }
 
-  static async getQuestions({accounts, status}) {
-    return this.meliClient.getQuestions({accounts, status})
+  static async getQuestions({accounts, status, startDate, endDate}) {
+    return this.meliClient.getQuestions({accounts, status, startDate, endDate})
   }
 }
 
