@@ -15,9 +15,6 @@
     "meli:test-account": "node ./bin/cli-meli-accounts",
     "meli:test-account:setup": "npm run setup -- --path=./bin/cli-meli-accounts"
   },
-  "now": {
-    "dotenv": ".env.production"
-  },
   "author": "tmilar",
   "xo": {
     "space": true,
