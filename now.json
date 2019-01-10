@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "env": {
+    "PORT": "3000",
+    "MELI_CLIENT_ID": "7471170213310547",
+    "MELI_CLIENT_SECRET": "@meli-manager-meli_client_secret",
+    "MONGODB_URL": "@meli-manager-mongodb_url",
+    "SPREADSHEET_PRIVATE_KEY_ID": "@meli-manager-spreadsheet_private_key_id",
+    "SPREADSHEET_PRIVATE_KEY": "@meli-manager-spreadsheet_private_key",
+    "SPREADSHEET_CLIENT_EMAIL": "meli-spreadsheets-manager@meli-manager.iam.gserviceaccount.com",
+    "SPREADSHEET_CLIENT_ID": "109014500175629607203",
+    "ORDERS_SPREADSHEET_ID": "1CPwBbJaDwLbv80S5__LK8_5LZOQ5NE5_zXo45um1LNQ",
+    "ORDERS_SPREADSHEET_SHEETNAME": "Ventas 2018",
+    "CUSTOMERS_SPREADSHEET_ID": "1CPwBbJaDwLbv80S5__LK8_5LZOQ5NE5_zXo45um1LNQ",
+    "CUSTOMERS_SPREADSHEET_SHEETNAME": "Clientes",
+    "QUESTIONS_SPREADSHEET_ID": "1xiHWATJAQZ3KPWETmPuxd6-M1ioH61EPqAp879UVLgE",
+    "QUESTIONS_SPREADSHEET_SHEETNAME": "Preguntas"
+  }
+}
