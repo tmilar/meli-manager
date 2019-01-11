@@ -1,3 +1,17 @@
+function parseGoogleSpreadsheetKey(keyString) {
+  if (!keyString || keyString.length === 0) {
+    console.error('No key string defined!')
+    return null
+  }
+  const newlineToken = '##NEW_LINE##'
+  const dashesToken = '##DASHES##'
+  const replaceNewline = string => string.replace(new RegExp(newlineToken, 'g'), '\\n')
+  const replaseDashes = string => string.replace(new RegExp(dashesToken, 'g'), '-----')
+  const parseKey = key => replaceNewline(replaseDashes(key))
+  const spreadsheetPrivateKey = parseKey(keyString)
+
+  return JSON.parse(`"${spreadsheetPrivateKey}"`)
+}
 const config = {
   db: process.env.MONGODB_URL,
   spreadsheet: {
@@ -24,7 +38,7 @@ const config = {
       type: 'service_account',
       project_id: 'meli-manager',
       private_key_id: process.env.SPREADSHEET_PRIVATE_KEY_ID,
-      private_key: JSON.parse(`"${process.env.SPREADSHEET_PRIVATE_KEY}"`),
+      private_key: parseGoogleSpreadsheetKey(process.env.SPREADSHEET_PRIVATE_KEY),
       client_email: process.env.SPREADSHEET_CLIENT_EMAIL,
       client_id: process.env.SPREADSHEET_CLIENT_ID,
       auth_uri: 'https://accounts.google.com/o/oauth2/auth',
