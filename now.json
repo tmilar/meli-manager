@@ -1,5 +1,18 @@
 {
-  "version": 1,
+  "version": 2,
+  "builds": [{
+    "src": "bin/www",
+    "use": "@now/node-server"
+  }],
+  "routes": [{
+    "headers": {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept"
+    },
+    "src": "/.*",
+    "dest": "/bin/www"
+  }],
   "env": {
     "PORT": "3000",
     "MELI_CLIENT_ID": "7471170213310547",
