@@ -1,23 +1,18 @@
 const config = require('../config')
 const MeliClient = require('../lib/meli-client.js')
-const Account = require('../model/account')
 const SheetsHelper = require('../lib/sheets-helper')
 const QuestionMapper = require('../model/question-mapper')
 
 class QuestionsService {
   static async setup() {
-    await this.setupMeliClient()
+    this.setupMeliClient()
     await this.setupQuestionsSheet()
+
+    console.log('[QuestionsService] setup ready')
   }
 
-  static async setupMeliClient() {
+  static setupMeliClient() {
     this.meliClient = new MeliClient()
-
-    const meliAccounts = await Account.find()
-    meliAccounts.forEach(account => this.meliClient.addAccount(account))
-
-    console.log('[QuestionsService] meli client initialized with accounts: ' +
-      `${this.meliClient.accounts.map(({nickname}) => nickname).join(', ')}`)
   }
 
   static async setupQuestionsSheet() {
@@ -62,9 +57,5 @@ class QuestionsService {
     return this.meliClient.getQuestions({accounts, status, startDate, endDate})
   }
 }
-
-QuestionsService
-  .setup()
-  .then(() => console.log('Questions Service ready.'))
 
 module.exports = QuestionsService
