@@ -1,21 +1,23 @@
 // Get env variables
 const path = require('path')
 require('dotenv').config({path: path.resolve(__dirname, '.env')})
-
+const {Server: server} = require('http')
 const express = require('express')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const db = require('./config/db')
+const {port = 3000} = require('./config')
 
-// Mount db connection
-require('./config/db').connect()
-  .then(({connection: {name, host, port}}) => console.log(`db connection open: ${host}:${port}/${name}`))
-  .catch(() => process.exit(1))
+const QuestionsService = require('./service/questions.service')
+const OrdersService = require('./service/orders.service')
+const Account = require('./model/account')
 
 const index = require('./routes')
 const auth = require('./routes/auth')
 const order = require('./routes/order')
 const question = require('./routes/question')
+
 const notification = require('./routes/notification')
 
 const app = express()
@@ -56,5 +58,44 @@ app.use((err, req, res) => {
   res.status(err.status || 500)
   res.render('error')
 })
+
+function startServer() {
+  const http = server(app)
+
+  return new Promise((resolve, reject) => {
+    try {
+      http.listen(port, () => {
+        resolve(port)
+      })
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+async function setup() {
+  await Promise.all([
+    db.connect()
+      .then(({connection: {name, host, port}}) => console.log(`db connection open: ${host}:${port}/${name}`)),
+    QuestionsService.setup(),
+    OrdersService.setup(),
+    Account.findAllCached()
+      .then(accounts => console.log(`Using accounts: '${accounts.map(({nickname}) => nickname).join('\', \'')}'`)),
+    startServer()
+      .then(port => console.log(`Listening on port ${port} (${app.get('env')})`))
+  ])
+
+  console.log('App is running.')
+}
+
+process.on('SIGINT', async () => {
+  console.log('\nGracefully shutting down from SIGINT (Ctrl-C)')
+
+  await db.disconnect()
+  process.exit(1)
+})
+
+setup()
+  .catch(error => console.error('Unexpected error on app startup:', error))
 
 module.exports = app

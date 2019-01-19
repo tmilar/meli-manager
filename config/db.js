@@ -3,15 +3,26 @@ mongoose.Promise = require('bluebird')
 const debugDbConnecting = require('debug')('db:connecting')
 const {db: dbUrl} = require('.')
 
+// Cache db connection so it can be reused
+let cachedDb = null
+
 /**
  * Connect to mongo DB.
  * @returns {Promise<*>} - resolves to mongoose instance if successful, rejects otherwise.
  */
 const connect = async () => {
-  if (mongoose.connection.readyState === 1) {
+  // If the database connection is cached,
+  // use it instead of creating a new connection
+  if (cachedDb) {
+    return cachedDb
+  }
+
+  const {connection: {readyState}} = mongoose
+
+  if (readyState === 1) {
     return mongoose
   }
-  if (mongoose.connection.readyState === 2) {
+  if (readyState === 2) {
     console.log('DB is already connecting, please wait.')
     return mongoose
   }
@@ -22,6 +33,7 @@ const connect = async () => {
     console.error('db connection error:', error.message)
     throw error
   }
+  cachedDb = ret
 
   return ret
 }

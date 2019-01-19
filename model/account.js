@@ -169,6 +169,16 @@ accountSchema.statics.findAllByCurrentClientId = function () {
   })
 }
 
+let allAccounts = null
+
+accountSchema.statics.findAllCached = async function () {
+  if (allAccounts) {
+    return allAccounts
+  }
+  allAccounts = await this.find({})
+  return allAccounts
+}
+
 const Account = mongoose.model('Account', accountSchema)
 
 module.exports = Account

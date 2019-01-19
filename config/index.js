@@ -12,7 +12,9 @@ function parseGoogleSpreadsheetKey(keyString) {
 
   return JSON.parse(`"${spreadsheetPrivateKey}"`)
 }
+
 const config = {
+  port: process.env.PORT,
   db: process.env.MONGODB_URL,
   spreadsheet: {
     orders: {

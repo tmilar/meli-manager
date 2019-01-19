@@ -3,15 +3,27 @@ const SheetsHelper = require('../lib/sheets-helper')
 const Order = require('../model/order.js')
 const config = require('../config')
 const MeliClient = require('../lib/meli-client.js')
-const Account = require('../model/account')
 
 class OrdersService {
   /**
-     * Setup Order service spreadsheet reference.
-     * TODO move this to some initial configuration place...
-     *
-     */
+   * Setup Order service spreadsheet reference.
+   *
+   */
   static async setup() {
+    this.setupMeliClient()
+    await this.setupOrdersSheet()
+
+    console.log('[OrdersService] setup ready')
+  }
+
+  static setupMeliClient() {
+    if (this.meliClient) {
+      return
+    }
+    this.meliClient = new MeliClient()
+  }
+
+  static async setupOrdersSheet() {
     if (this.ordersSheet) {
       return
     }
@@ -30,10 +42,6 @@ class OrdersService {
       headerRowWidth: this.headerRowWidth
     })
 
-    this.meliClient = new MeliClient()
-    const meliAccounts = await Account.find()
-    meliAccounts.forEach(account => this.meliClient.addAccount(account))
-    console.log(`meli client initialized with accounts: ${this.meliClient.accounts.map(a => a.nickname).join(', ')}`)
   }
 
   static async saveNewOrder(newOrderJson) {
@@ -128,9 +136,5 @@ class OrdersService {
     return orderRowPositions
   }
 }
-
-OrdersService
-  .setup()
-  .then(() => console.log('Orders Service ready.'))
 
 module.exports = OrdersService
