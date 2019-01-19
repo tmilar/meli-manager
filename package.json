@@ -4,8 +4,8 @@
   "description": "Handle Mercadolibre data and events, synchronize to Google Sheets.",
   "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www",
-    "start:debug": "node %NODE_DEBUG_OPTION% ./bin/www",
+    "start": "node app.js",
+    "start:debug": "node %NODE_DEBUG_OPTION% app.js",
     "dev": "nodemon app.js",
     "test": "ava --verbose",
     "test:debug": "node %NODE_DEBUG_OPTION% ./node_modules/ava/cli.js",
