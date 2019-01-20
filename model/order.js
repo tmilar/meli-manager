@@ -1,4 +1,5 @@
 const moment = require('moment-timezone')
+moment.tz('America/Argentina/Buenos_Aires')
 
 const columns = new Map([
   ['dateCreated', {header: 'FechaVenta', column: 'fechaventa', colPos: 1}],
@@ -44,29 +45,55 @@ const deliveryType = {
 
 class Order {
   /**
-     *
-     * @param meliOrderJson
-     * @returns {Order}
-     */
+   *
+   * @param meliOrderJson
+   * @returns {Order}
+   */
   static buildFromMeliOrder(meliOrderJson) {
+    const {
+      id,
+      date_created: dateCreated,
+      order_items: orderItems,
+      seller,
+      buyer,
+      shipping,
+      total_amount: totalAmount
+    } = meliOrderJson
+
+    // TODO: we need to support multiple items per order
+    const [orderItem] = orderItems
+
+    const {
+      quantity: itemQuantity,
+      unit_price: itemUnitPrice,
+      sale_fee: itemSaleFee,
+      item
+    } = orderItem
+
     const order = new Order()
-    order.dateCreated = moment(new Date(meliOrderJson.date_created)).tz('America/Argentina/Buenos_Aires').format('DD/MMM/YYYY')
-    order.timeCreated = moment(new Date(meliOrderJson.date_created)).tz('America/Argentina/Buenos_Aires').format('HH:mm')
-    order.buyerNicknameHyperlink = this._buyerProfileToHyperlink(meliOrderJson.buyer)
-    order.itemQuantity = meliOrderJson.order_items[0].quantity
-    order.itemUnitPrice = meliOrderJson.order_items[0].unit_price // TODO descontar comi + cargo envio gratis. discriminar?
-    order.orderDetailURL = `https://myaccount.mercadolibre.com.ar/sales/${meliOrderJson.id}/detail`
-    order.sellerNickname = meliOrderJson.seller.nickname
+    order.id = id
+    order.dateCreated = moment(dateCreated).format('DD/MMM/YYYY HH:mm')
+    order.timeCreated = moment(dateCreated).format('HH:mm')
+    order.buyerNicknameHyperlink = this._buyerProfileToHyperlink(buyer)
+    order.buyerId = buyer.id
+    order.itemQuantity = itemQuantity
+    order.itemUnitPrice = itemUnitPrice
+    order.itemSaleFee = itemSaleFee
+    order.shippingCost = shipping.cost
+    order.totalAmount = totalAmount
+    order.orderDetailURL = `https://myaccount.mercadolibre.com.ar/sales/${id}/detail`
+    order.sellerNickname = seller.nickname
+    order.sellerId = seller.id
+
     order.paymentType = this._getPaymentType(meliOrderJson)
     order.paymentMethod = this._getPaymentMethod(meliOrderJson)
     order.shipmentType = this._getDeliveryType(meliOrderJson)
     order.status = this._getOrderStatus(meliOrderJson)
     order.comments = ''
-    order.itemHyperlink = this._itemToHyperlink(meliOrderJson.order_items[0].item)
-    order.itemTitle = meliOrderJson.order_items[0].item.title
-    order.itemId = meliOrderJson.order_items[0].item.id
-    order.buyer = meliOrderJson.buyer
-    order.id = meliOrderJson.id
+    order.itemHyperlink = this._itemToHyperlink(item)
+    order.itemTitle = item.title
+    order.itemId = item.id
+    order.buyer = buyer
 
     return order
   }
