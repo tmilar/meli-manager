@@ -222,7 +222,6 @@ async function welcomeFlow() {
 function setupDbConnection() {
   return db.connect()
     .then(({connection: {name, host, port}}) => console.log(`db connected: ${host}:${port}/${name}`))
-    .catch(error => console.error('Could not connect to DB.', error))
 }
 
 /**
