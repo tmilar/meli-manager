@@ -2,14 +2,20 @@ const moment = require('moment-timezone')
 moment.tz('America/Argentina/Buenos_Aires')
 
 const columns = new Map([
+  ['id', {header: 'id_venta', column: 'id_venta', colPos: 1}],
   ['dateCreated', {header: 'FechaVenta', column: 'fechaventa', colPos: 1}],
-  ['timeCreated', {header: 'Hora', column: 'hora', colPos: 2}],
   ['buyerNicknameHyperlink', {header: 'Cliente', column: 'cliente', colPos: 3}],
+  ['buyerId', {header: 'id_cliente', column: 'id_cliente'}],
   ['itemHyperlink', {header: 'Item / Descripcion', column: 'itemdescripcion', colPos: 4}],
+  ['itemId', {header: 'id_item', column: 'id_item'}],
   ['itemQuantity', {header: 'Cantidad', column: 'cantidad', colPos: 5}],
   ['itemUnitPrice', {header: 'Precio', column: 'precio', colPos: 6}],
+  ['itemSaleFee', {header: 'Valor Comision', column: 'valorcomision'}],
+  ['shippingCost', {header: 'Valor Envio', column: 'valorenvio'}],
+  ['totalAmount', {header: 'Total', column: 'total'}],
   ['orderDetailURL', {header: 'Link', column: 'link', colPos: 7}],
   ['sellerNickname', {header: 'Vendedor', column: 'vendedor', colPos: 8}],
+  ['sellerId', {header: 'id_vendedor', column: 'id_vendedor'}],
   ['paymentType', {header: 'FormaPago', default: 'MP', column: 'formapago', colPos: 9}],
   ['shipmentType', {header: 'FormaEntrega', column: 'formaentrega', colPos: 10}],
   ['status', {header: 'Estado de venta', default: 'Nueva', column: 'estadodeventa', colPos: 11}],
