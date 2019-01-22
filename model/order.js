@@ -178,6 +178,10 @@ class Order {
       return orderStatus.DELIVERED
     }
 
+    if (status === 'cancelled') {
+      return orderStatus.CANCELLED
+    }
+
     // Se confirmo la compra (no esta "paid") y los pagos estan todos "refunded" ==> "cancelada"
     if (status === 'confirmed' && payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected')) {
       return orderStatus.CANCELLED
