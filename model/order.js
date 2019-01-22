@@ -153,7 +153,7 @@ class Order {
   }
 
   static _getOrderStatus(meliOrderJSON) {
-    const {status, payments, shipping, feedback, date_closed} = meliOrderJSON
+    const {status, payments, shipping, feedback, date_closed: dateClosed, tags} = meliOrderJSON
 
     const pendingDeliveryStatuses = ['to_be_agreed', 'ready_to_ship', 'pending']
 
@@ -167,7 +167,7 @@ class Order {
     }
 
     // Se pagó, se envio y se entrego ==> "entregado"
-    if (status === 'paid' && shipping.status === 'delivered') {
+    if (status === 'paid' && (shipping.status === 'delivered' || tags.includes('delivered'))) {
       return orderStatus.DELIVERED
     }
 
@@ -198,12 +198,12 @@ class Order {
       return orderStatus.CANCELLED
     }
 
-    if (status === 'paid' && shipping.status === 'to_be_agreed' && (Math.abs(moment(date_closed).diff(new Date(), 'days')) > 21)) {
+    if (status === 'paid' && shipping.status === 'to_be_agreed' && (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21)) {
       // Pago: "MP"
       return orderStatus.DELIVERED_EXPIRED
     }
     // Se confirmo la compra (no esta "paid"), y pasaron 21 dias ==> "entregada"
-    if (status === 'confirmed' && (Math.abs(moment(date_closed).diff(new Date(), 'days')) > 21)) {
+    if (status === 'confirmed' && (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21)) {
       // Pago: "efectivo"
       return orderStatus.DELIVERED_EXPIRED
     }
