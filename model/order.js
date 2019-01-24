@@ -243,13 +243,13 @@ class Order {
   }
 
   static _getPaymentType(meliOrderJSON) {
-    const {status, payments, shipping, date_closed, feedback} = meliOrderJSON
+    const {status, payments, shipping, date_closed: dateClosed, feedback} = meliOrderJSON
 
     // Se reintegraron los pagos, o alguno califico NO concretado => "Cancelado"
-    if (status === 'confirmed' && (
-      (payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected')) ||
-                ((feedback.purchase !== null && !feedback.purchase.fulfilled) ||
-                (feedback.sale !== null && !feedback.sale.fulfilled))
+    if ((status === 'confirmed' || status === 'cancelled') && (
+      (payments.length > 0 && payments.every(p => p.status === 'refunded' || p.status === 'rejected' || p.status === 'cancelled')) ||
+      ((feedback.purchase !== null && !feedback.purchase.fulfilled) ||
+        (feedback.sale !== null && !feedback.sale.fulfilled))
     )
     ) {
       return paymentType.CANCELLED
@@ -259,7 +259,7 @@ class Order {
     if (status === 'paid' &&
             (
               shipping.status === 'delivered' ||
-                (Math.abs(moment(date_closed).diff(new Date(), 'days')) > 21) ||
+                (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21) ||
                 (
                   (feedback.purchase !== null && feedback.purchase.fulfilled) ||
                     (feedback.sale !== null && feedback.sale.fulfilled)
@@ -277,7 +277,7 @@ class Order {
       return paymentType.CASH
     }
 
-    if (status === 'confirmed' && shipping.shipment_type !== 'shipping' && (Math.abs(moment(date_closed).diff(new Date(), 'days')) > 21)) {
+    if (status === 'confirmed' && shipping.shipment_type !== 'shipping' && (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21)) {
       return paymentType.UNKNOWN
     }
 
