@@ -26,6 +26,7 @@ router.get('/', async (req, res, next) => {
       accountsArray = accounts.split(',')
     }
   }
+
   const nicknamesFilter = accountsArray ? {nickname: {$in: accountsArray}} : {}
   const shouldStore = store === 'true' || store === '1'
 

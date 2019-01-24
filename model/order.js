@@ -1,4 +1,5 @@
 const moment = require('moment-timezone')
+
 moment.tz('America/Argentina/Buenos_Aires')
 
 const columns = new Map([
@@ -105,13 +106,13 @@ class Order {
   }
 
   /**
-     * Convert item data to it's spreadsheets Hyperlink function.
-     *
-     * @param id
-     * @param title
-     * @returns {string}
-     * @private
-     */
+   * Convert item data to it's spreadsheets Hyperlink function.
+   *
+   * @param id
+   * @param title
+   * @returns {string}
+   * @private
+   */
   static _itemToHyperlink({id, title}) {
     const base = 'http://articulo.mercadolibre.com.ar/'
     const idstr = `${id.substring(0, 3)}-${id.substring(3)}-`
@@ -122,12 +123,12 @@ class Order {
   }
 
   /**
-     * Convert buyer profile to it's nickname spreadsheets hyperlink.
-     *
-     * @param nickname
-     * @returns {string}
-     * @private
-     */
+   * Convert buyer profile to it's nickname spreadsheets hyperlink.
+   *
+   * @param nickname
+   * @returns {string}
+   * @private
+   */
   static _buyerProfileToHyperlink({nickname}) {
     const base = 'https://perfil.mercadolibre.com.ar/'
     const url = base + nickname
@@ -136,10 +137,10 @@ class Order {
   }
 
   /**
-     * Convert Order to an array of values, ordered to be correctly placed as a row.
-     *
-     * @returns {Array}
-     */
+   * Convert Order to an array of values, ordered to be correctly placed as a row.
+   *
+   * @returns {Array}
+   */
   toRowArray({update} = {}) {
     // Map Order properties to array values, in columns order.
     const orderRow = [...columns.keys()]
@@ -173,7 +174,7 @@ class Order {
 
     // Al menos uno califico como entregado ==> "entregado"
     if (((feedback.purchase !== null && feedback.purchase.fulfilled) ||
-            (feedback.sale !== null && feedback.sale.fulfilled))
+      (feedback.sale !== null && feedback.sale.fulfilled))
     ) {
       return orderStatus.DELIVERED
     }
@@ -188,16 +189,16 @@ class Order {
     }
 
     if (status === 'confirmed' &&
-            ((feedback.purchase === null) ||
-            (feedback.sale !== null && !feedback.sale.fulfilled))
+      ((feedback.purchase === null) ||
+        (feedback.sale !== null && !feedback.sale.fulfilled))
     ) {
       return orderStatus.CANCELLED_QUESTION
     }
 
     // Se confirmo la compra (no esta "paid") pero alguien califico no concretado
     if (status === 'confirmed' &&
-            ((feedback.purchase !== null && !feedback.purchase.fulfilled) &&
-            (feedback.sale !== null && !feedback.sale.fulfilled))
+      ((feedback.purchase !== null && !feedback.purchase.fulfilled) &&
+        (feedback.sale !== null && !feedback.sale.fulfilled))
     ) {
       return orderStatus.CANCELLED
     }
@@ -206,6 +207,7 @@ class Order {
       // Pago: "MP"
       return orderStatus.DELIVERED_EXPIRED
     }
+
     // Se confirmo la compra (no esta "paid"), y pasaron 21 dias ==> "entregada"
     if (status === 'confirmed' && (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21)) {
       // Pago: "efectivo"
@@ -216,7 +218,7 @@ class Order {
       return orderStatus.SHIPPED
     }
 
-    console.log('Unknown orderStatus for order: ', meliOrderJSON)
+    console.log('Unknown orderStatus for order:', meliOrderJSON)
     return orderStatus.UNKNOWN
   }
 
@@ -238,7 +240,7 @@ class Order {
       return deliveryType.OTHER
     }
 
-    console.log('Unknown deliveryType for order: ', meliOrderJSON)
+    console.log('Unknown deliveryType for order:', meliOrderJSON)
     return deliveryType.UNKNOWN
   }
 
@@ -257,14 +259,14 @@ class Order {
 
     // Se pago y (pasaron 21 dias o alguno puso concretado)=> MP
     if (status === 'paid' &&
-            (
-              shipping.status === 'delivered' ||
-                (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21) ||
-                (
-                  (feedback.purchase !== null && feedback.purchase.fulfilled) ||
-                    (feedback.sale !== null && feedback.sale.fulfilled)
-                )
-            )
+      (
+        shipping.status === 'delivered' ||
+        (Math.abs(moment(dateClosed).diff(new Date(), 'days')) > 21) ||
+        (
+          (feedback.purchase !== null && feedback.purchase.fulfilled) ||
+          (feedback.sale !== null && feedback.sale.fulfilled)
+        )
+      )
     ) {
       return paymentType.MP
     }
@@ -272,7 +274,7 @@ class Order {
     // No esta pago, y alguno puso concretado => Cash
     if (status === 'confirmed' && (
       (feedback.purchase !== null && feedback.purchase.fulfilled) ||
-            (feedback.sale !== null && feedback.sale.fulfilled))
+      (feedback.sale !== null && feedback.sale.fulfilled))
     ) {
       return paymentType.CASH
     }
@@ -293,11 +295,13 @@ class Order {
     if (!payments || payments.length === 0) {
       return null
     }
+
     const accreditedPayments = payments.filter(p => p.status_detail === 'accredited')
 
     if (accreditedPayments.length === 0) {
       return null
     }
+
     return accreditedPayments[0].payment_type
   }
 
@@ -307,6 +311,7 @@ class Order {
       // Not a mercadolibre order!
       return null
     }
+
     return Number(orderIdMatches[0])
   }
 

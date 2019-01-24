@@ -3,6 +3,7 @@ function parseGoogleSpreadsheetKey(keyString) {
     console.error('No key string defined!')
     return null
   }
+
   const newlineToken = '##NEW_LINE##'
   const dashesToken = '##DASHES##'
   const replaceNewline = string => string.replace(new RegExp(newlineToken, 'g'), '\\n')

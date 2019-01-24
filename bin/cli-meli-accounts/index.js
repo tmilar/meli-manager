@@ -27,6 +27,7 @@ async function doLoginFlow() {
   } catch (error) {
     throw new Error(`Could not complete authentication. Reason: ${error.message || error}`)
   }
+
   return accountData
 }
 
@@ -37,6 +38,7 @@ async function generateTestAccount() {
   } catch (error) {
     throw new Error(`Could not create a test account: ${error.message || error.data || error}`)
   }
+
   return testAccount
 }
 
@@ -60,6 +62,7 @@ async function registerTestAccount({profile, tokens}, testAccountCredentials) {
   } catch (error) {
     throw new Error('Problem registering test account: ' + (error.message || error))
   }
+
   const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
   console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST ' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
 
@@ -82,6 +85,7 @@ async function registerAccount({profile, tokens}) {
   } catch (error) {
     throw new Error('Problem registering account: ' + (error.message || error))
   }
+
   const verbMsg = account.isNewAccount() ? 'Registered new' : 'Updated existing'
   console.log(chalk.green(`${verbMsg} ${account.isTestAccount ? 'TEST ' : ''}account '${chalk.bold.green(account.nickname)}' succesfully.`))
 }
@@ -92,6 +96,7 @@ async function tryEnsureExpectedLogin(loggedUser, expectedNickname) {
     console.log(chalk.red(`Error: must log in with the created test user '${expectedNickname}'`))
     loggedUser = await doLoginFlow()
   }
+
   /* eslint-enable no-await-in-loop */
   return loggedUser
 }
@@ -106,6 +111,7 @@ function diplayAccountsList(accounts) {
     console.log(chalk.red('No accounts available for the current clientId.'))
     return
   }
+
   console.log('Available accounts are: ')
   const accountsList = accounts
     .map(({nickname, isTestAccount}) => `${nickname}${chalk.gray(isTestAccount ? ' (test)' : '')}`)
@@ -191,6 +197,7 @@ async function retrieveAndDisplayApplicationOwnerData({tokens: {accessToken}} = 
       'Please make sure the saved accounts data is valid and try again. '
     throw new Error(errMsg)
   }
+
   // Response: set to clientOwnerData
   clientOwnerData = ownerAccount.clientOwnerData
 
@@ -208,6 +215,7 @@ async function welcomeFlow() {
       'Create and store MercadoLibre Test accounts, manage existing ones, and more!'))
     return
   }
+
   console.log(chalk.cyan('Welcome back!'))
   try {
     await retrieveAndDisplayApplicationOwnerData()
@@ -258,8 +266,10 @@ async function main() {
       console.error(chalk.bold.red(`Selected option is not valid: ${chalk.red(JSON.stringify(choice))}`))
       continue
     }
+
     await selectedAction()
   } while (choice.action !== 'exit')
+
   /* eslint-enable no-await-in-loop */
   await exit()
 }

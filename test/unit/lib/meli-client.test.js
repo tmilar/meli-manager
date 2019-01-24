@@ -31,6 +31,7 @@ test.before('get dev account for testing', async t => {
   if (!devAccount) {
     t.fail(`dev account for test (nickname '${devAccountUsername}') not found in DB`)
   }
+
   Object.assign(t.context, {devAccount})
 })
 
@@ -175,6 +176,7 @@ async function _getOrCreateTestActiveListing(account, meliClient) {
   if (activeListings && activeListings.length > 0) {
     return activeListings[0]
   }
+
   return meliClient.createListing(account, testItemJson)
 }
 
@@ -223,6 +225,7 @@ async function _getOrCreateQuestionToAnswer(askingAccount, respondingAccount, mu
     t.true(questions.length === 1 && questions[0].id === freshQuestion.id, 'Should return with the freshly created question')
     t.true(questions[0].text === freshQuestion.text, 'Should return with the freshly created question')
   }
+
   t.true(questions.length > 0, 'Should have returned at least one unanswered question')
   t.true(questions.every(({status}) => status === 'UNANSWERED'), 'Should all of the returned questions be unanswered.')
   t.true(questions.every(({seller_id}) => seller_id === respondingAccount.id), 'Should all of the questions belong to the selected respondingAccount')

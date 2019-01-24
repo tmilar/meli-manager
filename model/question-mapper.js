@@ -1,4 +1,5 @@
 const moment = require('moment-timezone')
+
 moment.tz.setDefault('America/Argentina/Buenos_Aires')
 const dateToString = date => date ? moment(date).format('YYYY-MM-DD HH:mm:SS') : undefined
 const urlToSheetsHyperlink = (url, title = '') => `=HYPERLINK("${url}", "${title}")`
@@ -88,6 +89,7 @@ class QuestionMapper {
       if (question[key] !== undefined) {
         row[colPos] = question[key]
       }
+
       colPos++
     })
 

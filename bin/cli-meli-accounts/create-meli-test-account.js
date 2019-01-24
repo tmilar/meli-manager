@@ -61,8 +61,10 @@ async function createMeliTestAccount() {
         error.message = `${errMsg}. ${error.message || error.data || error}`
       }
     }
+
     throw new Error(error.message || error || errMsg)
   }
+
   return testAccountCredentials
 }
 

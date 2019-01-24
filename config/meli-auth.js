@@ -9,6 +9,7 @@ const {clientId, clientSecret} = require('.').auth.mercadolibre
 if (!clientId) {
   throw new Error('MercadoLibre clientId must be defined in MELI_CLIENT_ID env variable')
 }
+
 if (!clientSecret) {
   throw new Error('MercadoLibre clientSecret must be defined in MELI_CLIENT_SECRET env variable')
 }

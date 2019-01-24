@@ -20,6 +20,7 @@ class OrdersService {
     if (this.meliClient) {
       return
     }
+
     this.meliClient = new MeliClient()
   }
 
@@ -59,14 +60,14 @@ class OrdersService {
   }
 
   /**
-     * For all accounts, fetch all Meli orders between desired dates.
-     *
-     * @param startDate
-     * @param endDate
-     * @param accounts - {mongoose model}
-     * @param id - fetch by order id
-     * @returns {array} all the meli orders for the selected accounts, ordered by date_closed.
-     */
+   * For all accounts, fetch all Meli orders between desired dates.
+   *
+   * @param startDate
+   * @param endDate
+   * @param accounts - {mongoose model}
+   * @param id - fetch by order id
+   * @returns {array} all the meli orders for the selected accounts, ordered by date_closed.
+   */
   static async fetchMeliOrders({startDate, endDate, accounts, id}) {
     const ordersResponses = await this.meliClient.getOrders({startDate, endDate, accounts, id})
 
@@ -87,12 +88,12 @@ class OrdersService {
   }
 
   /**
-     * Fetch one specific order by account and id.
-     *
-     * @param account - {mongoose account holding the order}
-     * @param id      - orderId
-     * @returns {Promise.<null>} - order object
-     */
+   * Fetch one specific order by account and id.
+   *
+   * @param account - {mongoose account holding the order}
+   * @param id      - orderId
+   * @returns {Promise.<null>} - order object
+   */
   static async fetchOneMeliOrder(account, id) {
     const orders = await this.fetchMeliOrders({accounts: [account], id})
     return (orders && orders.length > 0) ? orders[0] : null
@@ -121,6 +122,7 @@ class OrdersService {
         return this.updateOrder(orderJson, rowPosition)
       })
     }
+
     // Save new row
     console.log('Saving new order row...')
     await this.saveNewOrder(orderJson)

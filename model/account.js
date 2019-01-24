@@ -68,6 +68,7 @@ accountSchema.methods.isNewAccount = function () {
   if (!this.createdAt) {
     return false
   }
+
   const isFresh = (new Date() - this.createdAt) < TIME_NEW_ACCOUNT_MILLIS
   const wasUpdated = this.updatedAt && this.updatedAt > this.createdAt
   return isFresh && !wasUpdated
@@ -175,6 +176,7 @@ accountSchema.statics.findAllCached = async function () {
   if (allAccounts) {
     return allAccounts
   }
+
   allAccounts = await this.find({})
   return allAccounts
 }

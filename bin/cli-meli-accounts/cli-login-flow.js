@@ -9,6 +9,7 @@ const port = process.env.PORT
 if (!port) {
   throw new Error('CliLoginFlow: express OAuth server PORT env variable must be defined!')
 }
+
 const TIMEOUT_MS = 100 * 1000
 
 class AuthEventEmitter extends EventEmitter {}
@@ -105,6 +106,7 @@ function startServer(app) {
       if (!error) {
         error = new Error()
       }
+
       error.message = `Could not start express server in cli-login-flow: ${error.message || error}`
       reject(error)
     })

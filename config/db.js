@@ -22,10 +22,12 @@ const connect = async () => {
   if (readyState === 1) {
     return mongoose
   }
+
   if (readyState === 2) {
     console.log('DB is already connecting, please wait.')
     return mongoose
   }
+
   let ret
   try {
     ret = await mongoose.connect(dbUrl, {useNewUrlParser: true})
@@ -33,6 +35,7 @@ const connect = async () => {
     console.error('db connection error:', error.message)
     throw error
   }
+
   cachedDb = ret
 
   return ret
@@ -88,9 +91,11 @@ const _waitForConnection = async function (maxChecks, checkIntervalMillis) {
       debugDbConnecting(`DB status: connecting... (check #${checks} out of ${maxChecks})`)
     }
   }
+
   if (!isConnectedResult && checks === maxChecks) {
     debugDbConnecting(`DB did not connect after ${checks} checks.`)
   }
+
   return isConnectedResult
 }
 
