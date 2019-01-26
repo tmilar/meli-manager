@@ -1,4 +1,3 @@
-/* eslint-disable import/first,import/order,import/no-unassigned-import,camelcase */
 import test from 'ava'
 
 // Load test env variables

@@ -53,8 +53,8 @@ const deliveryType = {
 class Order {
   /**
    *
-   * @param meliOrderJson
-   * @returns {Order}
+   * @param {*} meliOrderJson - JSON of the MeLi Order object
+   * @returns {Order} the created Order instance object
    */
   static buildFromMeliOrder(meliOrderJson) {
     const {
@@ -108,10 +108,11 @@ class Order {
   /**
    * Convert item data to it's spreadsheets Hyperlink function.
    *
-   * @param id
-   * @param title
-   * @returns {string}
    * @private
+   * @param {string} id - the item id
+   * @param {string} title - the item title
+   *
+   * @returns {string} - the meli item URL
    */
   static _itemToHyperlink({id, title}) {
     const base = 'http://articulo.mercadolibre.com.ar/'
@@ -125,9 +126,10 @@ class Order {
   /**
    * Convert buyer profile to it's nickname spreadsheets hyperlink.
    *
-   * @param nickname
-   * @returns {string}
    * @private
+   * @param {string} nickname - the nickanme to use for the profile url
+   *
+   * @returns {string} the profile URL
    */
   static _buyerProfileToHyperlink({nickname}) {
     const base = 'https://perfil.mercadolibre.com.ar/'
@@ -139,7 +141,7 @@ class Order {
   /**
    * Convert Order to an array of values, ordered to be correctly placed as a row.
    *
-   * @returns {Array}
+   * @returns {[string]} - row values array
    */
   toRowArray({update} = {}) {
     // Map Order properties to array values, in columns order.

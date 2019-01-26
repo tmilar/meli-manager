@@ -42,7 +42,6 @@ class OrdersService {
       headerRowHeight: this.headerRowHeight,
       headerRowWidth: this.headerRowWidth
     })
-
   }
 
   static async saveNewOrder(newOrderJson) {
@@ -62,11 +61,12 @@ class OrdersService {
   /**
    * For all accounts, fetch all Meli orders between desired dates.
    *
-   * @param startDate
-   * @param endDate
-   * @param accounts - {mongoose model}
-   * @param id - fetch by order id
-   * @returns {array} all the meli orders for the selected accounts, ordered by date_closed.
+   * @param {date} [startDate] - filter to retrieve results on or after this date only. Optional.
+   * @param {date} [endDate] - filter to retrieve results up to this date only. Optional.
+   * @param {[Account]} [accounts] - filter to retrieve results of these accounts only. Optional.
+   * @param {number|string} [id] - filter to fetch only one specific order by id
+   *
+   * @returns {[*]} all the meli orders for the selected accounts, ordered by date_closed.
    */
   static async fetchMeliOrders({startDate, endDate, accounts, id}) {
     const ordersResponses = await this.meliClient.getOrders({startDate, endDate, accounts, id})
@@ -90,9 +90,10 @@ class OrdersService {
   /**
    * Fetch one specific order by account and id.
    *
-   * @param account - {mongoose account holding the order}
-   * @param id      - orderId
-   * @returns {Promise.<null>} - order object
+   * @param {Account} account - the selected account . Optional.
+   * @param {number|string} [id] - meli order id
+   *
+   * @returns {Promise.<{}|null>} - resolves order object, or null if not found
    */
   static async fetchOneMeliOrder(account, id) {
     const orders = await this.fetchMeliOrders({accounts: [account], id})

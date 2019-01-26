@@ -27,11 +27,12 @@ const meliAuth = {
  * Callback after Mercadolibre authorization.
  * Uses default meliAuth.onAuthSuccess() callback, but it can be overwritten for custom logic ie. CLI app.
  *
- * @param accessToken
- * @param refreshToken
- * @param profile
- * @param done
- * @returns {Promise<*>}
+ * @param {string} accessToken - the MercadoLibre access token
+ * @param {string} refreshToken - the MercadoLibre refresh token
+ * @param {*} profile - the authorized mercadolibre account profile
+ * @param {function} done - callback
+ *
+ * @returns {Promise<*>} - execution promise
  */
 const authorizedCb = async (accessToken, refreshToken, profile, done) => {
   const tokens = {accessToken, refreshToken}
