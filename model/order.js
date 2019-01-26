@@ -225,20 +225,20 @@ class Order {
   }
 
   static _getDeliveryType(meliOrderJSON) {
-    const {shipping} = meliOrderJSON
+    const {shipping: {shipment_type: shipmentType, status, shipping_mode: shippingMode}} = meliOrderJSON
 
     // No hay 'shipment_type' y en status 'to_be_agreed' => "Retiro"
-    if (shipping.shipment_type === null && shipping.status === 'to_be_agreed') {
+    if (shipmentType === null && status === 'to_be_agreed') {
       return deliveryType.AGREED
     }
 
     // Tipo "shipping" , y modo "me2" => "Mercadoenvios"
-    if (shipping.shipment_type === 'shipping' && shipping.shipping_mode === 'me2') {
+    if (shipmentType === 'shipping' && shippingMode === 'me2') {
       return deliveryType.ME2
     }
 
     // Tipo "shipping", y otro modo => "envio: otro"
-    if (shipping.shipment_type === 'shipping' && shipping.shipping_mode !== 'me2') {
+    if ((shipmentType === 'shipping' || shipmentType === 'custom_shipping') && shippingMode !== 'me2') {
       return deliveryType.OTHER
     }
 
