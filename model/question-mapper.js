@@ -6,18 +6,18 @@ const urlToSheetsHyperlink = (url, title = '') => `=HYPERLINK("${url}", "${title
 
 const columns = new Map([
   ['sellerNickname', {header: 'Vendedor', column: 'Vendedor', colPos: 1}],
-  ['sellerId', {header: 'id_vendedor', column: 'id_vendedor', colPos: 2}],
-  ['id', {header: 'id_pregunta', column: 'id_pregunta', colPos: 3}],
-  ['customerNickname', {header: 'Comprador', column: 'Comprador', colPos: 4}],
-  ['customerId', {header: 'id_comprador', column: 'id_comprador', colPos: 5}],
-  ['itemTitle', {header: 'Publicacion', column: 'Publicacion', colPos: 6}],
-  ['itemId', {header: 'id_publicacion', column: 'id_publicacion', colPos: 7}],
-  ['questionText', {header: 'Pregunta', column: 'Pregunta', colPos: 8}],
-  ['date', {header: 'Fecha Pregunta', column: 'Fecha Pregunta', colPos: 9}],
-  ['questionStatus', {header: 'Estado Pregunta', column: 'Estado Pregunta', colPos: 10}],
-  ['answerText', {header: 'Respuesta', column: 'Respuesta', colPos: 11}],
-  ['answerDate', {header: 'Fecha Respuesta', column: 'Fecha Respuesta', colPos: 12}],
-  ['answerStatus', {header: 'Estado Respuesta', column: 'Estado Respuesta', colPos: 13}]
+  ['sellerId', {header: 'id_vendedor', column: 'id_vendedor'}],
+  ['id', {header: 'id_pregunta', column: 'id_pregunta'}],
+  ['customerNickname', {header: 'Comprador', column: 'Comprador'}],
+  ['customerId', {header: 'id_comprador', column: 'id_comprador'}],
+  ['itemTitle', {header: 'Publicacion', column: 'Publicacion'}],
+  ['itemId', {header: 'id_publicacion', column: 'id_publicacion'}],
+  ['questionText', {header: 'Pregunta', column: 'Pregunta'}],
+  ['date', {header: 'Fecha Pregunta', column: 'Fecha Pregunta'}],
+  ['questionStatus', {header: 'Estado Pregunta', column: 'Estado Pregunta'}],
+  ['answerText', {header: 'Respuesta', column: 'Respuesta'}],
+  ['answerDate', {header: 'Fecha Respuesta', column: 'Fecha Respuesta'}],
+  ['answerStatus', {header: 'Estado Respuesta', column: 'Estado Respuesta'}]
 ])
 
 class Question {
