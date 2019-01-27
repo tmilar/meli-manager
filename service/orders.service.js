@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const SheetsHelper = require('../lib/sheets-helper')
 const Order = require('../model/order.js')
 const config = require('../config')
@@ -44,19 +43,14 @@ class OrdersService {
     })
   }
 
-  static async saveNewOrder(newOrderJson) {
-    const newOrder = Order.buildFromMeliOrder(newOrderJson)
-    const orderRow = newOrder.toRowArray()
-    await this.ordersSheet.appendNewRow(orderRow)
+  static async saveOrUpdateOrder(orderJson) {
+    const order = Order.buildFromMeliOrder(orderJson)
+    const orderRow = order.toRowArray()
+    const {colPos: orderIdColumn} = Order.getIdColumn()
+    console.log('Saving order row...')
+    await this.ordersSheet.updateOrAppendRow(orderRow, orderIdColumn)
   }
 
-  static async updateOrder(updatedOrderJson, rowPosition) {
-    const order = Order.buildFromMeliOrder(updatedOrderJson)
-
-    const orderRow = order.toRowArray({update: true})
-
-    await this.ordersSheet.setRowValuesInRowCells(orderRow, rowPosition)
-  }
 
   /**
    * For all accounts, fetch all Meli orders between desired dates.
@@ -98,45 +92,6 @@ class OrdersService {
   static async fetchOneMeliOrder(account, id) {
     const orders = await this.fetchMeliOrders({accounts: [account], id})
     return (orders && orders.length > 0) ? orders[0] : null
-  }
-
-  static async saveOrUpdateOrder(orderJson) {
-    /*
-         Let ordersByRows = await this.ordersSheet.getAllRows();
-
-         let orderRowsById = ordersByRows.filter(o => Order.getIdFromRowObject(o) === orderJson.id);
-         orderRowsById.forEach(o => o.formapago = "caca");
-         let update = Promise.mapSeries(orderRowsById, o => {
-         console.log("Saving... ", o);
-         return o.save();
-         })
-         .then(() => console.log("Done"));
-
-         return update;
-         */
-    const orderRowPositions = await this.findOrderRowPositions(orderJson)
-
-    if (orderRowPositions && orderRowPositions.length >= 1) {
-      // Update existing row(s)
-      return Promise.mapSeries(orderRowPositions, ({rowPosition}) => {
-        console.log('Updating existing order...')
-        return this.updateOrder(orderJson, rowPosition)
-      })
-    }
-
-    // Save new row
-    console.log('Saving new order row...')
-    await this.saveNewOrder(orderJson)
-  }
-
-  static async findOrderRowPositions({id}) {
-    const orderIdColumn = Order.getIdColumn().colPos
-    const ordersIdsColumn = await this.ordersSheet.getAllCellsByColumn({col: orderIdColumn})
-    const orderRowPositions = ordersIdsColumn
-      .map((orderIdCell, rowPosition) => ({orderIdCell, rowPosition}))
-      .filter(({orderIdCell}) => Order.extractIdFromCellValue(orderIdCell) === id)
-
-    return orderRowPositions
   }
 }
 

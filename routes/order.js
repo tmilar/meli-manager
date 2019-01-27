@@ -44,7 +44,7 @@ router.get('/', async (req, res, next) => {
     // 3. store selected orders
     if (shouldStore) {
       req.setTimeout(0) // No timeout, so client can wait for the result.
-      await Promise.mapSeries(orders, o => OrderService.saveNewOrder(o))
+      await Promise.mapSeries(orders, o => OrderService.saveOrUpdateOrder(o))
     }
   } catch (error) {
     console.log('Something bad happened at /order', error)

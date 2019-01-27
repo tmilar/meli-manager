@@ -23,7 +23,6 @@ const columns = new Map([
   ['comments', {header: 'Comentarios', default: '', column: 'comentarios'}]
 ])
 
-const updatableColumns = ['paymentType', 'shipmentType', 'status']
 
 const orderStatus = {
   RESERVED: 'Reservada',
@@ -143,11 +142,11 @@ class Order {
    *
    * @returns {[string]} - row values array
    */
-  toRowArray({update} = {}) {
+  toRowArray() {
     // Map Order properties to array values, in columns order.
     const orderRow = [...columns.keys()]
       .map(key => {
-        return (Object.prototype.hasOwnProperty.call(this, key) && (!update || updatableColumns.includes(key))) ?
+        return (Object.prototype.hasOwnProperty.call(this, key)) ?
           this[key] :
           null
       })
@@ -307,22 +306,13 @@ class Order {
     return accreditedPayments[0].payment_type
   }
 
-  static extractIdFromCellValue(orderDetailURL) {
-    const orderIdMatches = orderDetailURL.match(/\d+/)
-    if (!orderIdMatches || orderIdMatches.length === 0) {
-      // Not a mercadolibre order!
-      return null
-    }
-
-    return Number(orderIdMatches[0])
-  }
 
   static getColumns() {
     return columns
   }
 
   static getIdColumn() {
-    return columns.get('orderDetailURL')
+    return columns.get('id')
   }
 }
 
