@@ -1,7 +1,7 @@
 // Get env variables
 const path = require('path')
 require('dotenv').config({path: path.resolve(__dirname, '.env')})
-const {Server: server} = require('http')
+
 const express = require('express')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
@@ -59,17 +59,27 @@ app.use((err, req, res) => {
   res.render('error')
 })
 
-function startServer() {
-  const http = server(app)
+let server
 
+function startServer() {
   return new Promise((resolve, reject) => {
     try {
-      http.listen(port, () => {
-        resolve(port)
+      server = app.listen(port, () => {
+        resolve(server)
       })
     } catch (error) {
       reject(error)
     }
+  })
+}
+
+function closeServer() {
+  return new Promise(resolve => {
+    if (!server || !server.close) {
+      return resolve()
+    }
+
+    server.close(resolve)
   })
 }
 
@@ -82,20 +92,32 @@ async function setup() {
     Account.findAllCached()
       .then(accounts => console.log(`Using accounts: '${accounts.map(({nickname}) => nickname).join('\', \'')}'`)),
     startServer()
-      .then(port => console.log(`Listening on port ${port} (${app.get('env')})`))
+      .then(server => console.log(`Listening on port ${server.address().port} (${app.get('env')})`))
   ])
 
   console.log('App is running.')
 }
 
+async function shutdown(code = 0) {
+  await closeServer()
+  await db.disconnect()
+  process.exitCode = code
+}
+
 process.on('SIGINT', async () => {
   console.log('\nGracefully shutting down from SIGINT (Ctrl-C)')
+  await shutdown()
+})
 
-  await db.disconnect()
-  process.exit(1)
+process.on('SIGTERM', async () => {
+  console.log('\nGracefully shutting down from SIGTERM')
+  await shutdown()
 })
 
 setup()
-  .catch(error => console.error('Unexpected error on app startup:', error))
+  .catch(async error => {
+    console.error('Unexpected error on app startup:', error)
+    await shutdown(1)
+  })
 
 module.exports = app
