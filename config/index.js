@@ -11,7 +11,14 @@ function parseGoogleSpreadsheetKey(keyString) {
   const parseKey = key => replaceNewline(replaseDashes(key))
   const spreadsheetPrivateKey = parseKey(keyString)
 
-  return JSON.parse(`"${spreadsheetPrivateKey}"`)
+  let parsed
+  try {
+    parsed = JSON.parse(`"${spreadsheetPrivateKey}"`)
+  } catch (error) {
+    parsed = spreadsheetPrivateKey
+  }
+
+  return parsed
 }
 
 const config = {
