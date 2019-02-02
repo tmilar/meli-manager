@@ -48,7 +48,7 @@ const config = {
       type: 'service_account',
       project_id: 'meli-manager',
       private_key_id: process.env.SPREADSHEET_PRIVATE_KEY_ID,
-      private_key: parseGoogleSpreadsheetKey(process.env.SPREADSHEET_PRIVATE_KEY),
+      private_key: process.env.SPREADSHEET_PRIVATE_KEY && parseGoogleSpreadsheetKey(process.env.SPREADSHEET_PRIVATE_KEY),
       client_email: process.env.SPREADSHEET_CLIENT_EMAIL,
       client_id: process.env.SPREADSHEET_CLIENT_ID,
       auth_uri: 'https://accounts.google.com/o/oauth2/auth',
