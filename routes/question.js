@@ -7,8 +7,9 @@ const Account = require('../model/account')
 /**
  * Post question answer by questionId and sellerId.
  */
-router.post('/answer', async (req, res, next) => {
-  const {questionId, sellerId, answerText} = req.body
+router.post('/:id/answer', async (req, res, next) => {
+  const {id: questionId} = req.params
+  const {sellerId, answerText} = req.body
 
   try {
     await QuestionService.answerQuestion(sellerId, questionId, answerText)
