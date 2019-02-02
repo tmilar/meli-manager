@@ -32,9 +32,9 @@ Meli Manager is a set of tools to help small and medium sized sellers of Mercado
 - [x] Real time synchronization support.
 - [x] Multi-account support.
 - [x] Simplify order status information (delivery and payment statuses).
+- [x] Manage customer Questions.
 
 ### Soon
-- [ ] Manage customer Questions.
 - [ ] Manage customer Messages.
 - [ ] Synchronize Customers data related to Orders.
 - [ ] Build Customers profiles and relate to questions and messages.
@@ -50,8 +50,8 @@ Meli Manager is a set of tools to help small and medium sized sellers of Mercado
 * MercadoLibre API [client keys](https://developers.mercadolibre.com.ar/apps/create-app) ([more info](https://developers.mercadolibre.com/en_us/register-your-application))
 * Google Spreadsheet API [client keys](https://cloud.google.com/docs/authentication/api-keys) (see [setup steps](#google-spreadsheet-api-keys-setup))
 
-
 ### First time Setup
+
 ```
 npm install
 ```
@@ -85,6 +85,7 @@ QUESTIONS_SPREADSHEET_ID=
 # Questions sheet name (ie. 'Sheet 1', 'Ventas'...)
 QUESTIONS_SPREADSHEET_SHEETNAME=
 ```
+
 ### Run
 Ensure Mongo DB instance is running (specified in `.env` file). Then:
 ```
@@ -99,7 +100,7 @@ npm test
 ### Misc
 
 #### MercadoLibre Test Accounts CLI tool
-A command line utility to locally create, authorize and store a MeLi test user account is provided.
+An optional command line utility to locally create, authorize and store a MeLi test user account is provided.
 
 __How to use__
 1. Setup env variables in `bin/cli-meli-accounts` path:
@@ -120,35 +121,20 @@ MELI_CLIENT_SECRET=
 ```
 
 2. Ensure the configured Mongo DB instance is running.
-3. Run it:
+3. Run it. For example:
 
 ```
-$ node bin/cli-meli-accounts/ -h
+$ npm run meli:test-account 
 Usage: cli-meli-accounts [options]
 
-Interactive CLI for MercadoLibre user Accounts management.
-
-Options:
-
-  -V, --version          output the version number
-  -h, --help             output usage information
+Welcome!
+? What do you want to do? (Use arrow keys)
+> Create a new Test account
+  Login & Save existing account
+  List saved accounts
+  ──────────────
+  Exit
 ```
-
-_Additionaly, it could be run doing_ `npm run meli:test-account`
-
-> example:
->  `node bin/cli-meli-accounts`
-> would output:
->
-> ```
-> Welcome!
-> ? What do you want to do? (Use arrow keys)
-> > Create a new Test account
->   Login & Save existing account
->   List saved accounts
->   ──────────────
->   Exit
-> ```
 
 
 #### Google Spreadsheet API Keys Setup
@@ -163,7 +149,7 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
 
 4. The service account key you have just generated includes a client_email. Navigate to your google spreadsheet that will hold the data and allow the client_email to have Write access on the document.
 
-5. With the downloaded JSON data, now you have to fill the properties in the .env file:
+5. With the downloaded JSON data, now you have to fill in the properties in the .env variables:
 
     ```
         SPREADSHEET_PRIVATE_KEY_ID=<private_key_id>
@@ -172,12 +158,12 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
         SPREADSHEET_CLIENT_ID=<client_id>
     ```
 
-    > Note: the rest of the JSON properties are already set by default in the [`config/index.js`](../master/config/index.js) file.
+    > _Note_: the rest of the JSON properties are already set by default in the [`config/index.js`](../master/config/index.js) file.
 
-6. For this specific project, we'll also need the Document Id and Sheet Name where we'll save the MercadoLibre Orders data:
+6. For this specific project, we'll also need the document Id and Sheet Name where we'll save the MercadoLibre Orders data:
 
     > The spreadsheet id can be found in the document URL. For example, in:
-    > <https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>
+    > "<https://docs.google.com/spreadsheets/d/1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw/edit#gid=0>"
     > the spreadsheet Id is: __1k0ip0Zvr9g9fXEnkLzNHs_recXFjTAlOFQ19nNdi4Tw__
 
     ```
