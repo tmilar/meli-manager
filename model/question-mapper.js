@@ -5,9 +5,9 @@ const dateToString = date => date ? moment(date).format('YYYY-MM-DD HH:mm:SS') :
 const urlToSheetsHyperlink = (url, title = '') => `=HYPERLINK("${url}", "${title}")`
 
 const columns = new Map([
-  ['sellerNickname', {header: 'Vendedor', column: 'Vendedor', colPos: 1}],
+  ['sellerNickname', {header: 'Vendedor', column: 'Vendedor'}],
   ['sellerId', {header: 'id_vendedor', column: 'id_vendedor'}],
-  ['id', {header: 'id_pregunta', column: 'id_pregunta'}],
+  ['id', {header: 'id_pregunta', column: 'id_pregunta', colPos: 3}],
   ['customerNickname', {header: 'Comprador', column: 'Comprador'}],
   ['customerId', {header: 'id_comprador', column: 'id_comprador'}],
   ['itemTitle', {header: 'Publicacion', column: 'Publicacion'}],
