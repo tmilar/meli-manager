@@ -19,7 +19,10 @@ Node.js + MercadoLibre API + Google SpreadSheets API = :tada:
   * [Test](#test)
   * [Misc](#misc)
     + [MercadoLibre Test Accounts CLI tool](#mercadolibre-test-accounts-cli-tool)
-    + [How to: configure Spreadsheet API keys](#how-to-configure-spreadsheet-api-keys)
+    + [Google Spreadsheet API Keys Setup](#google-spreadsheet-api-keys-setup)
+- [Deploy to Now](#deploy-to-now)
+  * [Setup & Config](#setup--config)
+  * [Deploy](#deploy)
 - [Contributing](#contributing)
 
 <!-- tocstop -->
@@ -186,6 +189,35 @@ To write to your own spreadsheet you need to set up “Service Account Keys”. 
         QUESTIONS_SPREADSHEET_SHEETNAME=
     ```
 
+
+## Deploy to Now
+
+Deploying is easy!
+
+### Setup & Config
+1) Make sure [Now client](https://zeit.co/download) is installed.
+2) Configure app secrets:
+```
+now secret add meli-manager-meli_client_secret "my_meli_client_secret"
+now secret add meli-manager-mongodb_url "my_mongodb_url"
+now secret add meli-manager-spreadsheet_private_key_id "my_spreadsheet_private_key_id"
+now secret add meli-manager-spreadsheet_private_key "my_spreadsheet_private_key"
+```
+_Note:_ the spreadsheet private key might be trickier to add to Now, due to it's multiline complexity.
+A [workaround](https://github.com/zeit/now-cli/issues/749#issuecomment-496674978) is saving the key text in a clean file, and then run instead:
+```
+now secret add meli-manager-spreadsheet_private_key -- "`< google-secret-key`"
+```
+
+3) Edit [`now.json`](./now.json) file `env` variables as you seem fit for your instance.
+
+### Deploy
+
+Simply run:
+```
+now
+```
+And in a few moments you'll see the URL of your running instance. See the [now docs](https://zeit.co/docs/v2/getting-started/introduction-to-now/) for more deployment options.
 
 ## Contributing
 - Create a new GitHub issue.
