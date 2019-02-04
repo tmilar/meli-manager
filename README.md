@@ -151,12 +151,12 @@ Retrieve all MercadoLibre orders of the available accounts.
 
 All params are *optional*:
 
-| Param | Type | Example | Description
-|---|
-| start | String | 01-01-19 | Start date filter (format "DD-MM-YY"). Inclusive.
-| end | String | 31-01-19 | End date filter (format "DD-MM-YY"). Inclusive.
-| accounts | String | "MELI USER1,MELI USER2" | Retrieve orders only from selected account usernames.
-| store | Boolean | true, false| Wether to store retrieved orders in the configured spreadsheet.
+| Param | Type | Example | Description |
+|---|---|---|---|
+| start | String | 01-01-19 | Start date filter (format "DD-MM-YY"). Inclusive. |
+| end | String | 31-01-19 | End date filter (format "DD-MM-YY"). Inclusive. |
+| accounts | String | "MELI USER1,MELI USER2" | Retrieve orders only from selected account usernames. |
+| store | Boolean | true, false| Wether to store retrieved orders in the configured spreadsheet. |
 
 #### Get MercadoLibre Questions
 
@@ -170,12 +170,12 @@ Retrieve all MercadoLibre questions of the available accounts.
 
 All params are *optional*:
 
-| Param | Type | Example | Description
-|---|
-| start | String | 01-01-19 | Start date filter (format "DD-MM-YY"). Inclusive.
-| end | String | 31-01-19 | End date filter (format "DD-MM-YY"). Inclusive.
-| accounts | String | "MELI USER1,MELI USER2" | Retrieve questions only from selected account usernames.
-| store | Boolean | true, false| Wether to store retrieved questions in the configured spreadsheet.
+| Param | Type | Example | Description |
+|---|---|---|---|
+| start | String | 01-01-19 | Start date filter (format "DD-MM-YY"). Inclusive. |
+| end | String | 31-01-19 | End date filter (format "DD-MM-YY"). Inclusive. |
+| accounts | String | "MELI USER1,MELI USER2" | Retrieve questions only from selected account usernames. |
+| store | Boolean | true, false| Wether to store retrieved questions in the configured spreadsheet. |
 
 #### Answer Mercadolibre Question
 
@@ -191,19 +191,19 @@ POST /question/{id}/answer
 
 All params are *required*.
 
-| Param | Type | Example | Description
-|---|
-| id | Number | 111111111 | ID of the MercadoLibre Question to answer.
+| Param | Type | Example | Description |
+|---|---|---|---|
+| id | Number | 111111111 | ID of the MercadoLibre Question to answer. |
 
 
 ###### Body Params
 
 All params are *required*.
 
-| Param  | Type | Example | Description
-|---|
-| sellerId | Number | 12121212 | ID of MercadoLibre seller account. Requires account to be authorized.
-| answerText | String | "answer text" | Text of the answer to be sent for the selected question
+| Param  | Type | Example | Description |
+|---|---|---|---|
+| sellerId | Number | 12121212 | ID of MercadoLibre seller account. Requires account to be authorized. |
+| answerText | String | "answer text" | Text of the answer to be sent for the selected question |
 
 ### Misc
 
