@@ -1,6 +1,6 @@
 {
   "name": "meli-manager",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Handle Mercadolibre data and events, synchronize to Google Sheets.",
   "main": "app.js",
   "scripts": {
