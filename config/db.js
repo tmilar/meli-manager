@@ -3,7 +3,7 @@ mongoose.Promise = require('bluebird')
 const debugDbConnecting = require('debug')('db:connecting')
 const {db: dbUrl} = require('.')
 
-// Cache db connection so it can be reused
+// Cache db connection so it can be reused, if kept in the global scope
 let cachedDb = null
 
 /**
@@ -13,32 +13,42 @@ let cachedDb = null
 const connect = async () => {
   // If the database connection is cached,
   // use it instead of creating a new connection
+  if (cachedDb && !_isConnected(cachedDb)) {
+    cachedDb = null
+    console.log('[mongoose] client discard')
+  }
+
   if (cachedDb) {
+    if (_isConnected(cachedDb)) {
+      console.log('[mongoose] client connected, quick return')
+    } else if (_isConnecting(cachedDb)) {
+      console.log('[mongoose] client is already connecting, please wait. quick return')
+    } else {
+      console.log(`[mongoose] client status is ${cachedDb.connection.readyState}`)
+    }
     return cachedDb
   }
 
-  const {connection: {readyState}} = mongoose
-
-  if (readyState === 1) {
-    return mongoose
-  }
-
-  if (readyState === 2) {
-    console.log('DB is already connecting, please wait.')
-    return mongoose
-  }
-
-  let ret
+  let db
   try {
-    ret = await mongoose.connect(dbUrl, {useNewUrlParser: true})
+    db = await mongoose.connect(dbUrl, {
+      useNewUrlParser: true,
+      /*
+        Buffering allows Mongoose to queue up operations if MongoDB
+        gets disconnected, and to send them upon reconnection.
+        With serverless, it is better to fail fast when not connected.
+      */
+      bufferCommands: false,
+      bufferMaxEntries: 0
+    })
   } catch (error) {
-    console.error('db connection error:', error.message)
+    console.error('[mongoose] db connection error:', error.message)
     throw error
   }
 
-  cachedDb = ret
+  cachedDb = db
 
-  return ret
+  return db
 }
 
 /**
@@ -46,24 +56,24 @@ const connect = async () => {
  *
  * @returns {Promise<void>} - exec promise
  */
-const disconnect = () => {
-  return mongoose.disconnect()
+const disconnect = (db = mongoose) => {
+  return db.disconnect()
 }
 
 /**
  * @returns {boolean} true if connection.state is 'connected' (value 1)
  * @private
  */
-const _isConnected = function () {
-  return mongoose.connection.readyState === 1
+const _isConnected = function ({connection: {readyState}} = mongoose) {
+  return readyState === 1
 }
 
 /**
  * @returns {boolean} true if connection.state is 'connecting' (value 2).
  * @private
  */
-const _isConnecting = function () {
-  return mongoose.connection.readyState === 2
+const _isConnecting = function ({connection: {readyState}} = mongoose) {
+  return readyState === 2
 }
 
 /**

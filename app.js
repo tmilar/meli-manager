@@ -83,10 +83,16 @@ function closeServer() {
   })
 }
 
+let dbConnection = null
+
 async function setup() {
   await Promise.all([
     db.connect()
-      .then(({connection: {name, host, port}}) => console.log(`db connection open: ${host}:${port}/${name}`)),
+      .then(connection => {
+        const {connection: {name, host, port}} = connection
+        console.log(`db connection open: ${host}:${port}/${name}`)
+        dbConnection = connection
+      }),
     QuestionsService.setup(),
     OrdersService.setup(),
     Account.findAllCached()
@@ -100,7 +106,9 @@ async function setup() {
 
 async function shutdown(code = 0) {
   await closeServer()
-  await db.disconnect()
+  if (dbConnection) {
+    await db.disconnect(dbConnection)
+  }
   process.exitCode = code
 }
 
