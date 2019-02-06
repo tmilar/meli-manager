@@ -1,37 +1,55 @@
 const config = require('../config')
-const MeliClient = require('../lib/meli-client.js')
+const MeliClient = require('../lib/meli-client')
 const SheetsHelper = require('../lib/sheets-helper')
+const Account = require('../model/account')
 const QuestionMapper = require('../model/question-mapper')
 
 class QuestionsService {
-  static async setup() {
-    this.setupMeliClient()
-    await this.setupQuestionsSheet()
+  /**
+   * Setup & Create a new QuestionsService instance.
+   * @return {QuestionsService} questionService new instance
+   */
+  static async build() {
+    const [questionsSheet, meliClient] = await Promise.all([
+      this.setupQuestionsSheet(),
+      this.setupMeliClient()
+    ])
 
-    console.log('[QuestionsService] setup ready')
-  }
-
-  static setupMeliClient() {
-    this.meliClient = new MeliClient()
+    return new QuestionsService(questionsSheet, meliClient)
   }
 
   static async setupQuestionsSheet() {
     const questionsSpreadsheet = config.spreadsheet.questions
 
-    this.questionsSheet = new SheetsHelper()
-    this.headerRowHeight = 1
-    this.headerRowWidth = QuestionMapper.getColumns().keys().length
+    const questionsSheet = new SheetsHelper()
+    const headerRowHeight = 1
+    const headerRowWidth = QuestionMapper.getColumns().keys().length
 
-    await this.questionsSheet.setupSheet({
+    await questionsSheet.setupSheet({
       credentials: config.auth.spreadsheet,
       spreadsheetsKey: questionsSpreadsheet.id,
       sheetName: questionsSpreadsheet.sheet,
-      headerRowHeight: this.headerRowHeight,
-      headerRowWidth: this.headerRowWidth
+      headerRowHeight,
+      headerRowWidth
     })
+
+    return questionsSheet
   }
 
-  static async saveOrUpdateQuestion(sellerAccount, question) {
+  static async setupMeliClient() {
+    const accounts = await Account.findAllCached()
+    const meliClient = new MeliClient()
+    accounts.forEach(account => meliClient.addAccount(account))
+    console.log(`[QuestionsService] Using accounts: '${meliClient.accounts.map(({nickname}) => nickname).join('\', \'')}'`)
+    return meliClient
+  }
+
+  constructor(questionsSheet, meliClient) {
+    this.questionsSheet = questionsSheet
+    this.meliClient = meliClient
+  }
+
+  async saveOrUpdateQuestion(sellerAccount, question) {
     if (typeof question === 'number' || typeof question === 'string') {
       // 'question' is id - retrieve remaining question data
       const questionId = question
@@ -48,12 +66,12 @@ class QuestionsService {
     await this.questionsSheet.updateOrAppendRow(questionRow, idColumn)
   }
 
-  static async answerQuestion(sellerId, questionId, answerText) {
+  async answerQuestion(sellerId, questionId, answerText) {
     const answeringAccount = await this.meliClient.getUser(sellerId)
     return this.meliClient.postQuestionAnswer(answeringAccount, questionId, answerText)
   }
 
-  static async getQuestions({accounts, status, startDate, endDate}) {
+  getQuestions({accounts, status, startDate, endDate}) {
     return this.meliClient.getQuestions({accounts, status, startDate, endDate})
   }
 }

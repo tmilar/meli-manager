@@ -173,7 +173,7 @@ accountSchema.statics.findAllByCurrentClientId = function () {
 let allAccounts = null
 
 accountSchema.statics.findAllCached = async function () {
-  if (allAccounts) {
+  if (allAccounts && allAccounts.length > 0) {
     return allAccounts
   }
 
