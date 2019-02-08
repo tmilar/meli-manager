@@ -1,24 +1,33 @@
 const router = require('express').Router()
 const Account = require('../model/account')
-const OrderService = require('../service/orders.service.js')
-const QuestionsService = require('../service/questions.service.js')
+const OrderService = require('../service/orders.service')
+const QuestionsService = require('../service/questions.service')
 
 const notificationHandler = {
   orders: async (account, orderId) => {
     console.log(`Order notification for ${account.nickname}.`)
-    const order = await OrderService.fetchOneMeliOrder(account, orderId)
+    const orderService = await OrderService.build()
+    const order = await orderService.fetchOneMeliOrder(account, orderId)
+    if (!order) {
+      throw new Error(`Order id ${orderId} not found for user '${account.nickname}', can't save.`)
+    }
 
-    await OrderService.saveOrUpdateOrder(order)
+    await orderService.saveOrUpdateOrder(order)
   },
   orders_v2: async (account, orderId) => {
     console.log(`Order 'v2' notification for ${account.nickname}.`)
-    const order = await OrderService.fetchOneMeliOrder(account, orderId)
+    const orderService = await OrderService.build()
+    const order = await orderService.fetchOneMeliOrder(account, orderId)
+    if (!order) {
+      throw new Error(`Order id ${orderId} not found for user '${account.nickname}', can't save.`)
+    }
 
-    await OrderService.saveOrUpdateOrder(order)
+    await orderService.saveOrUpdateOrder(order)
   },
   questions: async (account, questionId) => {
+    const questionsService = await QuestionsService.build()
     console.log(`New question for ${account.nickname}! Question id: ${questionId}`)
-    await QuestionsService.saveOrUpdateQuestion(account, questionId)
+    await questionsService.saveOrUpdateQuestion(account, questionId)
   },
   messages: async (account, messageId) => {
     console.log(`New message for ${account.nickname}! Not yet handled.`, messageId)

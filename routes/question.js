@@ -10,9 +10,9 @@ const Account = require('../model/account')
 router.post('/:id/answer', async (req, res, next) => {
   const {id: questionId} = req.params
   const {sellerId, answerText} = req.body
-
+  const questionService = await QuestionService.build()
   try {
-    await QuestionService.answerQuestion(sellerId, questionId, answerText)
+    await questionService.answerQuestion(sellerId, questionId, answerText)
   } catch (error) {
     console.log(`Could not post question ${questionId} answer '${answerText}' of seller ${sellerId}.`, error)
     return next(error)
@@ -61,6 +61,7 @@ router.get('/', async (req, res, next) => {
   const nicknamesFilter = accountsArray ? {nickname: {$in: accountsArray}} : {}
   const shouldStore = store === 'true' || store === '1'
 
+  const questionService = await QuestionService.build()
   let questionsResponse = []
 
   /// / *** questions service ***
@@ -70,14 +71,14 @@ router.get('/', async (req, res, next) => {
 
     // 2. fetch remote questions for accounts
     const meliQuestionFilters = {startDate, endDate, accounts: selectedAccounts}
-    questionsResponse = await QuestionService.getQuestions(meliQuestionFilters)
+    questionsResponse = await questionService.getQuestions(meliQuestionFilters)
 
     // 3. store selected questions
     if (shouldStore) {
       req.setTimeout(0) // No timeout, so client can wait for the result.
       await Promise.mapSeries(questionsResponse,
         ({account, response: {results}}) =>
-          Promise.mapSeries(results, question => QuestionService.saveOrUpdateQuestion(account, question))
+          Promise.mapSeries(results, question => questionService.saveOrUpdateQuestion(account, question))
       )
     }
   } catch (error) {

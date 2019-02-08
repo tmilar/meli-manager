@@ -9,10 +9,6 @@ const bodyParser = require('body-parser')
 const db = require('./config/db')
 const {port = 3000} = require('./config')
 
-const QuestionsService = require('./service/questions.service')
-const OrdersService = require('./service/orders.service')
-const Account = require('./model/account')
-
 const index = require('./routes')
 const auth = require('./routes/auth')
 const order = require('./routes/order')
@@ -93,10 +89,6 @@ async function setup() {
         console.log(`db connection open: ${host}:${port}/${name}`)
         dbConnection = connection
       }),
-    QuestionsService.setup(),
-    OrdersService.setup(),
-    Account.findAllCached()
-      .then(accounts => console.log(`Using accounts: '${accounts.map(({nickname}) => nickname).join('\', \'')}'`)),
     startServer()
       .then(server => console.log(`Listening on port ${server.address().port} (${app.get('env')})`))
   ])

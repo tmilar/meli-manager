@@ -2,7 +2,7 @@ const router = require('express').Router()
 const moment = require('moment')
 const Promise = require('bluebird')
 const Account = require('../model/account')
-const OrderService = require('../service/orders.service.js')
+const OrdersService = require('../service/orders.service')
 
 /**
  * @param start - start date range, format 'MM-DD-YY'
@@ -30,6 +30,7 @@ router.get('/', async (req, res, next) => {
   const nicknamesFilter = accountsArray ? {nickname: {$in: accountsArray}} : {}
   const shouldStore = store === 'true' || store === '1'
 
+  const ordersService = await OrdersService.build()
   let orders = []
 
   /// / *** orders service ***
@@ -39,12 +40,12 @@ router.get('/', async (req, res, next) => {
 
     // 2. fetch remote orders for accounts
     const meliOrderFilters = {startDate: dateStart, endDate: dateEnd, accounts: selectedAccounts}
-    orders = await OrderService.fetchMeliOrders(meliOrderFilters)
+    orders = await ordersService.fetchMeliOrders(meliOrderFilters)
 
     // 3. store selected orders
     if (shouldStore) {
       req.setTimeout(0) // No timeout, so client can wait for the result.
-      await Promise.mapSeries(orders, o => OrderService.saveOrUpdateOrder(o))
+      await Promise.mapSeries(orders, o => ordersService.saveOrUpdateOrder(o))
     }
   } catch (error) {
     console.log('Something bad happened at /order', error)
