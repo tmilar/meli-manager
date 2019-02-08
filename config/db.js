@@ -31,24 +31,42 @@ const connect = async () => {
 
   let db
   try {
-    db = await mongoose.connect(dbUrl, {
-      useNewUrlParser: true,
-      /*
-        Buffering allows Mongoose to queue up operations if MongoDB
-        gets disconnected, and to send them upon reconnection.
-        With serverless, it is better to fail fast when not connected.
-      */
-      bufferCommands: false,
-      bufferMaxEntries: 0
-    })
+    db = await tryConnect()
   } catch (error) {
-    console.error('[mongoose] db connection error:', error.message)
-    throw error
+    if (error.message && error.message.match(/failed to connect to server .* on first connect/)) {
+      const retryIn = 3000
+      console.log(`[mongoose] first connect failed, retrying in ${retryIn} ms`)
+      await retryConnectIn(retryIn)
+    } else {
+      console.error('[mongoose] db connection error:', error.message)
+      throw error
+    }
   }
 
   cachedDb = db
 
   return db
+}
+
+const tryConnect = function () {
+  return mongoose.connect(dbUrl, {
+    useNewUrlParser: true,
+    /*
+      Buffering allows Mongoose to queue up operations if MongoDB
+      gets disconnected, and to send them upon reconnection.
+      With serverless, it is better to fail fast when not connected.
+    */
+    bufferCommands: false,
+    bufferMaxEntries: 0,
+    keepAlive: 300000,
+    connectTimeoutMS: 5000
+  })
+}
+
+const retryConnectIn = function (retryTimeout) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => tryConnect().then(resolve).catch(reject), retryTimeout)
+  })
 }
 
 /**
