@@ -36,7 +36,7 @@ const connect = async () => {
     if (error.message && error.message.match(/failed to connect to server .* on first connect/)) {
       const retryIn = 3000
       console.log(`[mongoose] first connect failed, retrying in ${retryIn} ms`)
-      await retryConnectIn(retryIn)
+      db = await retryConnectIn(retryIn)
     } else {
       console.error('[mongoose] db connection error:', error.message)
       throw error
