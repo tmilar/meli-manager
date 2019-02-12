@@ -1,0 +1,54 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+}
+
+.button {
+    margin: auto;
+    background: #00B7FF;
+    border-radius: 3px;
+    bottom: 70px;
+    box-shadow: 2px 7px 7px 0 rgba(0, 0, 0, .2);
+    color: rgb(48, 40, 42);
+    display: block;
+    font-weight: bold;
+    height: 70px;
+    line-height: 70px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 250px;
+    font-size: medium;
+}
+
+.button:hover {
+    background: rgb(48, 40, 42);
+    color: #00dfff;
+    cursor: pointer;
+}
+
+.button.loading {
+    background: gainsboro;
+    cursor: wait;
+}
+
+.button.loading:hover {
+    color: #353535;
+}
+
+#info {
+    height: 50px;
+    line-height: 50px;
+    margin-top: 10px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
