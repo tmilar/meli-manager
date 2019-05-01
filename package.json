@@ -31,7 +31,7 @@
   "dependencies": {
     "bluebird": "3.5.3",
     "body-parser": "1.18.3",
-    "chrome-launcher": "0.10.2",
+    "chrome-launcher": "0.10.6",
     "cli-spinner": "0.2.8",
     "cookie-parser": "1.4.3",
     "debug": "4.1.0",
