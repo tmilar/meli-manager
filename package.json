@@ -41,7 +41,7 @@
     "hbs": "4.0.1",
     "inquirer": "6.2.0",
     "moment": "2.22.2",
-    "moment-timezone": "0.5.22",
+    "moment-timezone": "0.5.26",
     "mongoose": "5.2.13",
     "morgan": "1.9.1",
     "passport": "0.4.0",
