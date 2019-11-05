@@ -42,7 +42,7 @@
     "inquirer": "6.4.1",
     "moment": "2.24.0",
     "moment-timezone": "0.5.25",
-    "mongoose": "5.6.2",
+    "mongoose": "5.7.8",
     "morgan": "1.9.1",
     "passport": "0.4.0",
     "passport-mercadolibre": "0.0.2",
