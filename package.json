@@ -61,7 +61,7 @@
     "eslint-plugin-node": "8.0.0",
     "eslint-plugin-promise": "4.0.1",
     "eslint-plugin-unicorn": "6.0.1",
-    "nodemon": "1.19.1",
+    "nodemon": "2.0.2",
     "xo": "0.24.0"
   },
   "eslintConfig": {
