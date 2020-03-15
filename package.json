@@ -33,7 +33,7 @@
     "chrome-launcher": "0.10.7",
     "cli-spinner": "0.2.10",
     "commander": "2.20.0",
-    "cookie-parser": "1.4.4",
+    "cookie-parser": "1.4.5",
     "debug": "4.1.1",
     "dotenv": "8.0.0",
     "express": "4.17.1",
