@@ -46,7 +46,7 @@
     "morgan": "1.9.1",
     "passport": "0.4.0",
     "passport-mercadolibre": "0.0.2",
-    "passport-oauth2-refresh": "1.1.0",
+    "passport-oauth2-refresh": "2.0.0",
     "request-promise": "4.2.4",
     "serve-favicon": "2.5.0"
   },
