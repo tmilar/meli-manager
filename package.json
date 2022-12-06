@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "bluebird": "3.5.5",
-    "body-parser": "1.19.0",
+    "body-parser": "1.20.1",
     "chalk": "2.4.2",
     "chrome-launcher": "0.10.7",
     "cli-spinner": "0.2.10",
@@ -36,7 +36,7 @@
     "cookie-parser": "1.4.4",
     "debug": "4.1.1",
     "dotenv": "8.0.0",
-    "express": "4.17.1",
+    "express": "4.18.2",
     "google-spreadsheet": "2.0.7",
     "hbs": "4.0.4",
     "inquirer": "6.4.1",
